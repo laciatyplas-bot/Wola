@@ -1,0 +1,224 @@
+(function(){
+  'use strict';
+
+  // Debounce helper
+  function debounce(fn, wait){
+    let t;
+    return function(...args){
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), wait);
+    };
+  }
+
+  function updateAriaForBook(bookEl){
+    const isOpen = bookEl.classList.contains('open');
+    bookEl.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  function enhanceBooksBehavior(root = document){
+    root.querySelectorAll('.book').forEach(bookEl => {
+      // ensure aria-expanded is in sync
+      updateAriaForBook(bookEl);
+
+      // click handler already toggles .open — listen for mutations to sync aria
+      // but simpler: intercept click & keydown to also set aria
+      bookEl.addEventListener('click', (e) => {
+        if (e.target.tagName && e.target.tagName.toLowerCase() === 'a') return;
+        // toggling already done by original handler; but toggle again to be safe
+        // (we only want aria update here)
+        setTimeout(() => updateAriaForBook(bookEl), 0);
+      });
+
+      bookEl.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          setTimeout(() => updateAriaForBook(bookEl), 0);
+        }
+      });
+    });
+  }
+
+  function addBramaTitleToggle(){
+    document.querySelectorAll('.brama-card').forEach(card => {
+      const title = card.querySelector('.brama-title');
+      if(!title) return;
+
+      // make title behave like a button for keyboard users
+      title.setAttribute('role','button');
+      title.setAttribute('tabindex','0');
+      // aria-controls -> id of the list of books (create id if missing)
+      const ul = card.querySelector('.book-list');
+      if(ul && !ul.id) ul.id = card.id + '-list';
+      if(ul) title.setAttribute('aria-controls', ul.id);
+
+      title.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          // toggle all books in this brama
+          const books = card.querySelectorAll('.book');
+          const anyClosed = Array.from(books).some(b => !b.classList.contains('open'));
+          books.forEach(b => {
+            b.classList.toggle('open', anyClosed);
+            updateAriaForBook(b);
+          });
+          // update visible counter immediately
+          updateBramaVisibleCount(card);
+        }
+      });
+
+      // update meta to be region/labelledby
+      card.setAttribute('role','region');
+      // ensure title has id for aria-labelledby
+      if(!title.id) title.id = card.id + '-title';
+      card.setAttribute('aria-labelledby', title.id);
+    });
+  }
+
+  function updateBramaVisibleCount(card){
+    const total = card.querySelectorAll('.book').length;
+    const visible = card.querySelectorAll('.book:not([style*="display: none"])').length;
+    const meta = card.querySelector('.brama-meta');
+    if(meta){
+      // keep existing color info if present
+      const colorMatch = meta.textContent.match(/color:\s*([^\s]+)/i);
+      const color = colorMatch ? colorMatch[1] : null;
+      meta.textContent = (color ? 'color: ' + color + ' • ' : '') + visible + '/' + total + ' visible';
+    }
+  }
+
+  function updateAllBramaCounts(){
+    document.querySelectorAll('.brama-card').forEach(updateBramaVisibleCount);
+  }
+
+  // copyTitles: copy only visible titles when filters applied, else all
+  function enhanceCopyList(){
+    const copyBtn = document.getElementById('copyList');
+    if(!copyBtn) return;
+    copyBtn.removeEventListener('click', window.copyTitles); // in case original was attached
+    copyBtn.addEventListener('click', () => {
+      const titles = [];
+      document.querySelectorAll('.brama-card').forEach(card => {
+        card.querySelectorAll('.book').forEach(bookEl => {
+          // ignore hidden books
+          const style = bookEl.getAttribute('style') || '';
+          const isHidden = style.includes('display: none');
+          if(isHidden) return;
+          const strong = bookEl.querySelector('strong');
+          if(!strong) return;
+          // if there is an <a> take its text
+          const a = strong.querySelector('a');
+          const t = a ? a.textContent.trim() : strong.childNodes[0] ? strong.childNodes[0].textContent.trim() : '';
+          if(t) titles.push(t);
+        });
+      });
+      // fallback to all titles if nothing visible (original behavior)
+      if(titles.length === 0){
+        // fallback to MAP_DATA if available globally
+        if(window.MAP_DATA){
+          window.MAP_DATA.forEach(br => br.books.forEach(b => {
+            const t = (b.title && (b.title[window.currentLang] || b.title.pl)) || '';
+            if(t) titles.push(t);
+          }));
+        }
+      }
+      const text = titles.join('\\n');
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(() => {
+          alert(window.currentLang === 'pl' ? 'Skopiowano listę tytułów do schowka.' : 'Titles copied to clipboard.');
+        }).catch(() => {
+          fallbackCopy(text);
+        });
+      } else {
+        fallbackCopy(text);
+      }
+    });
+
+    function fallbackCopy(text){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      document.body.removeChild(ta);
+      alert(window.currentLang === 'pl' ? 'Skopiowano listę tytułów (tryb awaryjny).' : 'Titles copied (fallback mode).');
+    }
+  }
+
+  // Deep-link helpers: update hash when nav buttons clicked, and scroll to hash on load
+  function enableDeepLinking(){
+    document.querySelectorAll('nav [data-jump]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = btn.getAttribute('data-jump');
+        if(!id) return;
+        // scroll (existing behavior) then update hash without adding history entry
+        history.replaceState(null, '', '#' + id);
+        // optional: update focus
+        const el = document.getElementById(id);
+        if(el) el.focus({preventScroll:true});
+      });
+    });
+
+    // on load, if hash present, scroll to it
+    window.addEventListener('load', () => {
+      const hash = (location.hash || '').replace('#','');
+      if(hash){
+        const el = document.getElementById(hash);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  }
+
+  // Re-apply enhancements after the original rebuildMap() or language switch
+  function observeMapGrid(){
+    const grid = document.getElementById('mapGrid');
+    if(!grid) return;
+    const mo = new MutationObserver(() => {
+      // re-enhance when DOM changes (rebuildMap clears and appends)
+      setTimeout(() => {
+        enhanceBooksBehavior();
+        addBramaTitleToggle();
+        enhanceCopyList();
+        updateAllBramaCounts();
+      }, 0);
+    });
+    mo.observe(grid, {childList:true, subtree:true});
+  }
+
+  // Debounced filter hookup — if original attach exists we'll additionally debounce it
+  function debounceSearchHook(){
+    const search = document.getElementById('search');
+    if(!search) return;
+    // if original applyFilters exists globally, wrap it with debounce
+    if(window.applyFilters){
+      const deb = debounce(window.applyFilters, 200);
+      // remove other input listeners? safer to add our debounced one
+      search.addEventListener('input', deb);
+    }
+  }
+
+  // Update counts whenever filters change (hook input and select)
+  function hookFilterUpdates(){
+    const search = document.getElementById('search');
+    const filter = document.getElementById('filterBrama');
+    const applyAndCount = debounce(() => {
+      if(window.applyFilters) window.applyFilters();
+      updateAllBramaCounts();
+    }, 220);
+    if(search) search.addEventListener('input', applyAndCount);
+    if(filter) filter.addEventListener('change', applyAndCount);
+    // also update initially
+    setTimeout(updateAllBramaCounts, 100);
+  }
+
+  // init
+  document.addEventListener('DOMContentLoaded', () => {
+    enhanceBooksBehavior();
+    addBramaTitleToggle();
+    enhanceCopyList();
+    enableDeepLinking();
+    observeMapGrid();
+    debounceSearchHook();
+    hookFilterUpdates();
+  });
+})();
