@@ -27,5 +27,140 @@
   <h1>ETERNIVERSE</h1>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ETERNIVERSE — Mapa Świata</title>
+
+<style>
+:root{
+  --bg:#020812;
+  --card:#071626;
+  --gold:#D9A441;
+  --text:#E6F6F5;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top, #0b1a26, var(--bg));
+  color:var(--text);
+  font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.container{
+  max-width:1000px;
+  width:100%;
+  padding:40px;
+  text-align:center;
+}
+
+h1{
+  color:var(--gold);
+  letter-spacing:4px;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  opacity:.7;
+  margin-bottom:40px;
+}
+
+.map{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+
+.gate{
+  background:linear-gradient(180deg,#081b2e,#050d18);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:30px 20px;
+  cursor:pointer;
+  transition:.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.gate:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
+}
+
+.gate::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at top,var(--gold),transparent 70%);
+  opacity:.06;
+}
+
+.gate h2{
+  margin:0 0 10px;
+  color:var(--gold);
+}
+
+.gate p{
+  opacity:.75;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>ETERNIVERSE</h1>
+  <div class="subtitle">Interaktywna mapa świata narracyjnego</div>
+
+  <div class="map">
+
+    <div class="gate" onclick="openGate('INTERSEEKER')">
+      <h2>INTERSEEKER</h2>
+      <p>Psyche, cień, trauma, archetypy</p>
+    </div>
+
+    <div class="gate" onclick="openGate('ETERSEEKER')">
+      <h2>ETERSEEKER</h2>
+      <p>Wola, pole, świadomość</p>
+    </div>
+
+    <div class="gate" onclick="openGate('OBFITOSEEKER')">
+      <h2>OBFITOSEEKER</h2>
+      <p>Materia, pieniądz, ekspansja</p>
+    </div>
+
+    <div class="gate" onclick="openGate('BIOSEEKER')">
+      <h2>BIOSEEKER</h2>
+      <p>Ciało, biologia, system nerwowy</p>
+    </div>
+
+    <div class="gate" onclick="openGate('RELIGIOSEEKER')">
+      <h2>RELIGIOSEEKER</h2>
+      <p>Upadek dogmatów, własna duchowość</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function openGate(name){
+  alert(
+    "BRAMA: " + name +
+    "\n\nTa sekcja będzie rozwijana:\n• książki\n• serie\n• rozdziały\n• linie czasu"
+  );
+}
+</script>
+
+</body>
 </html>
+
 
