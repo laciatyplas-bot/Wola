@@ -2,40 +2,54 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>ETERNIVERSE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETERNIVERSE — Mapa Świata</title>
   <style>
     body{
       margin:0;
-      background:#020812;
-      color:#E6F6F5;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      height:100vh;
+      background:radial-gradient(circle at top, #0b1a26, #020812);
+      color:#e6f6f5;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       display:flex;
       align-items:center;
       justify-content:center;
-      height:100vh;
       text-align:center;
     }
+    .wrap{
+      max-width:720px;
+      padding:40px;
+    }
     h1{
-      color:#D9A441;
-      letter-spacing:3px;
-      margin-bottom:12px;
+      color:#d9a441;
+      letter-spacing:2px;
+      margin-bottom:16px;
     }
     p{
-      opacity:.85;
-      max-width:520px;
+      line-height:1.6;
+      opacity:.9;
+    }
+    .tag{
+      margin-top:24px;
+      font-size:13px;
+      opacity:.6;
     }
   </style>
 </head>
-
 <body>
-  <div>
+  <div class="wrap">
     <h1>ETERNIVERSE</h1>
     <p>
-      Interaktywna mapa systemu książek.<br>
-      Wola • Cień • Pole • Obfitość
+      Interaktywna mapa świata książek.<br>
+      Psychika · Cień · Wola · Obfitość · Pole
     </p>
+    <p>
+      To nie jest strona.<br>
+      To jest punkt wejścia.
+    </p>
+    <div class="tag">
+      © Maciej · EterSeeker
+    </div>
   </div>
 </body>
 </html>
