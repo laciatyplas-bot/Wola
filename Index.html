@@ -5,7 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ETERUNIVERSE</title>
 
-<style>
+<style>/* ===== BRAMY SYSTEMU ===== */
+
+.card{
+  position: relative;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(255,255,255,0.06), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.25));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* linia aktywacji */
+.card::before{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  opacity:.8;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+/* reakcja pola */
+.card:hover{
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 16px 40px rgba(0,0,0,0.8);
+}
+
+/* ===== KOLORY BRAM ===== */
+
+.card[data-brama="1"]{ --accent: var(--teal); }
+.card[data-brama="2"]{ --accent: var(--gold); }
+.card[data-brama="3"]{ --accent: var(--green); }
+.card[data-brama="4"]{ --accent: var(--purple); }
+
+.card h2{
+  font-size:17px;
+  letter-spacing:.5px;
+}
+
+.card .meta{
+  opacity:.85;
+}
+
+.tag{
+  border:1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+}
+
+/* ===== MOBILE FEEL ===== */
+
+@media(max-width:600px){
+  .card{
+    padding:18px;
+  }
+  h1{
+    font-size:24px;
+  }
+}
 :root{
   --bg:#020812;
   --card:#071626;
