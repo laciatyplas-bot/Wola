@@ -1,735 +1,156 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>MAPA ETERNIVERSE — System Operacyjny Rzeczywistości</title>
-<style>
-  :root{
-    --bg:#041018; --card:#071626; --text:#E6F6F5;
-    --gold:#D9A441; --teal:#28D3C6; --green:#12C65B; --purple:#9B6BFF; --orange:#FFB14B;
-    --glass: rgba(255,255,255,0.03);
-    --border: rgba(255,255,255,0.06);
-    font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
-  }
-  *{box-sizing:border-box}
-  html,body{
-    min-height:100%;
-    margin:0;
-    background:linear-gradient(180deg,#020812 0%,#05111a 100%);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:1200px;margin:0 auto;padding:30px 20px 100px 20px;}
-  header{margin-bottom:24px;border-bottom: 1px solid var(--border);padding-bottom: 20px;}
-  header h1{margin:0 0 10px 0;font-size:28px;letter-spacing:1px;color:var(--gold);text-transform: uppercase;font-weight: 800;}
-  .intro{color:#9abfb7;font-size:14px;max-width: 800px;line-height: 1.5;}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom: 24px;background: rgba(0,0,0,0.2);padding: 15px;border-radius: 12px;border: 1px solid var(--border);}
-  .search{padding:10px 14px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--text);flex: 1;min-width:240px;font-size: 14px;}
-  .search:focus { outline: 1px solid var(--teal); border-color: var(--teal); }
-  .btn, .select-like{padding:10px 16px;border-radius:8px;background:var(--glass);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;transition: all 0.2s;font-weight: 500;}
-  .btn:hover, .select-like:hover { background: rgba(255,255,255,0.08); }
-  .select-like{ appearance:none; -webkit-appearance:none; background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px; padding-right: 30px; }
-  .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:20px;}
-  @media(min-width:1024px){ .grid{grid-template-columns:repeat(2,1fr); align-items: start;} }
-  .brama-card{display:flex;flex-direction:column;padding:0;border-radius:16px;background: #08121c;box-shadow:0 10px 30px rgba(0,0,0,0.3);border:1px solid var(--border);overflow: hidden;position: relative;}
-  .brama-header-area { padding: 16px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .brama1 .brama-header-area { background: linear-gradient(90deg, rgba(40, 211, 198, 0.1), transparent); border-left: 4px solid var(--teal); }
-  .brama2 .brama-header-area { background: linear-gradient(90deg, rgba(217, 164, 65, 0.1), transparent); border-left: 4px solid var(--gold); }
-  .brama3 .brama-header-area { background: linear-gradient(90deg, rgba(18, 198, 91, 0.1), transparent); border-left: 4px solid var(--green); }
-  .brama4 .brama-header-area { background: linear-gradient(90deg, rgba(155, 107, 255, 0.1), transparent); border-left: 4px solid var(--purple); }
-  .brama5 .brama-header-area { background: linear-gradient(90deg, rgba(255, 177, 75, 0.1), transparent); border-left: 4px solid var(--orange); }
-  .brama-title{font-weight:800;font-size:18px;margin:0 0 4px 0;letter-spacing: 0.5px;text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
-  .brama1 .brama-title { color: var(--teal); }
-  .brama2 .brama-title { color: var(--gold); }
-  .brama3 .brama-title { color: var(--green); }
-  .brama4 .brama-title { color: var(--purple); }
-  .brama5 .brama-title { color: var(--orange); }
-  .brama-sub{font-size:12px;color:rgba(255,255,255,0.6);text-transform: uppercase;letter-spacing: 0.5px;}
-  .book-list{margin:0;padding:10px;list-style:none;max-height:600px;overflow-y:auto;}
-  .book-list::-webkit-scrollbar { width: 6px; }
-  .book-list::-webkit-scrollbar-track { background: #050b14; }
-  .book-list::-webkit-scrollbar-thumb { background: #1a3a4a; border-radius: 3px; }
-  .book{padding:12px;border-radius:8px;margin-bottom:8px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid transparent;transition: all 0.2s ease;}
-  .book:hover{background: rgba(255,255,255,0.04);transform: translateX(2px);border-color: rgba(255,255,255,0.1);}
-  .book.open { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.15); }
-  .book-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-  .book-title { font-weight: 600; font-size: 14px; line-height: 1.4; color: #e1e1e1; }
-  .book.open .book-title { color: var(--text); }
-  .status-pill{ display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:4px; font-size:10px; text-transform:uppercase; font-weight: 700; letter-spacing:0.05em; background:rgba(0,0,0,0.4); white-space: nowrap; border: 1px solid rgba(255,255,255,0.05); }
-  .status-dot{ width:6px; height:6px; border-radius:50%; }
-  .status-idea .status-dot{background:#666;} .status-idea { color: #aaa; }
-  .status-draft .status-dot{background:var(--orange);} .status-draft { color: var(--orange); }
-  .status-writing .status-dot{background:var(--teal);} .status-writing { color: var(--teal); }
-  .status-published .status-dot{background:var(--green);} .status-published { color: var(--green); border-color: rgba(18, 198, 91, 0.3); }
-  .status-ready .status-dot{background:var(--gold);} .status-ready { color: var(--gold); border-color: rgba(217, 164, 65, 0.3); }
-  .status-final_ready .status-dot{background:#fff; box-shadow: 0 0 5px #fff;} .status-final_ready { color: #fff; background: rgba(255,255,255,0.1); }
-  .tags{font-size:11px;color:#6b8c87;margin-top:6px;font-family: monospace;}
-  .desc{display:none;color:#b0ccc7;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);font-size:13px;line-height:1.6;animation: fadeIn 0.3s ease;}
-  .desc strong { color: var(--gold); }
-  .book.open .desc{display:block}
-  @keyframes fadeIn { from{opacity:0;transform:translateY(-5px);} to{opacity:1;transform:translateY(0);} }
-  footer{margin-top:40px;color:#5a7a75;font-size:12px;text-align: center;border-top: 1px solid var(--border);padding-top: 20px;}
-  nav{position:fixed;right:20px;bottom:20px;background:rgba(3,7,10,0.9);backdrop-filter: blur(10px);padding:10px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.8);border: 1px solid var(--border);display: flex;flex-direction: column;gap: 5px;z-index: 100;}
-  nav button { background: transparent; border: none; color: #88a; text-align: right; font-size: 11px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
-  nav button:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  .backtop { font-weight: bold; color: var(--gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; margin-bottom: 5px; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ETERUNIVERSE</title>
+
+  <style>
+    :root{
+      --bg:#020812;
+      --card:#071626;
+      --text:#E6F6F5;
+      --muted:#9bb7b2;
+      --gold:#D9A441;
+      --teal:#28D3C6;
+      --green:#12C65B;
+      --purple:#9B6BFF;
+      --radius:14px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: linear-gradient(180deg,#020812 0%,#071726 100%);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:auto;
+      padding:32px 20px 80px;
+    }
+
+    header{
+      margin-bottom:32px;
+    }
+
+    h1{
+      margin:0 0 8px 0;
+      color:var(--gold);
+      letter-spacing:1px;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      max-width:700px;
+    }
+
+    .grid{
+      display:grid;
+      gap:18px;
+    }
+
+    @media(min-width:900px){
+      .grid{ grid-template-columns:1fr 1fr; }
+    }
+
+    .card{
+      background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.04);
+      border-radius:var(--radius);
+      padding:20px;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,0.08);
+    }
+
+    .card h2{
+      margin:0;
+      font-size:18px;
+    }
+
+    .meta{
+      margin-top:6px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .tag{
+      display:inline-block;
+      margin-top:10px;
+      padding:4px 10px;
+      font-size:11px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.05);
+    }
+
+    footer{
+      position:fixed;
+      bottom:0;
+      left:0;
+      width:100%;
+      padding:10px;
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+      background:rgba(2,8,18,0.8);
+      backdrop-filter: blur(6px);
+    }
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
 
-<div class="wrap">
-  <header>
-    <h1 id="titleMain">MAPA ETERNIVERSE</h1>
-    <div class="intro" id="introText">
-      Centralny rejestr uniwersum. Tutaj znajdują się wszystkie bramy, księgi i protokoły. Dane są zsynchronizowane z systemem marketingowym Eterseeker.
-    </div>
-  </header>
+    <header>
+      <h1>ETERUNIVERSE</h1>
+      <div class="subtitle">
+        To nie jest opowieść. To jest nawigacja.<br>
+        Kliknij Bramę, która opisuje Twój obecny stan.
+      </div>
+    </header>
 
-  <div class="controls">
-    <input id="search" class="search" placeholder="Szukaj..." aria-label="Szukaj"/>
-    <select id="filterBrama" class="select-like">
-      <option value="all">Wszystkie bramy</option>
-      <option value="brama1">Brama 1 — InterSeeker</option>
-      <option value="brama2">Brama 2 — EterSeeker</option>
-      <option value="brama3">Brama 3 — ObfitoSeeker</option>
-      <option value="brama4">Brama 4 — The Knot</option>
-      <option value="brama5">Brama 5 — Quantum Knot</option>
-    </select>
-    <button class="btn" id="expandAll">Rozwiń wszystko</button>
-    <button class="btn" id="collapseAll">Zwiń</button>
-    <button class="btn" id="exportJson" style="color:var(--gold)">📥 Eksport Master JSON</button>
-    <select id="langSwitch" class="select-like" style="width:70px">
-      <option value="pl">PL</option>
-      <option value="en">EN</option>
-    </select>
+    <section class="grid" id="bramy">
+
+      <div class="card" data-brama="1">
+        <h2>BRAMA I — INTERSEEKER</h2>
+        <div class="meta">Psychika · Cień · Pamięć</div>
+        <span class="tag">CORE</span>
+      </div>
+
+      <div class="card" data-brama="2">
+        <h2>BRAMA II — CUSTOS</h2>
+        <div class="meta">Strażnik · Algorytm przetrwania</div>
+        <span class="tag">CORE</span>
+      </div>
+
+    </section>
+
   </div>
 
-  <section class="grid" id="mapGrid"></section>
-
   <footer>
-    <div id="footerText">SYSTEM ETERNIVERSE v2.1 • Architekt: Maciej</div>
+    ETERUNIVERSE • system roboczy • Maciej
   </footer>
 
-  <nav>
-    <button class="backtop" id="toTop">↑ TOP</button>
-    <button data-jump="brama1">B1: Inter</button>
-    <button data-jump="brama2">B2: Eter</button>
-    <button data-jump="brama3">B3: Obfito</button>
-    <button data-jump="brama4">B4: Knot</button>
-    <button data-jump="brama5">B5: Quantum</button>
-  </nav>
-</div>
+  <script>
+    // START SYSTEMU
+    console.log("ETERUNIVERSE online");
 
-<script>
-/* -----------------------
-   ZMIENNE UI I JĘZYK
-   ----------------------- */
-let currentLang = 'pl';
-const UI_TEXT = {
-  pl:{
-    title:'MAPA ETERNIVERSE',
-    intro:'Centralny interfejs Architekta. Wyszukaj, filtruj, zarządzaj stanem. Kliknij na tytuł, aby zobaczyć szczegóły, statusy i notatki marketingowe.',
-    searchPlaceholder:'Szukaj: tytuł, tag, opis...',
-    expand:'Rozwiń', collapse:'Zwiń',
-    filterAll:'Wszystkie bramy', filter1:'Brama 1 (Inter)', filter2:'Brama 2 (Eter)', filter3:'Brama 3 (Obfito)', filter4:'Brama 4 (Knot)', filter5:'Brama 5 (Quantum)',
-    exportJson:'📥 Eksport JSON',
-    status:{ idea:'pomysł', draft:'szkic', writing:'w pisaniu', published:'opublikowana', ready:'gotowa do druku', final_ready:'final ready' }
-  },
-  en:{
-    title:'ETERNIVERSE MAP',
-    intro:'Central Architect Interface. Search, filter, manage state. Click title to see details, status and marketing notes.',
-    searchPlaceholder:'Search...',
-    expand:'Expand', collapse:'Collapse',
-    filterAll:'All Gates', filter1:'Gate 1 (Inter)', filter2:'Gate 2 (Eter)', filter3:'Gate 3 (Obfito)', filter4:'Gate 4 (Knot)', filter5:'Gate 5 (Quantum)',
-    exportJson:'📥 Export JSON',
-    status:{ idea:'idea', draft:'draft', writing:'writing', published:'published', ready:'ready to print', final_ready:'final ready' }
-  }
-};
-
-/* -----------------------
-   MASTER JSON (wklejone)
-   ----------------------- */
-const MASTER_JSON = {
-  "generated_at": "2025-12-08T18:19:36.850Z",
-  "map_data": [
-    {
-      "id": "brama1",
-      "class": "brama1",
-      "name": { "pl": "BRAMA 1 — INTERSEEKER", "en": "GATE 1 — INTERSEEKER" },
-      "color": "var(--teal)",
-      "sub": { "pl": "Psychika · Trauma · Cień · Archetyp", "en": "Psyche · Trauma · Shadow · Archetype" },
-      "books": [
-        {
-          "title": { "pl": "INTERSEEKER: Geneza", "en": "INTERSEEKER: Geneza" },
-          "status": "ready",
-          "tags": { "pl": [ "autobiografia", "ogien", "trauma", "geneza" ], "en": [] },
-          "desc": { "pl": "Historia 'spod pieca'. Dzieciństwo na bagnach, ośrodek, walka z cieniem. Fundament, na którym stoi cała reszta. To 'Origin Story' Architekta.", "en": "" },
-          "notes": "Gotowa część autobiograficzna (Ogień wybrał Macieja). Opublikowana częściowo na Wattpad."
-        },
-        {
-          "title": { "pl": "InterSeeker – Atlas Wewnętrzny", "en": "InterSeeker – Atlas Wewnętrzny" },
-          "status": "published",
-          "tags": { "pl": [ "psychika", "cień", "wattpad" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Podręcznik nawigacji w ciemności. 17 opublikowanych części na Wattpad. #3 w rankingu Interseeker.", "en": "Entry into the shadow: a compact atlas of the psyche." },
-          "notes": "Zawiera rozdziały o walce z Cieniem. Działa jako wstęp do pracy własnej."
-        },
-        {
-          "title": { "pl": "BioSeeker – Sekret Biologii Pola", "en": "BioSeeker – Sekret Biologii Pola" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "NaukoSeeker – Mechanika Pola", "en": "NaukoSeeker – Mechanika Pola" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "ObfitoSeeker II – Kod Rozszerzony", "en": "ObfitoSeeker II – Kod Rozszerzony" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "RytmSeeker – Mechanika Ruchu Życia", "en": "RytmSeeker – Mechanika Ruchu Życia" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "CzasSeeker – Fizyka Linii Czasu", "en": "CzasSeeker – Fizyka Linii Czasu" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Geneza", "en": "Geneza" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Tom zero — ustawienia nukleusowe uniwersum: początki logiki pola.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Kronika Woli", "en": "Kronika Woli" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Wola jako mechanika kwantowa. Cień jako test. Jedna księga łącząca autobiografię, protokoły i praktykę przebudzenia.", "en": "Chronicle of Will. Will as quantum mechanics. Shadow as a test." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Archetypy Eteru — Tom 2", "en": "Archetypy Eteru — Tom 2" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Mapa Trajektorii Życia (rozszerzona)", "en": "Mapa Trajektorii Życia (rozszerzona)" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "EterWar", "en": "EterWar" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        }
-      ]
-    },
-    {
-      "id": "brama2",
-      "class": "brama2",
-      "name": { "pl": "BRAMA 2 — ETERSEEKER", "en": "GATE 2 — ETERSEEKER" },
-      "color": "var(--gold)",
-      "sub": { "pl": "Wola · Pole · Architektura rzeczywistości", "en": "Will · Field · Architecture of Reality" },
-      "books": [
-        {
-          "title": { "pl": "ShadowSeeker – Anatomia Cienia", "en": "ShadowSeeker – Anatomia Cienia" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "BólSeeker – Anatomia Rany", "en": "BólSeeker – Anatomia Rany" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "InterfejsSeeker – Interfejs Świadomości", "en": "InterfejsSeeker – Interfejs Świadomości" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "MateriaSeeker – Przewodnik Ciała i Przepływu", "en": "MateriaSeeker – Przewodnik Ciała i Przepływu" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "ConscienceSeeker – Kartografia Sumienia", "en": "ConscienceSeeker – Kartografia Sumienia" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "PoleSeeker – Topologia Ludzkiego Pola", "en": "PoleSeeker – Topologia Ludzkiego Pola" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "EterSeeker – Księga Zakazana (Tom Zero)", "en": "EterSeeker – Księga Zakazana (Tom Zero)" },
-          "status": "writing",
-          "tags": { "pl": [ "tartaria", "zakazana_wiedza", "reset" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Cisza przed błotem. Historia resetów cywilizacji i ukrytej technologii eteru.", "en": "Description pending." },
-          "notes": "Czarny PDF, tylko tekst, bez ozdobników. Dla wtajemniczonych."
-        },
-        {
-          "title": { "pl": "Kronika Obserwatora", "en": "Kronika Obserwatora" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Archetypy Eteru — Tom 3", "en": "Archetypy Eteru — Tom 3" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Esker / Eskiera", "en": "Esker / Eskiera" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "MetaGeneza", "en": "MetaGeneza" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        }
-      ]
-    },
-    {
-      "id": "brama3",
-      "class": "brama3",
-      "name": { "pl": "BRAMA 3 — OBFITOSEEKER", "en": "GATE 3 — OBFITOSEEKER" },
-      "color": "var(--green)",
-      "sub": { "pl": "Materia · Transformacja · Obfitość", "en": "Matter · Transformation · Abundance" },
-      "books": [
-        {
-          "title": { "pl": "Fito-Seeker", "en": "Fito-Seeker" },
-          "status": "draft",
-          "tags": { "pl": [ "zdrowie", "biologia", "natura" ], "en": [] },
-          "desc": { "pl": "Człowiek, który zaczyna rosnąć. Połączenie pracy z ciałem, dietą i naturą.", "en": "" },
-          "notes": "Okładka gotowa (postać z rośliną)."
-        },
-        {
-          "title": { "pl": "MemorySeeker – Archeologia Wspomnień", "en": "MemorySeeker – Archeologia Wspomnień" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "EterSeeker – Architektura Woli", "en": "EterSeeker – Architektura Woli" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Schematy kreacji rzeczywistości — krótko, projektowo, efektywnie.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "SplatanieSeeker – Protokół Obserwatora", "en": "SplatanieSeeker – Protokół Obserwatora" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Mutoseeker – Kod Mutacji", "en": "Mutoseeker – Kod Mutacji" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "ArchetypSeeker – System Archetypów Eteru", "en": "ArchetypSeeker – System Archetypów Eteru" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "SenSeeker – Mechanika Snów", "en": "SenSeeker – Mechanika Snów" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Eteriony – Tom I", "en": "Eteriony – Tom I" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Księga Przepływu", "en": "Księga Przepływu" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Atlas Ludzi Ognia", "en": "Atlas Ludzi Ognia" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Esker: Cząstka, która patrzy z powrotem", "en": "Esker: Cząstka, która patrzy z powrotem" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Custos: Kodeks Głębi", "en": "Custos: Kodeks Głębi" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        }
-      ]
-    },
-    {
-      "id": "brama4",
-      "class": "brama4",
-      "name": { "pl": "BRAMA 4 — THE KNOT", "en": "GATE 4 — THE KNOT" },
-      "color": "var(--purple)",
-      "sub": { "pl": "Technologia · Splątanie · Protokół", "en": "Technology · Entanglement · Protocol" },
-      "books": [
-        {
-          "title": { "pl": "SelfSplit Seeker – Rozszczepienie Tożsamości", "en": "SelfSplit Seeker – Rozszczepienie Tożsamości" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "EterSeeker – Księga Woli", "en": "EterSeeker – Księga Woli" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Zestaw zasad i praktyk, które przekształcają intencję w działanie pola.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "QuantumSeeker – Fizyka Duszy", "en": "QuantumSeeker – Fizyka Duszy" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "TrajektoriaSeeker – Mapa Linii Życia", "en": "TrajektoriaSeeker – Mapa Linii Życia" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "ZwierzSeeker – Atlas Zwierząt Eterycznych", "en": "ZwierzSeeker – Atlas Zwierząt Eterycznych" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "FuturSeeker – Przyszłość, która nadchodzi", "en": "FuturSeeker – Przyszłość, która nadchodzi" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Eteriony – Tom II", "en": "Eteriony – Tom II" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Ciało jako Interfejs Pola", "en": "Ciało jako Interfejs Pola" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Kod Ludzi Przebudzonych", "en": "Kod Ludzi Przebudzonych" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Shiker / Shikera", "en": "Shiker / Shikera" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Architekt Eteru — Manifest Twórcy", "en": "Architekt Eteru — Manifest Twórcy" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Manifest i reguły twórcy systemu — zobowiązania, metody, etyka.", "en": "Description pending." },
-          "notes": ""
-        }
-      ]
-    },
-    {
-      "id": "brama5",
-      "class": "brama5",
-      "name": { "pl": "BRAMA 5 — QUANTUM KNOT", "en": "GATE 5 — QUANTUM KNOT" },
-      "color": "var(--orange)",
-      "sub": { "pl": "Kwanta · Entropia · Nowe trajektorie", "en": "Quanta · Entropy · New trajectories" },
-      "books": [
-        {
-          "title": { "pl": "ReligioSeeker – Droga Bez Religii", "en": "ReligioSeeker – Droga Bez Religii" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "WolaSeeker – Kwant Woli", "en": "WolaSeeker – Kwant Woli" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "ObfitoSeeker – Kod Obfitości", "en": "ObfitoSeeker – Kod Obfitości" },
-          "status": "published",
-          "tags": { "pl": [ "pieniądze", "przepływ", "ojciec", "syn" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Kod, który nie mówi o pieniądzach — mówi o regułach gry. Historia powrotu do syna. 19 opublikowanych części na Wattpadzie.", "en": "Abundance Code: practical protocol for resource transformation." },
-          "notes": "Najważniejsza część 'dla Nikosia'. Okładka z ojcem i synem. Status #1 w rankingu 'Start Tutaj'."
-        },
-        {
-          "title": { "pl": "DrogaSeeker – Kod Przemiany Człowieka", "en": "DrogaSeeker – Kod Przemiany Człowieka" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "PustkaSeeker – Kartografia Ciszy", "en": "PustkaSeeker – Kartografia Ciszy" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "OjciecSeeker – Architektura Relacji Ojciec–Dziecko", "en": "OjciecSeeker – Architektura Relacji Ojciec–Dziecko" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Praca z relacją rodzic–dziecko: energetyczne wzory i protokoły naprawy.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Protokół Splątania (wersja meta)", "en": "Protokół Splątania (wersja meta)" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Archetypy Eteru — Tom 1", "en": "Archetypy Eteru — Tom 1" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Mapa Uniwersum Eteru", "en": "Mapa Uniwersum Eteru" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Funkcja, która zmienia świat", "en": "Funkcja, która zmienia świat" },
-          "status": "idea",
-          "tags": { "pl": [ "seeker" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Opis w przygotowaniu.", "en": "Description pending." },
-          "notes": ""
-        },
-        {
-          "title": { "pl": "Janowice – Uśmiech Architekta", "en": "Janowice – Uśmiech Architekta" },
-          "status": "writing",
-          "tags": { "pl": [ "trauma", "zęby", "odwaga", "lęk" ], "en": [ "seeker" ] },
-          "desc": { "pl": "Podręcznik odwagi cywilnej. Historia walki z paraliżującym lękiem przed dentystą i odzyskania uśmiechu po 4 latach. Kryptonim 'Operacja Uśmiech'.", "en": "Description pending." },
-          "notes": "Lead Magnet. Najbardziej ludzka i intymna część sagi."
-        }
-      ]
-    }
-  ],
-  "meta": {
-    "assets": { "audio": [ "200k słów nagranych" ], "covers": [ "40+ okładek premium" ] },
-    "launch_plan": "Zbiórka na 'Wolność Czasową' i 'Uśmiech'. Publikacja sagi na Amazon KDP."
-  }
-};
-
-/* -----------------------
-   MAPA I META (referencje)
-   ----------------------- */
-let MAP_DATA = MASTER_JSON.map_data;
-let GLOBAL_META = MASTER_JSON.meta;
-
-/* -----------------------
-   RENDER / UI
-   ----------------------- */
-
-function createBookElement(book){
-  const li = document.createElement('li');
-  li.className = 'book';
-  const top = document.createElement('div'); top.className = 'book-top';
-  const title = document.createElement('div'); title.className = 'book-title';
-  title.textContent = (book.title && (book.title[currentLang] || book.title.pl)) || 'Untitled';
-  const statusSpan = document.createElement('span'); statusSpan.className = 'status-pill status-' + (book.status || 'idea');
-  const dot = document.createElement('span'); dot.className = 'status-dot';
-  const label = document.createElement('span');
-  const statusDict = UI_TEXT[currentLang].status;
-  label.textContent = statusDict[book.status] || book.status || '';
-  statusSpan.appendChild(dot); statusSpan.appendChild(label);
-  top.appendChild(title); top.appendChild(statusSpan);
-  li.appendChild(top);
-  const tagsEl = document.createElement('div'); tagsEl.className = 'tags';
-  const tagList = (book.tags && (book.tags[currentLang] || book.tags.pl)) || [];
-  tagsEl.textContent = tagList.length > 0 ? '#' + tagList.join(' #') : '';
-  li.appendChild(tagsEl);
-  const descEl = document.createElement('div'); descEl.className = 'desc';
-  let descText = (book.desc && (book.desc[currentLang] || book.desc.pl)) || '';
-  if(book.notes) { descText += `<br><br><strong>NOTATKI ARCHITEKTA:</strong> ${book.notes}`; }
-  descEl.innerHTML = descText;
-  li.appendChild(descEl);
-  li.addEventListener('click', () => li.classList.toggle('open'));
-  return li;
-}
-
-function createBramaCard(brama){
-  const article = document.createElement('article');
-  article.id = brama.id;
-  article.className = 'brama-card ' + (brama.class || '');
-  const headerArea = document.createElement('div'); headerArea.className = 'brama-header-area';
-  const title = document.createElement('h2'); title.className = 'brama-title';
-  title.textContent = (brama.name && (brama.name[currentLang] || brama.name.pl)) || brama.id;
-  const sub = document.createElement('div'); sub.className = 'brama-sub';
-  sub.textContent = (brama.sub && (brama.sub[currentLang] || brama.sub.pl)) || '';
-  headerArea.appendChild(title); headerArea.appendChild(sub); article.appendChild(headerArea);
-  const ul = document.createElement('ul'); ul.className = 'book-list';
-  (brama.books || []).forEach(b => { ul.appendChild(createBookElement(b)); });
-  article.appendChild(ul);
-  return article;
-}
-
-function rebuildMap(){
-  const grid = document.getElementById('mapGrid');
-  grid.innerHTML = '';
-  MAP_DATA.forEach(br => { grid.appendChild(createBramaCard(br)); });
-  refreshUITexts();
-  applyFilters();
-}
-
-function applyFilters(){
-  const searchVal = document.getElementById('search').value.toLowerCase();
-  const filterVal = document.getElementById('filterBrama').value;
-  MAP_DATA.forEach(br => {
-    const card = document.getElementById(br.id);
-    if(!card) return;
-    if(filterVal !== 'all' && filterVal !== br.id){ card.style.display = 'none'; return; }
-    let visibleBooks = 0;
-    const bookEls = card.querySelectorAll('.book');
-    bookEls.forEach((el, idx) => {
-      const book = br.books[idx];
-      const t = ((book.title && (book.title[currentLang] || book.title.pl)) || '').toLowerCase();
-      const d = ((book.desc && (book.desc[currentLang] || book.desc.pl)) || '').toLowerCase();
-      const tag = (((book.tags && (book.tags[currentLang] || book.tags.pl)) || []).join(' ')).toLowerCase();
-      if(t.includes(searchVal) || d.includes(searchVal) || tag.includes(searchVal)){ el.style.display = ''; visibleBooks++; }
-      else el.style.display = 'none';
+    // Kliknięcie bramy (placeholder)
+    document.querySelectorAll('.card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        const id = card.dataset.brama;
+        alert('Wejście do Bramy ' + id);
+      });
     });
-    card.style.display = visibleBooks > 0 ? '' : 'none';
-  });
-}
-
-function refreshUITexts(){
-  const t = UI_TEXT[currentLang];
-  document.getElementById('titleMain').textContent = t.title;
-  document.getElementById('introText').textContent = t.intro;
-  document.getElementById('search').placeholder = t.searchPlaceholder;
-  document.getElementById('expandAll').textContent = t.expand;
-  document.getElementById('collapseAll').textContent = t.collapse;
-  document.getElementById('exportJson').textContent = t.exportJson;
-  const sel = document.getElementById('filterBrama');
-  sel.options[0].text = t.filterAll;
-  sel.options[1].text = t.filter1;
-  sel.options[2].text = t.filter2;
-  sel.options[3].text = t.filter3;
-  sel.options[4].text = t.filter4;
-  sel.options[5].text = t.filter5;
-}
-
-function exportJson(){
-  const exportObj = { generated_at: new Date().toISOString(), map_data: MAP_DATA, meta: GLOBAL_META };
-  const dataStr = JSON.stringify(exportObj, null, 2);
-  const blob = new Blob([dataStr], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'eterniverse_master_data.json';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-}
-
-function scrollToId(id){ const el = document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); }
-
-/* -----------------------
-   EVENTS
-   ----------------------- */
-document.addEventListener('DOMContentLoaded', () => {
-  rebuildMap();
-  document.getElementById('search').addEventListener('input', applyFilters);
-  document.getElementById('filterBrama').addEventListener('change', applyFilters);
-  document.getElementById('langSwitch').addEventListener('change', (e) => { currentLang = e.target.value; rebuildMap(); });
-  document.getElementById('expandAll').addEventListener('click', () => document.querySelectorAll('.book').forEach(b => b.classList.add('open')));
-  document.getElementById('collapseAll').addEventListener('click', () => document.querySelectorAll('.book').forEach(b => b.classList.remove('open')));
-  document.getElementById('exportJson').addEventListener('click', exportJson);
-  document.getElementById('toTop').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
-  document.querySelectorAll('nav [data-jump]').forEach(btn => { btn.addEventListener('click', () => scrollToId(btn.getAttribute('data-jump'))); });
-});
-
-</script>
+  </script>
 </body>
 </html>
-
