@@ -2,260 +2,48 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MAPA ETERNIVERSE — ARCHITEKT</title>
-  <style>
-    :root{
-      --bg:#050814; --card:#0A1727; --card-soft:#0D1C30; --text:#E9F4FF;
-      --muted:#9BA9C8; --border:#20324A; --gold:#D9A441; --teal:#28D3C6;
-      --green:#12C65B; --orange:#FFB14B; --red:#FF6B6B; --gray:#8B8FA0;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      background: radial-gradient(circle at top, #15223A 0%, #050814 55%, #01030A 100%);
-      color:var(--text); font-family: system-ui, sans-serif; min-height:100vh;
-    }
-    .wrap{ max-width:1200px; margin:0 auto; padding:32px 16px 40px; }
-    header{ margin-bottom:24px; }
-    h1{ font-size:32px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
-    .subtitle{ margin-top:8px; color:var(--muted); font-size:14px; }
-    .toolbar{ display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; align-items:center; }
-    .search input{ width:220px; padding:9px 12px; border-radius:10px; border:1px solid var(--border); background:#050B16; color:var(--text); font-size:13px; }
-    .toolbar select, .toolbar button{ border-radius:10px; border:1px solid var(--border); padding:9px 12px; font-size:13px; background:#050B16; color:var(--text); cursor:pointer; }
-    .toolbar button.main{ background:var(--gold); color:#02030A; font-weight:700; border:none; }
-    
-    .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:20px; }
-    .brama-card{ background:var(--card); border-radius:14px; border:1px solid var(--border); padding:14px; display:flex; flex-direction:column; min-height:220px; }
-    .brama-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
-    .brama-title{ font-size:14px; font-weight:700; color:white; }
-    .brama-sub{ font-size:10px; text-transform:uppercase; color:var(--muted); margin-top:4px; line-height:1.4; }
-    .badge{ font-size:9px; padding:3px 8px; border-radius:999px; background:rgba(217,164,65,0.1); color:var(--gold); text-transform:uppercase; border:1px solid rgba(217,164,65,0.2); }
-    
-    .books{ margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px; display:flex; flex-direction:column; gap:8px; }
-    .book{ background:var(--card-soft); border-radius:10px; padding:8px; border:1px solid rgba(255,255,255,0.04); display:flex; gap:10px; align-items:center; cursor:pointer; transition: 0.2s; }
-    .book:hover { border-color: var(--gold); background: #0F2138; }
-    .book-cover-thumb{ width:32px; height:44px; border-radius:4px; flex-shrink:0; background:#050814; background-size:cover; background-position:center; border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:8px; color:var(--gray); }
-    .book-main{ flex:1; min-width:0; }
-    .book-title{ font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
-    .status-tag{ font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; }
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#D9A441">
+  <meta name="description" content="ETERNIVERSE PRO MASTER — Profesjonalne centrum wydawnicze Architekta Woli. Zarządzanie Bramami, księgami, audiobookami, okładkami, statusami i publikacją.">
+  <meta name="author" content="Maciej Maciuszek">
+  
+  <title>ETERNIVERSE PRO MASTER — Wydawnictwo</title>
 
-    .modal-backdrop{ position:fixed;inset:0;background:rgba(0,0,0,0.9); display:none;align-items:center;justify-content:center;z-index:2000; padding:20px; }
-    .modal{ background:#0A1727; border-radius:20px; border:1px solid var(--gold); padding:24px; max-width:400px; width:100%; }
-    .modal h2{ font-size:18px; color:var(--gold); margin-bottom:15px; }
-    .modal label{ display:block; font-size:11px; color:var(--muted); margin:10px 0 4px; }
-    .modal input, .modal select{ width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:#050B16; color:white; }
-    .modal-actions{ display:flex; flex-direction:column; gap:10px; margin-top:20px; }
-    .btn-save{ background:var(--gold); color:black; font-weight:bold; border:none; padding:12px; border-radius:10px; cursor:pointer; }
-    .btn-del{ background:none; border:1px solid var(--red); color:var(--red); padding:10px; border-radius:10px; font-size:12px; cursor:pointer; }
-.audio-btn{
-  font-size:9px;
-  padding:3px 8px;
-  border-radius:999px;
-  border:1px solid rgba(40,211,198,0.4);
-  color:var(--teal);
-  background:rgba(40,211,198,0.1);
-  cursor:pointer;
-  margin-left:6px;
-}
+  <!-- Favicon (do dodania później) -->
+  <!-- <link rel="icon" href="favicon.ico"> -->
 
-.audio-panel{
-  margin-top:6px;
-  padding:6px;
-  border-radius:8px;
-  background:#050B16;
-  border:1px solid rgba(255,255,255,0.06);
-  display:none;
-  flex-direction:column;
-  gap:4px;
-}
+  <!-- Style – zewnętrzny plik (lepsza organizacja, cache) -->
+  <link rel="stylesheet" href="style.css">
 
-.audio-item{
-  font-size:10px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:6px;
-}
-
-.audio-item a{
-  color:var(--gold);
-  text-decoration:none;
-  font-size:10px;
-}
-  </style>
+  <!-- Future-proof: defer dla JS -->
 </head>
+
 <body>
-<div class="wrap">
-  <header>
-    <h1>MAPA ETERNIVERSE</h1>
-    <div class="subtitle">System Archiwizacji Woli — Maciej Maciuszek</div>
-    <div class="toolbar">
-      <input type="text" id="searchInput" placeholder="Szukaj projektu...">
-      <select id="gateFilter"><option value="all">Wszystkie bramy</option></select>
-      <button class="main" onclick="openM()">+ NOWA KSIĘGA</button>
-    </div>
-  </header>
-  <main><section class="grid" id="gatesGrid"></section></main>
-</div>
-
-<div class="modal-backdrop" id="addModal">
-  <div class="modal">
-    <h2 id="mHead">Zarządzaj Księgą</h2>
-    <label>Brama</label><select id="mGate"></select>
-    <label>Tytuł projektu</label><input id="mTitle">
-    <label>Status</label>
-    <select id="mStatus">
-      <option value="IDEA">IDEA</option>
-      <option value="W TRAKCIE">W TRAKCIE</option>
-      <option value="GOTOWE">GOTOWE</option>
-      <option value="WYDANE">WYDANE</option>
-    </select>
-    <label>Link do okładki (Canva/Wattpad)</label><input id="mCover">
-    <div class="modal-actions">
-      <button class="btn-save" onclick="save()">ZAPISZ ZMIANY</button>
-      <button id="mDel" class="btn-del" style="display:none;" onclick="del()">USUŃ PROJEKT</button>
-      <button onclick="closeM()" style="background:none; border:none; color:white;">Anuluj</button>
+  <!-- Główny kontener aplikacji -->
+  <div id="app" class="app-container" aria-live="polite">
+    <!-- Wszystko będzie wstrzykiwane tutaj przez app.js -->
+    <div class="loading-screen">
+      <div class="loading-spinner"></div>
+      <p>Ładowanie ETERNIVERSE PRO MASTER...</p>
     </div>
   </div>
-</div>
 
-<script>
-  const KEY = 'ETER_FINAL_MAP_DATA';
-  let editContext = null;
-
-  function load(){
-    const s = localStorage.getItem(KEY);
-    return s ? JSON.parse(s) : null;
-  }
-
-window.DATA = load() || [
-    {id:1, name:"BRAMA I — INTERSEEKER", sub:"Psychika · Cień · Trauma", tag:"CORE / PSYCHE", books:[
-      {title:"InterSeeker – Atlas Wewnętrzny", status:"WYDANE", cover:""},
-      {title:"ShadowSeeker – Anatomia Cienia", status:"GOTOWE", cover:""},
-      {title:"MemorySeeker – Archeologia Wspomnień", status:"W TRAKCIE", cover:""}
-    ]},
-    {id:2, name:"BRAMA II — CUSTOS", sub:"Strażnik · Rdzeń · Początek", tag:"CORE / ORIGIN", books:[
-      {title:"Geneza: Pierwszy Rezonans", status:"GOTOWE", cover:""},
-      {title:"Custos: Kodeks Głębi", status:"IDEA", cover:""}
-    ]},
-    {id:3, name:"BRAMA III — ETERSEEKER", sub:"Wola · Pole · Protokół", tag:"CORE / FIELD", books:[
-      {title:"EterSeeker – Tom Zero", status:"W TRAKCIE", cover:""},
-      {title:"Architektura Woli", status:"IDEA", cover:""}
-    ]},
-    {id:4, name:"BRAMA IV — ARCHETYPY", sub:"Konstrukcja · Role · Przeznaczenie", tag:"CORE / WILL", books:[
-      {title:"Kronika Woli", status:"IDEA", cover:""}
-    ]},
-    {id:5, name:"BRAMA V — OBFITOŚĆ", sub:"Materia · Manifestacja · Przepływ", tag:"EMBODIED", books:[
-      {title:"ObfitoSeeker – Kod Obfitości", status:"WYDANE", cover:""}
-    ]},
-    {id:6, name:"BRAMA VI — BIOSEEKER", sub:"Ciało · Biologia · Regulacja", tag:"EMBODIED / BIO", books:[
-      {title:"BioSeeker: Protokół Biologii Pola", status:"IDEA", cover:""}
-    ]},
-    {id:7, name:"BRAMA VII — SPLĄTANIE", sub:"AI · Obserwator · Technologia", tag:"META / TECH", books:[
-      {title:"SplątanieSeeker: Protokół AI", status:"IDEA", cover:""}
-    ]},
-    {id:8, name:"BRAMA VIII — TRAJEKTORIE", sub:"Linie Czasu · Fizyka Duszy", tag:"META / PHYSICS", books:[
-      {title:"TrajektoriaSeeker", status:"GOTOWE", cover:""}
-    ]},
-    {id:9, name:"BRAMA IX — ETERNIONY", sub:"Wspólnota · Misja · Węzły", tag:"COLLECTIVE", books:[]},
-    {id:10, name:"BRAMA X — ETERUNIVERSE", sub:"Integracja · Jedność · Architekt", tag:"INTEGRATION", books:[
-      {title:"Architekt Eteru — Manifest Twórcy", status:"W TRAKCIE", cover:""}
-    ]}
-  ];
-
-  const grid = document.getElementById('gatesGrid');
-  const mG = document.getElementById('mGate');
-  DATA.forEach(g => {
-    const o = `<option value="${g.id}">${g.name}</option>`;
-    document.getElementById('gateFilter').innerHTML += o;
-    mG.innerHTML += o;
-  });
-
-  function render(){
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const f = document.getElementById('gateFilter').value;
-    grid.innerHTML = '';
-    DATA.forEach(brama => {
-      if(f !== 'all' && String(brama.id) !== f) return;
-      const card = document.createElement('div');
-      card.className = 'brama-card';
-      card.innerHTML = `<div class="brama-header"><div><div class="brama-title">${brama.name}</div><div class="brama-sub">${brama.sub}</div></div><span class="badge">${brama.tag}</span></div><div class="books"></div>`;
-      const bWrap = card.querySelector('.books');
-      brama.books.forEach((b, idx) => {
-        if(q && !b.title.toLowerCase().includes(q)) return;
-        const el = document.createElement('div');
-        el.className = 'book';
-        el.onclick = () => openM(brama.id, idx);
-        const stCol = b.status === 'WYDANE' ? 'var(--green)' : b.status === 'GOTOWE' ? 'var(--gold)' : 'var(--muted)';
-        el.innerHTML = `
-  <div class="book-cover-thumb" style="${b.cover ? `background-image:url('${b.cover}')` : ''}">
-    ${b.cover ? '' : 'okładka'}
-    
-  </div>
-
-  <div class="book-main">
-    <div class="book-title">
-      ${b.title}
-      <button class="audio-btn">AUDIO (${(b.audio||[]).length})</button>
-    </div>
-
-    <div class="status-tag" style="color:${stCol}">${b.status}</div>
-
-    <div class="audio-panel">
-      ${(b.audio||[]).map(a => `
-        <div class="audio-item">
-          <span>${a.name} [${a.type}]</span>
-          <a href="${a.link}" target="_blank">▶</a>
-        </div>
-      `).join('')}
+  <!-- Modal główny (ukryty domyślnie) -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header">
+        <h2 id="modalTitle">Nowa księga</h2>
+      </header>
+      <div class="modal-content" id="modalContent">
+        <!-- Treść modala wstrzykiwana dynamicznie -->
+      </div>
     </div>
   </div>
-`;
-        bWrap.appendChild(el);
-      });
-      grid.appendChild(card);
-    });
-    localStorage.setItem(KEY, JSON.stringify(DATA));
-  }
 
-  function openM(gId=null, bIdx=null){
-    editContext = gId ? {gId, bIdx} : null;
-    document.getElementById('mDel').style.display = editContext ? 'block' : 'none';
-    if(editContext){
-      const b = DATA.find(x => x.id === gId).books[bIdx];
-      document.getElementById('mTitle').value = b.title;
-      document.getElementById('mStatus').value = b.status;
-      document.getElementById('mCover').value = b.cover || '';
-      mG.value = gId;
-    } else {
-      document.getElementById('mTitle').value = '';
-      document.getElementById('mCover').value = '';
-    }
-    document.getElementById('addModal').style.display = 'flex';
-  }
+  <!-- Toast notifications -->
+  <div id="toastContainer" aria-live="assertive" class="toast-container"></div>
 
-  function closeM(){ document.getElementById('addModal').style.display='none'; }
-
-  function save(){
-    const t = document.getElementById('mTitle').value.trim();
-    if(!t) return;
-    const gId = parseInt(mG.value);
-    const b = {title:t, status:document.getElementById('mStatus').value, cover:document.getElementById('mCover').value};
-    if(editContext) DATA.find(x => x.id === editContext.gId).books.splice(editContext.bIdx, 1);
-    DATA.find(x => x.id === gId).books.push(b);
-    closeM(); render();
-  }
-
-  function del(){
-    if(editContext && confirm('Usunąć ten projekt?')){
-      DATA.find(x => x.id === editContext.gId).books.splice(editContext.bIdx, 1);
-      closeM(); render();
-    }
-  }
-
-  document.getElementById('searchInput').oninput = render;
-  document.getElementById('gateFilter').onchange = render;
-  render();
-</script>
+  <!-- Główny skrypt – defer dla lepszego ładowania -->
+  <script defer src="app.js" type="module"></script>
 </body>
 </html>
