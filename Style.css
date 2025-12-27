@@ -1,0 +1,802 @@
+/* style.css — ETERNIVERSE PRO MASTER v1.3 — KWANTOWY KOSMOS */
+/* Wydawnictwo Architekta Woli — Maciej Maciuszek */
+/* 27 grudnia 2025 — Architektura pola eteru */
+
+:root {
+  /* Kosmiczne tło pola */
+  --bg: #050814;
+  --bg-gradient: radial-gradient(circle at 25% 15%, #1A254B 0%, #0A1423 30%, #050814 60%, #01030A 100%);
+  --bg-nebula: radial-gradient(circle at 75% 85%, rgba(217,164,65,0.03) 0%, transparent 50%);
+  
+  /* Struktura eteru */
+  --card: #0A1727;
+  --card-soft: #0F2138;
+  --card-glow: #14263F;
+  --card-field: rgba(40,211,198,0.03);
+  
+  /* Widmo świadomości */
+  --text: #E9F4FF;
+  --text-glow: #F0F8FF;
+  --muted: #9BB0D4;
+  --border: #20324A;
+  --border-field: rgba(217,164,65,0.15);
+  --border-quantum: rgba(155,107,255,0.2);
+  
+  /* Pole woli */
+  --gold: #D9A441;
+  --gold-field: #E9B949;
+  --gold-gradient: linear-gradient(135deg, #D9A441 0%, #E9B949 50%, #F0C14D 100%);
+  --teal: #28D3C6;
+  --teal-field: #3AD9D0;
+  --green: #12C65B;
+  --orange: #FFB14B;
+  --red: #FF6B6B;
+  --purple: #9B6BFF;
+  
+  /* Kwantowe cienie */
+  --shadow-atom: 0 8px 32px rgba(5,8,20,0.8);
+  --shadow-field: 0 20px 80px rgba(217,164,65,0.12);
+  --shadow-quantum: 0 0 40px rgba(40,211,198,0.2);
+  --shadow-nebula: 0 32px 120px rgba(0,0,0,0.7);
+  
+  /* Geometria eteru */
+  --radius-atom: 16px;
+  --radius-field: 24px;
+  --radius-gate: 32px;
+  
+  /* Przepływ czasu */
+  --transition-field: all 0.6s cubic-bezier(0.23,1,0.32,1);
+  --transition-atom: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  
+  /* Typografia pola */
+  --font-main: system-ui, -apple-system, 'Inter var', BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-gradient), var(--bg-nebula);
+  background-blend-mode: overlay;
+  color: var(--text);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(40,211,198,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(217,164,65,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(155,107,255,0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+  animation: fieldPulse 20s ease-in-out infinite alternate;
+}
+
+@keyframes fieldPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Kontener pola */
+.app-container {
+  min-height: 100vh;
+  padding: 48px 40px 100px;
+  max-width: 1800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Loading — kwantowa aktywacja */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: var(--muted);
+  font-size: 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 80px;
+  height: 80px;
+  border: 3px solid var(--border);
+  border-top: 3px solid transparent;
+  border-right: 3px solid var(--gold);
+  border-radius: 50%;
+  position: relative;
+  animation: quantumSpin 1.2s cubic-bezier(0.68,-0.55,0.265,1.55) infinite;
+}
+
+.loading-spinner::before,
+.loading-spinner::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--teal);
+  animation: quantumSpin 1.2s cubic-bezier(0.68,-0.55,0.265,1.55) infinite reverse;
+}
+
+@keyframes quantumSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(720deg); }
+}
+
+/* Nagłówek — manifestacja woli */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 80px;
+  padding: 40px 0;
+  position: relative;
+}
+
+.dashboard-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold-gradient);
+  -webkit-mask: radial-gradient(circle, transparent 30%, black 70%);
+  mask: radial-gradient(circle, transparent 30%, black 70%);
+  opacity: 0.1;
+  animation: pulseField 4s ease-in-out infinite;
+}
+
+@keyframes pulseField {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.1); }
+}
+
+.dashboard-header h1 {
+  font-size: clamp(44px, 8vw, 68px);
+  font-weight: 900;
+  letter-spacing: clamp(4px, 1vw, 8px);
+  text-transform: uppercase;
+  background: linear-gradient(120deg, var(--gold), var(--teal), var(--purple), var(--text-glow));
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 12px 48px rgba(217,164,65,0.4);
+  margin-bottom: 24px;
+  animation: spectrumShift 8s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes spectrumShift {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
+}
+
+.dashboard-subtitle {
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: var(--muted);
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-weight: 400;
+  backdrop-filter: blur(20px);
+  background: rgba(10,23,39,0.6);
+  padding: 20px 40px;
+  border-radius: var(--radius-field);
+  border: 1px solid var(--border-quantum);
+}
+
+/* Bramy — węzły pola */
+.gates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 40px;
+  margin-bottom: 64px;
+}
+
+/* Karta bramy — kryształ eteru */
+.gate-card {
+  background: 
+    linear-gradient(145deg, var(--card), var(--card-soft)),
+    var(--card-field);
+  background-blend-mode: overlay;
+  border-radius: var(--radius-gate);
+  border: 1px solid var(--border);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  transition: var(--transition-field);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.gate-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at top left, rgba(217,164,65,0.08) 0%, transparent 50%),
+    radial-gradient(circle at bottom right, rgba(40,211,198,0.06) 0%, transparent 50%);
+  opacity: 0;
+  transition: var(--transition-field);
+  z-index: 0;
+}
+
+.gate-card:hover {
+  transform: translateY(-24px) scale(1.02);
+  box-shadow: var(--shadow-nebula), var(--shadow-quantum);
+  border-color: var(--gold);
+}
+
+.gate-card:hover::before {
+  opacity: 1;
+}
+
+.gate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.gate-card h3 {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-glow);
+  letter-spacing: 1.2px;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.gate-tag {
+  font-size: 13px;
+  padding: 12px 24px;
+  border-radius: 50px;
+  background: var(--gold-gradient);
+  color: #02030A;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(217,164,65,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.gate-tag::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--teal-field);
+  opacity: 0;
+  transition: var(--transition-atom);
+}
+
+.gate-tag:hover::before {
+  opacity: 0.2;
+}
+
+.gate-sub {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 28px;
+  flex-grow: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.books-count {
+  font-size: 16px;
+  color: var(--teal);
+  font-weight: 700;
+  margin-bottom: 28px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 2;
+}
+
+.books-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-grow: 1;
+  position: relative;
+  z-index: 2;
+}
+
+/* Księgi — kryształy świadomości */
+.book-item {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  background: rgba(15,33,56,0.6);
+  border-radius: var(--radius-field);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: var(--transition-field);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+.book-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold-gradient);
+  opacity: 0;
+  transition: var(--transition-field);
+}
+
+.book-item:hover {
+  transform: translateX(12px) scale(1.02);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-field);
+}
+
+.book-item:hover::before {
+  opacity: 0.08;
+}
+
+.book-cover {
+  width: 72px;
+  height: 96px;
+  border-radius: var(--radius-atom);
+  background: linear-gradient(145deg, var(--card-glow), var(--card-soft));
+  border: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--muted);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-field);
+}
+
+.book-cover:hover {
+  border-color: var(--gold);
+  box-shadow: var(--shadow-quantum);
+  transform: scale(1.1);
+}
+
+.book-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  color: var(--text-glow);
+}
+
+.book-desc {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.status-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-right: 12px;
+  position: relative;
+}
+
+.status-tag.st-idea { background: rgba(155,107,255,0.2); color: var(--purple); border: 1px solid var(--purple); }
+.status-tag.st-writing { background: rgba(255,177,75,0.2); color: var(--orange); border: 1px solid var(--orange); }
+.status-tag.st-ready { background: rgba(217,164,65,0.2); color: var(--gold); border: 1px solid var(--gold); }
+.status-tag.st-published { background: rgba(18,198,91,0.2); color: var(--green); border: 1px solid var(--green); }
+
+.audio-indicator {
+  font-size: 11px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--teal);
+  color: var(--teal);
+  background: rgba(40,211,198,0.12);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.no-books {
+  color: var(--muted);
+  text-align: center;
+  padding: 48px 24px;
+  font-style: italic;
+  font-size: 16px;
+}
+
+.add-book-btn {
+  align-self: flex-start;
+  background: var(--gold-gradient);
+  color: #02030A;
+  font-weight: 900;
+  padding: 18px 36px;
+  border: none;
+  border-radius: var(--radius-field);
+  cursor: pointer;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  transition: var(--transition-field);
+  box-shadow: var(--shadow-field);
+  position: relative;
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.add-book-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--teal-field);
+  opacity: 0;
+  transition: var(--transition-field);
+}
+
+.add-book-btn:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-quantum), var(--shadow-nebula);
+}
+
+.add-book-btn:hover::before {
+  opacity: 0.3;
+}
+
+/* Modal — portal eteru */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: 
+    rgba(5,8,20,0.95),
+    radial-gradient(circle at center, rgba(217,164,65,0.1) 0%, transparent 70%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  backdrop-filter: blur(24px) saturate(120%);
+  padding: 24px;
+  animation: backdropReveal 0.6s ease-out;
+}
+
+@keyframes backdropReveal {
+  from { background: rgba(5,8,20,0); backdrop-filter: blur(0px); }
+}
+
+.modal {
+  background: 
+    linear-gradient(145deg, var(--card), var(--card-soft)),
+    var(--card-field);
+  background-blend-mode: overlay;
+  border-radius: var(--radius-gate);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-image: var(--gold-gradient) 1;
+  padding: 48px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-nebula), var(--shadow-quantum);
+  animation: portalOpen 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+  backdrop-filter: blur(32px);
+  position: relative;
+}
+
+@keyframes portalOpen {
+  from { opacity: 0; transform: scale(0.8) rotateX(10deg); }
+  to { opacity: 1; transform: scale(1) rotateX(0deg); }
+}
+
+.modal-row {
+  margin-bottom: 32px;
+}
+
+.modal-row label {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  position: relative;
+  padding-left: 12px;
+}
+
+.modal-row label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.modal-row input,
+.modal-row textarea,
+.modal-row select {
+  width: 100%;
+  padding: 20px 24px;
+  border-radius: var(--radius-field);
+  border: 2px solid var(--border);
+  background: rgba(15,33,56,0.8);
+  color: var(--text-glow);
+  font-size: 16px;
+  font-family: inherit;
+  transition: var(--transition-field);
+  backdrop-filter: blur(16px);
+}
+
+.modal-row textarea {
+  resize: vertical;
+  min-height: 140px;
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+.modal-row input:focus,
+.modal-row textarea:focus,
+.modal-row select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(217,164,65,0.15), var(--shadow-atom);
+  transform: translateY(-2px);
+}
+
+.content-editor {
+  min-height: 240px !important;
+}
+
+.editor-hint {
+  font-size: 13px;
+  color: var(--teal);
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border-quantum);
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 16px 32px;
+  border-radius: var(--radius-atom);
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: var(--transition-field);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+#modalDelete {
+  background: linear-gradient(135deg, var(--red), #FF8A8A);
+  color: white;
+  box-shadow: 0 8px 32px rgba(255,107,107,0.4);
+}
+
+#modalCancel {
+  background: transparent;
+  border: 2px solid var(--border-quantum);
+  color: var(--muted);
+}
+
+#modalSave {
+  background: var(--gold-gradient);
+  color: #02030A;
+  box-shadow: var(--shadow-field);
+  font-size: 16px;
+  padding: 18px 40px;
+}
+
+#modalExportWattpad {
+  background: linear-gradient(135deg, var(--teal), var(--green));
+  color: white;
+  box-shadow: 0 8px 32px rgba(40,211,198,0.4);
+}
+
+/* Toast — impuls pola */
+.toast-container {
+  position: fixed;
+  top: 48px;
+  right: 48px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.toast {
+  background: linear-gradient(135deg, var(--green), #10B649);
+  color: white;
+  padding: 24px 40px;
+  border-radius: var(--radius-field);
+  font-weight: 800;
+  font-size: 16px;
+  min-width: 360px;
+  box-shadow: var(--shadow-nebula);
+  opacity: 0;
+  transform: translateX(120%) scale(0.95);
+  transition: var(--transition-field);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+/* Master actions — kryształy kontroli */
+.master-actions {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.master-actions button {
+  padding: 20px 40px;
+  border-radius: var(--radius-field);
+  font-weight: 900;
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--transition-field);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-atom);
+}
+
+#exportWattpadAll {
+  background: linear-gradient(135deg, var(--purple), #A78BFA);
+  color: white;
+}
+
+#exportJSON {
+  background: linear-gradient(135deg, var(--teal), var(--teal-field));
+  color: white;
+}
+
+#importJSON {
+  background: linear-gradient(135deg, var(--orange), #FFCC80);
+  color: white;
+}
+
+/* Cover preview — lustro eteru */
+#coverPreview {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,8,20,0.98);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 6000;
+  backdrop-filter: blur(40px);
+}
+
+.cover-container {
+  background: var(--card);
+  border-radius: var(--radius-gate);
+  padding: 48px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  border: 2px solid var(--gold);
+  box-shadow: var(--shadow-nebula);
+  animation: mirrorReveal 0.6s ease-out;
+}
+
+@keyframes mirrorReveal {
+  from { opacity: 0; transform: scale(0.9) rotateY(15deg); }
+}
+
+#coverImg {
+  max-width: 480px;
+  max-height: 640px;
+  border-radius: var(--radius-field);
+  box-shadow: var(--shadow-quantum), var(--shadow-nebula);
+  object-fit: cover;
+}
+
+#coverClose {
+  background: var(--gold-gradient);
+  color: #02030A;
+  border: none;
+  padding: 18px 36px;
+  border-radius: var(--radius-atom);
+  font-weight: 900;
+  font-size: 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  transition: var(--transition-field);
+  box-shadow: var(--shadow-field);
+}
+
+/* Responsywność — adaptacja pola */
+@media (max-width: 1400px) {
+  .gates-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 32px; }
+}
+
+@media (max-width: 1024px) {
+  .gates-grid { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px; }
+  .app-container { padding: 40px 24px 80px; }
+}
+
+@media (max-width: 768px) {
+  .app-container { padding: 32px 20px 60px; }
+  .dashboard-header h1 { letter-spacing: 2px; }
+  .dashboard-subtitle { font-size: 16px; padding: 16px 24px; }
+  .gates-grid { grid-template-columns: 1fr; gap: 24px; }
+  .gate-card { padding: 32px; min-height: auto; }
+  .book-item { padding: 20px; flex-direction: column; gap: 16px; }
+  .book-cover { width: 100%; height: 120px; }
+  .master-actions { flex-direction: column; gap: 20px; }
+  .modal { padding: 32px 24px; margin: 16px; }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header h1 { font-size: 32px; }
+  .gate-card { padding: 24px; }
+  .toast { min-width: 280px; font-size: 14px; padding: 16px 24px; }
+}
+
+/* Print — manifestacja fizyczna */
+@media print {
+  body { background: white; color: black; }
+  .gate-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+}

@@ -448,3 +448,4 @@ ${book.content || ''}
 
 // START — PEŁNA MOC
 new Eterniverse();
+new Eterniverse();
