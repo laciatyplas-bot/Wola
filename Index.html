@@ -1,376 +1,49 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ETERUNIVERSE</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#D9A441">
+  <meta name="description" content="ETERNIVERSE PRO MASTER — Profesjonalne centrum wydawnicze Architekta Woli. Zarządzanie Bramami, księgami, audiobookami, okładkami, statusami i publikacją.">
+  <meta name="author" content="Maciej Maciuszek">
+  
+  <title>ETERNIVERSE PRO MASTER — Wydawnictwo</title>
 
-<style>
-:root{
-  --bg:#020812;
-  --card:#071626;
-  --text:#E6F6F5;
-  --muted:#9bb7b2;
-  --gold:#D9A441;
-  --teal:#28D3C6;
-  --radius:14px;
-}
+  <!-- Favicon (do dodania później) -->
+  <!-- <link rel="icon" href="favicon.ico"> -->
 
-*{box-sizing:border-box}
+  <!-- Style – zewnętrzny plik (lepsza organizacja, cache) -->
+  <link rel="stylesheet" href="style.css">
 
-body{
-  margin:0;
-  min-height:100vh;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:linear-gradient(180deg,#020812 0%,#071726 100%);
-  color:var(--text);
-}
-
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:32px 20px 80px;
-}
-
-header{
-  margin-bottom:32px;
-}
-
-h1{
-  margin:0 0 8px 0;
-  color:var(--gold);
-  letter-spacing:1px;
-}
-
-.subtitle{
-  color:var(--muted);
-  max-width:700px;
-}
-
-.grid{
-  display:grid;
-  gap:18px;
-}
-
-@media(min-width:900px){
-  .grid{grid-template-columns:1fr 1fr;}
-}
-
-.card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:var(--radius);
-  padding:20px;
-  cursor:pointer;
-  transition:.2s ease;
-}
-
-.card:hover{
-  transform:translateY(-2px);
-  border-color:rgba(255,255,255,0.12);
-}
-
-.card h2{
-  margin:0;
-  font-size:18px;
-}
-
-.meta{
-  margin-top:6px;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.details{
-  margin-top:14px;
-  font-size:14px;
-  line-height:1.5;
-  color:#dbeee9;
-
-  max-height:0;
-  overflow:hidden;
-  opacity:0;
-  transition:max-height .4s ease, opacity .3s ease;
-}
-
-.card.active .details{
-  max-height:400px;
-  opacity:1;
-}
-
-footer{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  padding:10px;
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-  background:rgba(2,8,18,0.85);
-  backdrop-filter:blur(6px);
-}
-</style>
+  <!-- Future-proof: defer dla JS -->
 </head>
 
 <body>
-
-<div class="wrap">
-
-<header>
-  <h1>ETERUNIVERSE</h1>
-  <div class="subtitle">
-    To nie jest opowieść. To jest nawigacja.<br>
-    Kliknij Bramę, która opisuje Twój obecny stan.
-  </div>
-</header>
-
-<section class="grid">
-
-  <div class="card">
-    <h2>BRAMA I — INTERSEEKER</h2>
-    <div class="meta">Psychika · Cień · Pamięć</div>
-    <div class="details">
-      Tu schodzisz pod narrację.<br>
-      Spotykasz cień, pamięć i mechanizmy przetrwania.<br><br>
-      To Brama prawdy — bez ulgi, bez ucieczki.
+  <!-- Główny kontener aplikacji -->
+  <div id="app" class="app-container" aria-live="polite">
+    <!-- Wszystko będzie wstrzykiwane tutaj przez app.js -->
+    <div class="loading-screen">
+      <div class="loading-spinner"></div>
+      <p>Ładowanie ETERNIVERSE PRO MASTER...</p>
     </div>
   </div>
 
-  <div class="card">
-    <h2>BRAMA II — CUSTOS</h2>
-    <div class="meta">Strażnik · Algorytm przetrwania</div>
-    <div class="details">
-      Custos to system, który latami prowadził Twoje reakcje.<br><br>
-      Tu odzyskujesz stery i rozbrajasz automatyzmy.
+  <!-- Modal główny (ukryty domyślnie) -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header">
+        <h2 id="modalTitle">Nowa księga</h2>
+      </header>
+      <div class="modal-content" id="modalContent">
+        <!-- Treść modala wstrzykiwana dynamicznie -->
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>BRAMA III — ETERSEEKER</h2>
-    <div class="meta">Wola · Pole · Architektura</div>
-    <div class="details">
-      Tu kończy się przypadek.<br>
-      Uczysz się, że rzeczywistość reaguje na spójność.
-    </div>
-  </div>
+  <!-- Toast notifications -->
+  <div id="toastContainer" aria-live="assertive" class="toast-container"></div>
 
-  <div class="card">
-    <h2>BRAMA IV — OBFITOSEEKER</h2>
-    <div class="meta">Materia · Przepływ · Ciało</div>
-    <div class="details">
-      Obfitość nie jest nagrodą.<br>
-      Jest efektem zgodności decyzji z działaniem.
-    </div>
-  </div>
-
-</section>
-
-</div>
-
-<footer>
-  ETERUNIVERSE • system roboczy • Maciej
-</footer>
-
-<script>
-console.log("ETERUNIVERSE online");
-
-document.querySelectorAll('.card').forEach(card=>{
-  card.addEventListener('click',()=>{
-    document.querySelectorAll('.card').forEach(c=>{
-      if(c!==card) c.classList.remove('active');
-    });
-    card.classList.toggle('active');
-  });
-});
-</script>
-
-</body>
-</html>.card[data-brama="1"]{ --accent: var(--teal); }
-.card[data-brama="2"]{ --accent: var(--gold); }
-.card[data-brama="3"]{ --accent: var(--green); }
-.card[data-brama="4"]{ --accent: var(--purple); }
-
-.card h2{
-  font-size:17px;
-  letter-spacing:.5px;
-}
-
-.card .meta{
-  opacity:.85;
-}
-
-.tag{
-  border:1px solid rgba(255,255,255,0.15);
-  backdrop-filter: blur(4px);
-}
-
-/* ===== MOBILE FEEL ===== */
-
-@media(max-width:600px){
-  .card{
-    padding:18px;
-  }
-  h1{
-    font-size:24px;
-  }
-}
-:root{
-  --bg:#020812;
-  --card:#071626;
-  --text:#E6F6F5;
-  --muted:#9bb7b2;
-  --gold:#D9A441;
-  --teal:#28D3C6;
-  --radius:14px;
-}
-
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  min-height:100vh;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background: linear-gradient(180deg,#020812 0%,#071726 100%);
-  color:var(--text);
-}
-
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:32px 20px 60px;
-}
-
-header{
-  margin-bottom:32px;
-}
-
-h1{
-  margin:0 0 8px 0;
-  color:var(--gold);
-  letter-spacing:1px;
-}
-
-.subtitle{
-  color:var(--muted);
-  max-width:700px;
-  line-height:1.4;
-}
-
-.grid{
-  display:grid;
-  gap:18px;
-}
-
-@media(min-width:900px){
-  .grid{ grid-template-columns:1fr 1fr; }
-}
-
-.card{
-  background:rgba(255,255,255,0.02);
-  border:1px solid rgba(255,255,255,0.04);
-  border-radius:var(--radius);
-  padding:20px;
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-.card:hover{
-  transform:translateY(-2px);
-  border-color:rgba(255,255,255,0.08);
-}
-
-.card h2{
-  margin:0;
-  font-size:18px;
-}
-
-.meta{
-  margin-top:6px;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.tag{
-  display:inline-block;
-  margin-top:10px;
-  padding:4px 10px;
-  font-size:11px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.05);
-}
-
-.content{
-  display:none;
-  margin-top:14px;
-  font-size:14px;
-  line-height:1.45;
-  color:#dbeee9;
-}
-
-.card.open .content{
-  display:block;
-}
-
-footer{
-  margin-top:40px;
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-}
-</style>
-</head>
-
-<body>
-<div class="wrap">
-
-<header>
-  <h1>ETERUNIVERSE</h1>
-  <div class="subtitle">
-    To nie jest opowieść. To jest nawigacja.<br>
-    Kliknij Bramę, która opisuje Twój obecny stan.
-  </div>
-</header>
-
-<section class="grid">
-
-  <div class="card">
-    <h2>BRAMA I — INTERSEEKER</h2>
-    <div class="meta">Psychika · Cień · Pamięć</div>
-    <span class="tag">CORE</span>
-    <div class="content">
-      Tu schodzisz pod narrację.<br>
-      Spotykasz mechanizmy, które rządziły Tobą w ciszy.
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>BRAMA II — CUSTOS</h2>
-    <div class="meta">Strażnik · Algorytm przetrwania</div>
-    <span class="tag">CORE</span>
-    <div class="content">
-      Tu widzisz, kto naprawdę trzymał ster.<br>
-      Custos nie znika — oddaje kontrolę.
-    </div>
-  </div>
-
-</section>
-
-<footer>
-  ETERUNIVERSE • system roboczy • Maciej
-</footer>
-
-</div>
-
-<script>
-console.log("ETERUNIVERSE online");
-
-document.querySelectorAll('.card').forEach(card=>{
-  card.addEventListener('click', ()=>{
-    card.classList.toggle('open');
-  });
-});
-</script>
-
+  <!-- Główny skrypt – defer dla lepszego ładowania -->
+  <script defer src="app.js" type="module"></script>
 </body>
 </html>
