@@ -911,9 +911,6 @@ body::before {
 #mapa-img {
   width: 100%;
   display: block;
-.mona-btn { background: #ff4757; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; }
-.mona-modal { position: fixed; top: 20%; left: 50%; transform: translateX(-50%); background: #1a1a2e; padding: 24px; border-radius: 12px; max-width: 400px; z-index: 1000; }
-.mona-close { float: right; cursor: pointer; font-size: 24px; }
 }
 // Ta część z fetch('./mapa.json') też działa!
 // Dodaj mapa.json z współrzędnymi Bram
