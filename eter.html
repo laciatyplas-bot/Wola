@@ -1,3 +1,234 @@
-<!DOCTYPE html>
-<img src="mapa.png" width="100%" alt="Mapa Imperium">
-<script>fetch('mapa.json').then(r=>r.json()).then(data=>console.log(data));</script>
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>ETERNIVERSE DEV CONSOLE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:#050814;
+      color:#E9F4FF;
+    }
+    .wrap{
+      max-width:960px;
+      margin:0 auto;
+      padding:16px;
+    }
+    h1{font-size:22px;margin:0 0 4px;}
+    .sub{font-size:13px;color:#9BB0D4;margin-bottom:16px;}
+    textarea,select,input,button{
+      font:inherit;
+      border-radius:6px;
+      border:1px solid #20324A;
+      background:#020617;
+      color:#E9F4FF;
+      padding:6px 8px;
+    }
+    textarea{width:100%;min-height:140px;}
+    button{
+      cursor:pointer;
+      background:#D9A441;
+      color:#050814;
+      border:none;
+      font-weight:600;
+      margin-top:6px;
+    }
+    .row{margin-bottom:12px;font-size:13px;}
+    label{display:block;margin-bottom:2px;color:#9BB0D4;font-size:12px;}
+    .small{font-size:11px;color:#9BB0D4;margin-top:4px;}
+    .log{
+      margin-top:12px;
+      font-size:11px;
+      color:#9BB0D4;
+      white-space:pre-wrap;
+      border-top:1px solid #20324A;
+      padding-top:8px;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>ETERNIVERSE DEV CONSOLE</h1>
+        <div class="sub">Generator bram / ksiąg • zapis do pamięci jak w aplikacji</div>
+      </div>
+      <div>
+        <button onclick="loadFromStorage()">Odczytaj z aplikacji</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <label>Świat (numer)</label>
+      <input id="worldId" type="number" value="1" min="1" style="width:80px;">
+      <span class="small">Na razie tylko informacja w JSON – główny silnik może to później wykorzystać.</span>
+    </div>
+
+    <div class="row">
+      <label>JSON świata / bram / ksiąg</label>
+      <textarea id="jsonInput" placeholder='Tu wklejasz albo edytujesz JSON świata (gates: [...])'></textarea>
+      <div class="small">
+        • Kliknij „Odczytaj z aplikacji”, żeby zobaczyć aktualne dane z ETERNIVERSE.<br>
+        • Edytuj / generuj tutaj bramy i księgi, potem „Zapisz do aplikacji”.
+      </div>
+    </div>
+
+    <div class="row">
+      <label>Szybki generator księgi (dopisz do bramy)</label>
+      <select id="gateSelect"></select>
+      <input id="bookTitle" placeholder="Tytuł" style="width:100%;margin-top:4px;">
+      <input id="bookHook" placeholder="Hook / krótki opis" style="width:100%;margin-top:4px;">
+      <textarea id="bookPitch" placeholder="Pitch / dłuższy opis (trafi do content)"></textarea>
+      <button onclick="addBook()">+ Dodaj księgę do JSON poniżej</button>
+      <div class="small">
+        Po kliknięciu dopiszemy obiekt <code>book</code> do wybranej bramy w JSON‑ie w polu <code>books</code>.
+      </div>
+    </div>
+
+    <div class="row">
+      <button onclick="saveToStorage()">Zapisz do aplikacji (localStorage)</button>
+      <button onclick="downloadJSON()" style="background:#111827;color:#E9F4FF;margin-left:6px;">Pobierz jako plik JSON</button>
+    </div>
+
+    <div id="log" class="log"></div>
+  </div>
+
+<script>
+const STORAGE_KEY = 'eterniverse-pro-master-v1.3';
+
+function log(msg){
+  const el = document.getElementById('log');
+  el.textContent += msg + "\
+";
+}
+
+function loadFromStorage(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      log('Brak danych w localStorage pod kluczem ' + STORAGE_KEY);
+      return;
+    }
+    document.getElementById('jsonInput').value = raw;
+    log('Załadowano dane z aplikacji.');
+    initGateSelect();
+  }catch(e){
+    log('Błąd odczytu: ' + e.message);
+  }
+}
+
+function saveToStorage(){
+  try{
+    const txt = document.getElementById('jsonInput').value.trim();
+    if(!txt){ log('Pole JSON jest puste.'); return; }
+    const parsed = JSON.parse(txt);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+    log('Zapisano JSON do localStorage. Odśwież index.html, żeby zobaczyć efekt.');
+  }catch(e){
+    log('Błąd JSON: ' + e.message);
+  }
+}
+
+function initGateSelect(){
+  const select = document.getElementById('gateSelect');
+  select.innerHTML = '';
+  try{
+    const data = JSON.parse(document.getElementById('jsonInput').value || '{}');
+    const gates = data.gates || [];
+    if(!gates.length){
+      const opt = document.createElement('option');
+      opt.value = '-1';
+      opt.textContent = 'Brak bram w JSON';
+      select.appendChild(opt);
+      return;
+    }
+    gates.forEach((g, idx)=>{
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = (g.id || (idx+1)) + ' — ' + (g.name || 'Brama');
+      select.appendChild(opt);
+    });
+  }catch(e){
+    const opt = document.createElement('option');
+    opt.value = '-1';
+    opt.textContent = 'JSON z błędem';
+    select.appendChild(opt);
+  }
+}
+
+function addBook(){
+  try{
+    const txt = document.getElementById('jsonInput').value.trim();
+    if(!txt){ log('Najpierw wczytaj albo wklej JSON.'); return; }
+    const data = JSON.parse(txt);
+    const gates = data.gates || [];
+    const gateIndex = parseInt(document.getElementById('gateSelect').value, 10);
+    if(isNaN(gateIndex) || !gates[gateIndex]){
+      log('Wybierz poprawną bramę.');
+      return;
+    }
+
+    const title = document.getElementById('bookTitle').value.trim();
+    const hook  = document.getElementById('bookHook').value.trim();
+    const pitch = document.getElementById('bookPitch').value.trim();
+    if(!title){ log('Tytuł jest wymagany.'); return; }
+
+    const book = {
+      title,
+      status: 'idea',
+      desc: hook,
+      cover: '',
+      content: pitch,
+      audio: []
+    };
+
+    if(!Array.isArray(gates[gateIndex].books)) gates[gateIndex].books = [];
+    gates[gateIndex].books.push(book);
+
+    data.gates = gates;
+    document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
+    log('Dodano księgę "' + title + '" do bramy ' + (gates[gateIndex].name || (gateIndex+1)));
+
+    document.getElementById('bookTitle').value = '';
+    document.getElementById('bookHook').value = '';
+    document.getElementById('bookPitch').value = '';
+  }catch(e){
+    log('Błąd przy dodawaniu księgi: ' + e.message);
+  }
+}
+
+function downloadJSON(){
+  try{
+    const txt = document.getElementById('jsonInput').value.trim();
+    if(!txt){ log('Brak JSON do pobrania.'); return; }
+    const blob = new Blob([txt], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'eterniverse_world_preset.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    log('Pobrano plik JSON.');
+  }catch(e){
+    log('Błąd pobierania: ' + e.message);
+  }
+}
+
+// automatycznie spróbuj wczytać dane przy starcie
+window.addEventListener('load', ()=>{
+  loadFromStorage();
+  initGateSelect();
+});
+</script>
+</body>
+</html>
