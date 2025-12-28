@@ -1,54 +1,50 @@
-<!doctype html>
-<html lang="pl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#D9A441">
-  <meta name="description" content="ETERNIVERSE PRO MASTER — Profesjonalne centrum wydawnicze Architekta Woli. Zarządzanie Bramami, księgami, audiobookami, okładkami, statusami i publikacją.">
-  <meta name="author" content="Maciej Maciuszek">
-  
-  <title>ETERNIVERSE PRO MASTER — Wydawnictwo</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ETERNIVERSE</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif;}
+body{background:#111;color:#eee;padding:20px;line-height:1.5;}
+h1{color:#ffd700;font-size:24px;margin-bottom:30px;}
+button{background:#ffd700;color:#000;border:none;padding:10px 20px;border-radius:4px;cursor:pointer;margin:5px;font-weight:bold;}
+button:hover{background:#ffed4a;}
+#gates{display:flex;flex-direction:column;gap:20px;}
+.gate{border:1px solid #333;padding:20px;border-radius:8px;background:#1a1a1a;}
+.gate h3{color:#ffd700;cursor:pointer;}
+.book{background:#333;padding:10px;border-radius:4px;cursor:pointer;margin:5px;}
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;}
+#modal-content{background:#1a1a1a;margin:50px auto;padding:30px;width:90%;max-width:600px;border-radius:8px;}
+input,textarea,select{width:100%;padding:10px;background:#333;color:#eee;border:1px solid #555;border-radius:4px;margin:10px 0;}
+textarea{height:150px;resize:vertical;}
+#toast{position:fixed;top:20px;right:20px;background:#00ff88;color:#000;padding:15px;border-radius:4px;display:none;z-index:2000;}</style>
+</head><body>
+<h1>🌌 ETERNIVERSE LIBRARY</h1>
+<div id="gates"></div>
+<div><button onclick="addGate()">➕ Nowa Brama</button><button onclick="exportAll()">📤 Wattpad</button><button onclick="clearAll()">🔄 Reset</button></div>
 
-  <!-- Favicon (do dodania później) -->
-  <!-- <link rel="icon" href="favicon.ico"> -->
+<div id="modal"><div id="modal-content">
+<h2 id="mTitle">Nowa Brama</h2><input id="gateName" placeholder="Nazwa Bramy">
+<h3>lub edytuj książkę:</h3><input id="bookTitle" placeholder="Tytuł"><textarea id="bookText" placeholder="Treść..."></textarea>
+<button onclick="saveData()">💾 Zapisz</button><button onclick="closeM()">✕</button></div></div><div id="toast"></div>
 
-  <!-- Style – zewnętrzny plik (lepsza organizacja, cache) -->
-  <link rel="stylesheet" href="style.css">
+<script>
+let data=JSON.parse(localStorage.getItem('eterniverse')||'{"gates":{}}');let edit={};
+function render(){let g=document.getElementById('gates');g.innerHTML='';
+Object.keys(data.gates).forEach(n=>{let d=document.createElement('div');d.className='gate';
+d.innerHTML=`<h3 onclick="editGate('${n}')">${n}</h3><div>${data.gates[n].map((b,i)=>`<div class="book" onclick="editBook('${n}',${i})">${b.title}</div>`).join('')||'<span style="color:#666">pusto</span>'}</div>`;
+g.appendChild(d);});}
+function editGate(n){edit={gate:n};document.getElementById('mTitle').innerText='Brama: '+n;document.getElementById('gateName').value=n;document.getElementById('bookTitle').value='';document.getElementById('bookText').value='';document.getElementById('modal').style.display='block';}
+function editBook(g,i){edit={gate:g,book:i};let b=data.gates[g][i];document.getElementById('mTitle').innerText=b.title;document.getElementById('gateName').value=g;document.getElementById('bookTitle').value=b.title;document.getElementById('bookText').value=b.text||'';document.getElementById('modal').style.display='block';}
+function saveData(){let gn=document.getElementById('gateName').value.trim();let bt=document.getElementById('bookTitle').value.trim();if(bt){if(!data.gates[gn])data.gates[gn]=[];if(edit.book!==undefined){data.gates[gn][edit.book]={title:bt,text:document.getElementById('bookText').value};}else{data.gates[gn].push({title:bt,text:document.getElementById('bookText').value});}localStorage.setItem('eterniverse',JSON.stringify(data));render();closeM();toast('Zapisano!');}}
+function closeM(){document.getElementById('modal').style.display='none';edit={};}
+function addGate(){edit={};document.getElementById('mTitle').innerText='Nowa Brama';document.getElementById('gateName').value='';document.getElementById('bookTitle').value='';document.getElementById('bookText').value='';document.getElementById('modal').style.display='block';}
+function exportAll(){let t='# ETERNIVERSE
 
-  <!-- Future-proof: defer dla JS -->
-</head>
+';Object.keys(data.gates).forEach(g=>{if(data.gates[g].length){t+='## '+g+'
 
-<body>
-  <!-- Główny kontener aplikacji -->
-  <div id="app" class="app-container" aria-live="polite">
-    <!-- Wszystko będzie wstrzykiwane tutaj przez app.js -->
-    <div class="loading-screen">
-<div id="mapa">
-  <img id="mapa-img" src="mapa.png" alt="Mapa Polaris">
-  <div class="brama" style="left:42%; top:58%" title="Brama I"></div>
-  <div class="brama" style="left:60%; top:40%" title="Brama II"></div>
-</div>
-      <div class="loading-spinner"></div>
-      <p>Ładowanie ETERNIVERSE PRO MASTER...</p>
-    </div>
-  </div>
+';data.gates[g].forEach(b=>{t+='### '+b.title+'
 
-  <!-- Modal główny (ukryty domyślnie) -->
-  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <header class="modal-header">
-        <h2 id="modalTitle">Nowa księga</h2>
-      </header>
-      <div class="modal-content" id="modalContent">
-        <!-- Treść modala wstrzykiwana dynamicznie -->
-      </div>
-    </div>
-  </div>
+'+(b.text||'')+'
 
-  <!-- Toast notifications -->
-  <div id="toastContainer" aria-live="assertive" class="toast-container"></div>
-
-  <!-- Główny skrypt – defer dla lepszego ładowania -->
-  <script defer src="app.js" type="module"></script>
-</body>
-</html>
+---
+';});}});navigator.clipboard.writeText(t);toast('📤 Do Wattpada!');}
+function clearAll(){if(confirm('Reset?')){localStorage.removeItem('eterniverse');data={gates:{}};render();toast('Reset!');}}
+function toast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',2000);}
+render();setInterval(()=>localStorage.setItem('eterniverse',JSON.stringify(data)),5000);
+</script></body></html>
