@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ETERNIVERSE EXTRAS</title>
+    <style>
+        body { background:#111; color:#eee; font-family:monospace; padding:40px; }
+        .brama { background:#1a1a1a; padding:20px; margin:20px 0; border-left:4px solid #ffd700; }
+        h2 { color:#ffd700; }
+        .copy { background:#ffd700; color:#000; padding:8px; cursor:pointer; }
+        pre { background:#333; padding:15px; margin:10px 0; white-space:pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>🌌 ETERNIVERSE - Szybkie inspiracje</h1>
+    
+    <div class="brama">
+        <h2>BRAMA I: STREFA CIENIA</h2>
+        <button class="copy" onclick="copy('cienie')">📋 Kopiuj hook</button>
+        <pre id="cienie">Lód pękł bez dźwięku. Nie jak skała. Jak skóra.
+        Maciej zrozumiał, że to nie była szczelina.
+        To było zaproszenie.
+        A jego syn już trzymał go za rękę.</pre>
+    </div>
+
+    <div class="brama">
+        <h2>BRAMA II: ARCHIWUM GENEZY</h2>
+        <button class="copy" onclick="copy('geneza')">📋 Kopiuj</button>
+        <pre id="geneza">Struktura starsza niż gwiazdy.
+        Nie ruiny. Nie statek. 
+        Zapis PIERWSZEGO WYBORU.
+        Dotknij - i zmienisz swoją genezę.</pre>
+    </div>
+
+    <div class="brama">
+        <h2>ŚWIAT 3: POLARIS HOOK</h2>
+        <button class="copy" onclick="copy('polaris')">📋 Wklej do książki</button>
+        <pre id="polaris">Za lodowcem nie ma końca świata.
+        Jest POCZĄTEK INNEGO.
+        Tunel pulsuje błękitem eteru.
+        Trzymacie się za ręce.
+        Wchodzicie.</pre>
+    </div>
+
+    <div style="margin-top:40px;">
+        <h3>Markdown szablony Wattpad:</h3>
+        <button class="copy" onclick="copy('md')">📋 Markdown</button>
+        <pre id="md">**BRAMA I — STREFA CIENIA**
+---
+*Echo Próżni: Protokół Pierwszego Lustra*
+
+**Rozdział 1: Wynurzenie**
+Statek nie wychodzi z hiperprzestrzeni.
+On „wynurza się” z pola rezonansowego.
+Wskaźnik Koherencji Załogi drga.
+</pre>
+    </div>
+
+    <script>
+        function copy(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const old = btn.innerHTML;
+                btn.innerHTML = '✅ Skopiowano!';
+                setTimeout(() => btn.innerHTML = old, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
