@@ -800,3 +800,25 @@ body::before {
   body { background: white; color: black; }
   .gate-card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
 }
+
+#mapa {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+#mapa-img {
+  width: 100%;
+  display: block;
+}
+
+.brama {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: cyan;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px cyan;
+}
