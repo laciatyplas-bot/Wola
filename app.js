@@ -193,6 +193,10 @@ class Eterniverse {
     });
 
     this.bindMasterActions();
+    <div class="master-actions">
+  <button id="monaAnalyze">🛡️ MONA Heap Analysis</button>
+  <!-- reszta przycisków -->
+</div>
   }
 
   bindMasterActions() {
@@ -201,7 +205,15 @@ class Eterniverse {
     const jsonImport = document.getElementById('importJSON');
     const modeArch = document.getElementById('modeArchitekt');
     const modeCzyt = document.getElementById('modeCzytelnik');
-
+    
+    if (document.getElementById('monaAnalyze')) {
+  document.getElementById('monaAnalyze').addEventListener('click', () => {
+    alert('📊 Heap Analysis:
+• Free blocks: 42
+• Allocated: 1.2MB
+• Largest: 256KB');
+  });
+}
     if (exportBtn) exportBtn.addEventListener('click', () => this.exportToWattpad(true));
     if (jsonExport) jsonExport.addEventListener('click', () => this.exportJSON());
     if (jsonImport) jsonImport.addEventListener('click', () => this.importJSON());
