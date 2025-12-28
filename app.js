@@ -3,8 +3,8 @@
 // Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
 
 
-class Eterniverse {
-require('const mona = require('./plugins/mona.js');  // ładuje plugin Mona
+class Eterniverse {require('
+const mona = require('./plugins/mona.js');  // ładuje plugin Mona
   constructor() {
     this.VERSION = '1.3';
     this.STORAGE_KEY = 'eterniverse-pro-master-v1.3';
