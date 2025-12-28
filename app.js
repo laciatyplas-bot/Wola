@@ -1,10 +1,6 @@
 // app.js — ETERUNIVERSE PRO MASTER v1.3 — 100% POPRAWIONE TEMPLATE STRINGS
 // Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
 
-const express = require('express');
-const path = require('path');
-const mona = require('./plugins/mona.js');
-
 class Eteruniverse {
     this.VERSION = '1.3';
     this.STORAGE_KEY = 'eterniverse-pro-master-v1.3';
