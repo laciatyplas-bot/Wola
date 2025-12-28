@@ -468,6 +468,34 @@ fetch('./mapa.json')
   })
   .catch(err => console.error('Błąd mapy:', err));
 
-// START — PEŁNA MOC Z DANYMI STARTowymi
-localStorage.removeItem('eterniverse-pro-master-v1.3'); // CZYSZCZENIE
+// HOTFIX - DODAJ KSIĘGI START
+setTimeout(() => {
+  if (!localStorage.getItem('eterniverse-pro-master-v1.3')) {
+    const startBooks = {
+      meta: { version: '1.3' },
+      gates: [
+        {
+          id: 1,
+          name: "BRAMA I — INTERSEEKER",
+          sub: "Psychika · Cień · Trauma",
+          tag: "CORE/PSYCHE",
+          books: [{
+            title: "ShadowSeeker – Anatomia Cienia",
+            status: "idea",
+            desc: "Twój cień zna cię lepiej niż ty.",
+            content: "**Rozdział 1**
+
+Wola to nie życzenie — to broń."
+          }]
+        }
+      ]
+    };
+    localStorage.setItem('eterniverse-pro-master-v1.3', JSON.stringify(startBooks));
+    location.reload();
+  }
+}, 100);
+
+// TWOJA MAPA KOD (pozostaw)
+// fetch('./mapa.json') ...
+
 new Eterniverse();
