@@ -2,7 +2,6 @@
 // Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
 
 class Eterniverse {
-
   constructor() {
     this.VERSION = '1.3';
     this.STORAGE_KEY = 'eterniverse-pro-master-v1.3';
@@ -448,4 +447,5 @@ ${book.content || ''}
 }
 
 // START — PEŁNA MOC
+new Eterniverse();
 new Eterniverse();
