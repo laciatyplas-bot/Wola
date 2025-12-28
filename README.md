@@ -1,8 +1,7 @@
-# 🌌 ETERSEEKER ATLAS
+# 🌌 **WOLA** - EterSeeker Universe
 
-**Interaktywna mapa narracyjna EterSeeker**  
-*10 Bram • 3 Światy • Multiversum w budowie*
+**Interaktywna mapa narracyjna + biblioteka 10 Bram Multiversum**
 
-## ✨ Co to jest?
-**ETERNIVERSE** = meta-kontener światów  
-**ETERSEEKER ATLAS** = Twoja mapa do nich  
+[![ETERNIVERSE ATLAS](https://github.com/laciatyplas-bot/Wola/raw/main/eterniverse.png)](https://laciatyplas-bot.github.io/Wola/eterseeker.html)
+
+## 🚀 **Szybki start**
