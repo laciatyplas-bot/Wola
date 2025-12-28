@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wola Bot - Stabilna v2.1</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 2.5em; margin-bottom: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .status { background: rgba(0,255,0,0.2); padding: 15px; border-radius: 10px; margin: 20px 0; font-size: 1.1em; }
+        .buttons { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        button { 
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white; border: none; padding: 15px 30px;
+            border-radius: 50px; font-size: 16px; cursor: pointer;
+            transition: all 0.3s; font-weight: 600;
+            box-shadow: 0 10px 20px rgba(255,107,107,0.3);
+        }
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255,107,107,0.4); }
+        .footer { margin-top: 30px; opacity: 0.8; font-size: 0.9em; }
+        @media (max-width: 600px) { .buttons { flex-direction: column; } button { width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 Wola Bot v2.1</h1>
+        <div class="status">
+            ✅ Status: <strong>Online</strong> | Użytkowników: <strong>420+</strong> | Komend: <strong>69</strong>
+        </div>
+        <div class="buttons">
+            <button onclick="deployDev()">⚡ Deploy Dev</button>
+            <button onclick="addMona()">🛡️ Dodaj Mona</button>
+            <button onclick="restartBot()">🔄 Restart Bot</button>
+        </div>
+        <div class="footer">Warszawa Wola District Bot | laciatyplas-bot</div>
+    </div>
+
+    <script>
+        function deployDev() { alert('🚀 Deploy z dev brancha... Gotowe!'); }
+        function addMona() { alert('🛡️ Mona exploit analyzer dodany! Użyj: !mona heap'); }
+        function restartBot() { alert('🔄 Bot zrestartowany. Status: Online'); }
+    </script>
+</body>
+</html>
