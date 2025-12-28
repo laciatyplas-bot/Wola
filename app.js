@@ -1,6 +1,7 @@
 
 // app.js — ETERNIVERSE PRO MASTER v1.3 — 100% POPRAWIONE TEMPLATE STRINGS
 // Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
+
 require('./plugins/mona.js');  // ładuje plugin Mona
 class Eterniverse {
   constructor() {
