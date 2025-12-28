@@ -1,27 +1,6 @@
 // app.js — ETERNIVERSE PRO MASTER v1.3 — 100% POPRAWIONE TEMPLATE STRINGS
 // Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
 
-fetch('./mapa.json')
-  .then(res => res.json())
-  .then(data => {
-    const mapa = document.getElementById('mapa');
-
-    data.gates.forEach(gate => {
-      const el = document.createElement('div');
-      el.className = 'brama';
-      el.style.left = gate.x + '%';
-      el.style.top = gate.y + '%';
-      el.title = gate.name;
-
-      el.onclick = () => {
-        alert(gate.name + "\n\n" + gate.description);
-        // później: window.location.href = gate.target;
-      };
-
-      mapa.appendChild(el);
-    });
-  })
-  .catch(err => console.error('Błąd mapy:', err));
 
 class Eterniverse {
   constructor() {
@@ -467,6 +446,27 @@ ${book.content || ''}
     }
   }
 }
+fetch('./mapa.json')
+  .then(res => res.json())
+  .then(data => {
+    const mapa = document.getElementById('mapa');
+
+    data.gates.forEach(gate => {
+      const el = document.createElement('div');
+      el.className = 'brama';
+      el.style.left = gate.x + '%';
+      el.style.top = gate.y + '%';
+      el.title = gate.name;
+
+      el.onclick = () => {
+        alert(gate.name + "\n\n" + gate.description);
+        // później: window.location.href = gate.target;
+      };
+
+      mapa.appendChild(el);
+    });
+  })
+  .catch(err => console.error('Błąd mapy:', err));
 
 // START — PEŁNA MOC
 new Eterniverse();
