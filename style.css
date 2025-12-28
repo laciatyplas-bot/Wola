@@ -862,3 +862,43 @@ body::before {
   cursor: pointer;
   box-shadow: 0 0 10px cyan;
 }
+.brama {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #8ff, #0ff);
+  cursor: pointer;
+
+  box-shadow:
+    0 0 6px #0ff,
+    0 0 12px rgba(0,255,255,0.7),
+    0 0 24px rgba(0,255,255,0.4);
+
+  animation: puls 2.2s infinite ease-in-out;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brama:hover {
+  transform: scale(1.4);
+  box-shadow:
+    0 0 10px #fff,
+    0 0 25px #0ff,
+    0 0 50px rgba(0,255,255,0.9);
+}
+
+/* FALA / ODDECH */
+@keyframes puls {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
