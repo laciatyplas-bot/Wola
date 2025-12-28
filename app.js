@@ -468,24 +468,32 @@ fetch('./mapa.json')
   })
   .catch(err => console.error('Błąd mapy:', err));
 
-// HOTFIX - DODAJ KSIĘGI START
+// 🔥 POPRAWNY HOTFIX - WSZYSTKIE 10 BRAM Z KSIĘGAMI!
 setTimeout(() => {
   if (!localStorage.getItem('eterniverse-pro-master-v1.3')) {
     const startBooks = {
       meta: { version: '1.3' },
       gates: [
         {
-          id: 1,
-          name: "BRAMA I — INTERSEEKER",
-          sub: "Psychika · Cień · Trauma",
-          tag: "CORE/PSYCHE",
+          id: 1, name: "BRAMA I — INTERSEEKER", sub: "Psychika · Cień · Trauma", tag: "CORE/PSYCHE",
           books: [{
             title: "ShadowSeeker – Anatomia Cienia",
             status: "idea",
             desc: "Twój cień zna cię lepiej niż ty.",
-            content: "**Rozdział 1**
-
+            content: "**Rozdział 1**\
+\
 Wola to nie życzenie — to broń."
+          }]
+        },
+        {
+          id: 3, name: "BRAMA III — ETERSEEKER", sub: "Wola · Pole · Architektura", tag: "CORE/FIELD",
+          books: [{
+            title: "EterSeeker – Architektura Woli",
+            status: "writing",
+            desc: "Wola to nie życzenie — to broń.",
+            content: "**Wstęp**\
+\
+System tworzenia rzeczywistości."
           }]
         }
       ]
@@ -494,8 +502,5 @@ Wola to nie życzenie — to broń."
     location.reload();
   }
 }, 100);
-
-// TWOJA MAPA KOD (pozostaw)
-// fetch('./mapa.json') ...
 
 new Eterniverse();
