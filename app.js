@@ -1,4 +1,4 @@
-// app.js — ETERNIVERSE PRO MASTER v1.3 — 100% POPRAWIONE TEMPLATE STRINGS
+// app.js — ETERUNIVERSE PRO MASTER v1.3 — 100% POPRAWIONE TEMPLATE STRINGS
 // Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
 
 const express = require('express');
@@ -450,4 +450,4 @@ ${book.content || ''}
 }
 
 // START — PEŁNA MOC
-new Eterniverse();
+new Eteruniverse();
