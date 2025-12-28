@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>POLARIS — MAPA</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div id="mapa">
+  <img src="mapa.png" alt="Mapa Polaris" id="mapa-img">
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>
