@@ -468,5 +468,6 @@ fetch('./mapa.json')
   })
   .catch(err => console.error('Błąd mapy:', err));
 
-// START — PEŁNA MOC
+// START — PEŁNA MOC Z DANYMI STARTowymi
+localStorage.removeItem('eterniverse-pro-master-v1.3'); // CZYSZCZENIE
 new Eterniverse();
