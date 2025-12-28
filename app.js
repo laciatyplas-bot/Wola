@@ -1,3 +1,4 @@
+// === POCZĄTEK app.js ===
 const express = require('express');
 const path = require('path');
 const mona = require('./plugins/mona.js');
