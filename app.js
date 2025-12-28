@@ -1,4 +1,6 @@
-// === POCZĄTEK app.js ===
+// app.js — ETERNIVERSE PRO MASTER v1.3 — 100% POPRAWIONE TEMPLATE STRINGS
+// Architekt: Maciej Maciuszek | Data: 27 grudnia 2025
+
 const express = require('express');
 const path = require('path');
 const mona = require('./plugins/mona.js');
