@@ -5,7 +5,7 @@ const express = require('express');
 const path = require('path');
 const mona = require('./plugins/mona.js');
 
-class Eterniverse {
+class Eteruniverse {
     this.VERSION = '1.3';
     this.STORAGE_KEY = 'eterniverse-pro-master-v1.3';
     this.data = { meta: { version: this.VERSION }, gates: [] };
