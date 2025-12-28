@@ -1,0 +1,29 @@
+{
+  "world": "POLARIS",
+  "gates": [
+    {
+      "id": "BRAMA_I",
+      "name": "Krainy Cienia",
+      "x": 22,
+      "y": 78,
+      "description": "Wejście. Manifestacja cienia.",
+      "target": "brama1.html"
+    },
+    {
+      "id": "BRAMA_II",
+      "name": "Archiwum Pierwotne",
+      "x": 40,
+      "y": 65,
+      "description": "Stara wiedza. Ryzyko nadpisania.",
+      "target": "brama2.html"
+    },
+    {
+      "id": "BRAMA_III",
+      "name": "Wieże Woli",
+      "x": 60,
+      "y": 50,
+      "description": "Myśl kształtuje teren.",
+      "target": "brama3.html"
+    }
+  ]
+}
