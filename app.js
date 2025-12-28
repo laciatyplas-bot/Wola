@@ -468,18 +468,60 @@ fetch('./mapa.json')
   })
   .catch(err => console.error('Błąd mapy:', err));
 
-// 🔥 POPRAWNY HOTFIX - WSZYSTKIE 10 BRAM Z KSIĘGAMI!
-setTimeout(() => {
-  if (!localStorage.getItem('eterniverse-pro-master-v1.3')) {
-    const startBooks = {
-      meta: { version: '1.3' },
-      gates: [
-        {
-          id: 1, name: "BRAMA I — INTERSEEKER", sub: "Psychika · Cień · Trauma", tag: "CORE/PSYCHE",
-          books: [{
-            title: "ShadowSeeker – Anatomia Cienia",
-            status: "idea",
-            desc: "Twój cień zna cię lepiej niż ty.",
+// 🔥 ULTYMATIVE HOTFIX - FORCUJE KSIĘGI!
+if (!localStorage.getItem('eterniverse-pro-master-v1.3')) {
+  const FULL_DATA = {
+    meta: { version: '1.3' },
+    gates: [
+      {
+        id: 1, name: "BRAMA I — INTERSEEKER", sub: "Psychika · Cień · Trauma", tag: "CORE/PSYCHE",
+        books: [{
+          title: "ShadowSeeker – Anatomia Cienia",
+          status: "idea",
+          desc: "Twój cień zna cię lepiej niż ty.",
+          content: "**Rozdział 1**
+
+Wola to nie życzenie — to broń."
+        }]
+      },
+      {
+        id: 3, name: "BRAMA III — ETERSEEKER", sub: "Wola · Pole · Architektura", tag: "CORE/FIELD",
+        books: [{
+          title: "EterSeeker – Architektura Woli",
+          status: "writing",
+          desc: "System tworzenia rzeczywistości.",
+          content: "**Wstęp**
+
+Wola = broń przeciwko chaosowi."
+        }]
+      }
+    ]
+  };
+  localStorage.setItem('eterniverse-pro-master-v1.3', JSON.stringify(FULL_DATA));
+}
+
+// MAPA (pozostaw)
+fetch('./mapa.json')
+.then(res => res.json())
+.then(data => {
+  const mapa = document.getElementById('mapa');
+  if (!mapa) return;
+  data.gates.forEach(gate => {
+    const el = document.createElement('div');
+    el.className = 'brama';
+    el.style.left = gate.x + '%';
+    el.style.top = gate.y + '%';
+    el.title = gate.name;
+    el.onclick = () => alert(gate.name + "
+
+" + gate.description);
+    mapa.appendChild(el);
+  });
+})
+.catch(err => console.error('BŁĄD MAPY:', err));
+
+// START
+new Eterniverse();
             content: "**Rozdział 1**\
 \
 Wola to nie życzenie — to broń."
