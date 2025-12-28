@@ -2,277 +2,112 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <title>ETERNIVERSE – Pro Master</title>
+  <title>MAPA ETERNIVERSE – 4 Bramy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { margin:0; font-family:system-ui, sans-serif; background:#050814; color:#E9F4FF; }
-    header { padding:16px 20px; border-bottom:1px solid #20324A; background:#050814cc; position:sticky; top:0; backdrop-filter:blur(10px); }
-    h1 { margin:0; font-size:20px; letter-spacing:2px; text-transform:uppercase;}
-    main { padding:16px; display:flex; flex-direction:column; gap:16px; max-width:960px; margin:0 auto; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; }
-    select, input, textarea, button {
-      font:inherit; padding:8px 10px; border-radius:6px; border:1px solid #20324A; background:#0A1727; color:#E9F4FF;
+    body{
+      margin:0;font-family:system-ui,sans-serif;
+      background:#050814;
+      color:#E9F4FF;
     }
-    button { cursor:pointer; background:#D9A441; color:#050814; border:none; font-weight:600; }
-    button.secondary { background:#0A1727; color:#E9F4FF; border:1px solid #20324A; }
-    textarea { width:100%; min-height:80px; }
-    .card { border:1px solid #20324A; border-radius:10px; padding:12px 14px; background:#0A1727; margin-bottom:8px; }
-    .card small { color:#9BB0D4; display:block; margin-top:4px; }
-    .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; margin-right:4px; }
-    .idea { background:#3b3b5a; }
-    .writing { background:#FFB14B33; }
-    .draft { background:#9BB0D433; }
-    .ready { background:#D9A44133; }
-    .published { background:#12C65B33; }
+    .wrap{max-width:960px;margin:0 auto;padding:16px;}
+    h1{margin:8px 0 0;font-size:24px;letter-spacing:3px;text-transform:uppercase;}
+    h2{margin:0 0 8px;font-size:16px;letter-spacing:2px;text-transform:uppercase;}
+    header{
+      padding:16px;
+      text-align:center;
+      border-bottom:1px solid #20324A;
+      background:#050814;
+    }
+    .subtitle{color:#9BB0D4;font-size:13px;}
+    .grid4{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:16px;
+    }
+    .gate{
+      border-radius:10px;
+      padding:10px;
+      text-align:left;
+      cursor:pointer;
+      border:1px solid #20324A;
+      font-size:13px;
+    }
+    .g1{background:#0A1727;}
+    .g2{background:#23160d;}
+    .g3{background:#061b15;}
+    .g4{background:#22140b;}
+    .gate strong{display:block;font-size:13px;margin-bottom:4px;}
+    .gate small{color:#C9D6FF;font-size:11px;}
+    .mid{
+      text-align:center;
+      margin:24px 0 8px;
+      font-size:13px;
+      color:#9BB0D4;
+    }
+    .hint{
+      margin-top:12px;
+      font-size:11px;
+      color:#9BB0D4;
+    }
+    a.btn{
+      display:inline-block;
+      margin-top:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid #20324A;
+      background:#0A1727;
+      color:#E9F4FF;
+      text-decoration:none;
+      font-size:12px;
+    }
   </style>
 </head>
 <body>
-<header>
-  <h1>ETERNIVERSE – PRO MASTER</h1>
-  <div>Światy · 10 Bram na świat · Księgi i audiobooki</div>
-</header>
+  <header>
+    <h1>MAPA ETERNIVERSE</h1>
+    <div class="subtitle">Cztery Bramy Uniwersum – Świat 1</div>
+  </header>
 
-<main>
-  <!-- WYBÓR ŚWIATA I BRAMY -->
-  <section class="row">
-    <div>
-      <label>Świat:</label><br>
-      <select id="worldSelect"></select>
-    </div>
-    <div>
-      <label>Brama:</label><br>
-      <select id="gateSelect"></select>
-    </div>
-    <div style="align-self:flex-end;">
-      <button id="addWorldBtn" class="secondary">+ Nowy świat</button>
-    </div>
-  </section>
-
-  <!-- LISTA KSIĄŻEK -->
-  <section>
-    <h2>Księgi w wybranej Bramie</h2>
-    <div id="bookList"></div>
-  </section>
-
-  <!-- EDYTOR KSIĄŻKI -->
-  <section>
-    <h2>Edytor / nowy tytuł</h2>
-    <div class="row">
-      <div style="flex:2;">
-        <label>Tytuł</label><br>
-        <input id="bookTitle" style="width:100%;">
+  <div class="wrap">
+    <h2>Wybierz Bramę</h2>
+    <div class="grid4">
+      <div class="gate g1" onclick="openGate(1)">
+        <strong>BRAMA 1 – INTERSEEKER</strong>
+        <small>Psychika · Cień · Trauma · Archetyp</small>
       </div>
-      <div>
-        <label>Status</label><br>
-        <select id="bookStatus">
-          <option value="idea">Idea</option>
-          <option value="outline">Outline</option>
-          <option value="writing">Writing</option>
-          <option value="draft">Draft</option>
-          <option value="ready">Ready</option>
-          <option value="published">Published</option>
-        </select>
+      <div class="gate g2" onclick="openGate(2)">
+        <strong>BRAMA 2 – ETERSEEKER</strong>
+        <small>Światło · Wola · Pole · Mitologia Eteru</small>
       </div>
-      <div>
-        <label>Typ</label><br>
-        <select id="bookType">
-          <option value="book">Książka</option>
-          <option value="audio">Audiobook</option>
-        </select>
+      <div class="gate g3" onclick="openGate(3)">
+        <strong>BRAMA 3 – OBFITOSEEKER</strong>
+        <small>Materia · Przepływ · Transformacja · Ciało</small>
+      </div>
+      <div class="gate g4" onclick="openGate(4)">
+        <strong>BRAMA 4 – KNOT / PROTOKÓŁ SPLĄTANIA</strong>
+        <small>Technologia · Kwant · Obserwator</small>
       </div>
     </div>
 
-    <label>Notatki</label><br>
-    <textarea id="bookNotes" placeholder="Szkic fabuły, sceny, skojarzenia..."></textarea>
-
-    <div class="row">
-      <button id="saveBookBtn">Zapisz / zaktualizuj</button>
-      <button id="clearFormBtn" class="secondary">Wyczyść formularz</button>
-      <button id="exportBtn" class="secondary">Eksportuj Wszechświat (JSON)</button>
+    <div class="mid">
+      Każda brama otworzy osobny ekran z listą Twoich tytułów.
     </div>
-  </section>
-</main>
 
-<script>
-  // ===== Dane bazowe =====
-  const STORAGE_KEY = 'eterniverse-data-v1';
+    <p class="hint">
+      To jest tylko mapa. Same tytuły, notatki i audiobooki zapisujesz w pliku <code>brama.html</code>,
+      który otworzy się po kliknięciu bramy.
+    </p>
 
-  const DEFAULT_DATA = {
-    worlds: [
-      { id: 1, name: 'Świat 1 – Eterniverse Core', genre: 'psychologiczne dark-fantasy' }
-    ],
-    gates: [
-      // 10 Bram w Świecie 1
-      ...Array.from({length:10}, (_,i)=>({
-        id: i+1,
-        worldId: 1,
-        name: 'Brama ' + (i+1)
-      }))
-    ],
-    books: [] // tutaj będziesz dopisywać 80+ tytułów
-  };
+    <a href="brama.html" class="btn">Otwórz bramę ręcznie (test)</a>
+  </div>
 
-  let data = loadData();
-  let currentWorldId = data.worlds[0].id;
-  let currentGateId = 1;
-  let editingBookId = null;
-
-  const worldSelect = document.getElementById('worldSelect');
-  const gateSelect = document.getElementById('gateSelect');
-  const bookList = document.getElementById('bookList');
-
-  const bookTitle = document.getElementById('bookTitle');
-  const bookStatus = document.getElementById('bookStatus');
-  const bookType = document.getElementById('bookType');
-  const bookNotes = document.getElementById('bookNotes');
-
-  document.getElementById('addWorldBtn').onclick = addWorld;
-  document.getElementById('saveBookBtn').onclick = saveBook;
-  document.getElementById('clearFormBtn').onclick = clearForm;
-  document.getElementById('exportBtn').onclick = exportData;
-
-  worldSelect.onchange = () => {
-    currentWorldId = Number(worldSelect.value);
-    populateGates();
-    renderBooks();
-  };
-  gateSelect.onchange = () => {
-    currentGateId = Number(gateSelect.value);
-    renderBooks();
-  };
-
-  init();
-
-  function init() {
-    populateWorlds();
-    populateGates();
-    renderBooks();
-  }
-
-  function loadData() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return DEFAULT_DATA;
-      return JSON.parse(raw);
-    } catch(e) {
-      return DEFAULT_DATA;
+  <script>
+    function openGate(nr){
+      // przechodzimy do brama.html z numerem w adresie
+      window.location.href = 'brama.html?gate=' + nr;
     }
-  }
-
-  function saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }
-
-  function populateWorlds() {
-    worldSelect.innerHTML = '';
-    data.worlds.forEach(w => {
-      const opt = document.createElement('option');
-      opt.value = w.id;
-      opt.textContent = w.name;
-      worldSelect.appendChild(opt);
-    });
-    worldSelect.value = currentWorldId;
-  }
-
-  function populateGates() {
-    gateSelect.innerHTML = '';
-    const gates = data.gates.filter(g => g.worldId === currentWorldId);
-    gates.forEach(g => {
-      const opt = document.createElement('option');
-      opt.value = g.id;
-      opt.textContent = g.name;
-      gateSelect.appendChild(opt);
-    });
-    currentGateId = gates[0]?.id || 1;
-    gateSelect.value = currentGateId;
-  }
-
-  function renderBooks() {
-    bookList.innerHTML = '';
-    const books = data.books.filter(
-      b => b.worldId === currentWorldId && b.gateId === currentGateId
-    );
-    if (!books.length) {
-      bookList.textContent = 'Brak tytułów w tej Bramie – dodaj pierwszy.';
-      return;
-    }
-    books.forEach(b => {
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.innerHTML = `
-        <strong>${b.title}</strong>
-        <div>
-          <span class="pill ${b.status}">${b.status}</span>
-          <span class="pill">${b.type}</span>
-        </div>
-        <small>${b.notes || ''}</small>
-      `;
-      div.onclick = () => loadToForm(b);
-      bookList.appendChild(div);
-    });
-  }
-
-  function addWorld() {
-    const name = prompt('Nazwa nowego świata (gatunek):');
-    if (!name) return;
-    const id = (data.worlds.at(-1)?.id || 0) + 1;
-    data.worlds.push({ id, name, genre: '' });
-    // tworzymy 10 pustych Bram dla nowego świata
-    for (let i=1;i<=10;i++) {
-      data.gates.push({ id: i, worldId: id, name: 'Brama ' + i });
-    }
-    currentWorldId = id;
-    saveData();
-    populateWorlds();
-    populateGates();
-    renderBooks();
-  }
-
-  function saveBook() {
-    const title = bookTitle.value.trim();
-    if (!title) { alert('Podaj tytuł.'); return; }
-    const payload = {
-      id: editingBookId ?? Date.now(),
-      worldId: currentWorldId,
-      gateId: currentGateId,
-      title,
-      status: bookStatus.value,
-      type: bookType.value,
-      notes: bookNotes.value.trim()
-    };
-    const idx = data.books.findIndex(b => b.id === payload.id);
-    if (idx === -1) data.books.push(payload);
-    else data.books[idx] = payload;
-    saveData();
-    clearForm();
-    renderBooks();
-  }
-
-  function loadToForm(book) {
-    editingBookId = book.id;
-    bookTitle.value = book.title;
-    bookStatus.value = book.status;
-    bookType.value = book.type;
-    bookNotes.value = book.notes || '';
-  }
-
-  function clearForm() {
-    editingBookId = null;
-    bookTitle.value = '';
-    bookNotes.value = '';
-    bookStatus.value = 'idea';
-    bookType.value = 'book';
-  }
-
-  function exportData() {
-    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'eterniverse-data.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-</script>
+  </script>
 </body>
 </html>
