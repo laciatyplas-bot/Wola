@@ -912,3 +912,5 @@ body::before {
   width: 100%;
   display: block;
 }
+// Ta część z fetch('./mapa.json') też działa!
+// Dodaj mapa.json z współrzędnymi Bram
