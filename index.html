@@ -1,164 +1,278 @@
 <!doctype html>
 <html lang="pl">
-<head><style>
-  body { background: #050814 !important; color: #E9F4FF !important; }
-  h1 { font-size: 60px; background: linear-gradient(120deg, #D9A441, #28D3C6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-</style>
+<head>
   <meta charset="utf-8">
+  <title>ETERNIVERSE – Pro Master</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#D9A441">
-  <meta name="description" content="ETERNIVERSE PRO MASTER — Profesjonalne centrum wydawnicze Architekta Woli. Zarządzanie Bramami, księgami, audiobookami, okładkami, statusami i publikacją.">
-  <meta name="author" content="Maciej Maciuszek">
-  
-  <title>ETERNIVERSE PRO MASTER — Wydawnictwo</title>
-
-  <!-- Favicon (do dodania później) -->
-  <!-- <link rel="icon" href="favicon.ico"> -->
-  <!-- Style – zewnętrzny plik (lepsza organizacja, cache) -->
-  <link rel="stylesheet" href="style.css?v=20251228">
-
-  <!-- Future-proof: defer dla JS -->
+  <style>
+    body { margin:0; font-family:system-ui, sans-serif; background:#050814; color:#E9F4FF; }
+    header { padding:16px 20px; border-bottom:1px solid #20324A; background:#050814cc; position:sticky; top:0; backdrop-filter:blur(10px); }
+    h1 { margin:0; font-size:20px; letter-spacing:2px; text-transform:uppercase;}
+    main { padding:16px; display:flex; flex-direction:column; gap:16px; max-width:960px; margin:0 auto; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    select, input, textarea, button {
+      font:inherit; padding:8px 10px; border-radius:6px; border:1px solid #20324A; background:#0A1727; color:#E9F4FF;
+    }
+    button { cursor:pointer; background:#D9A441; color:#050814; border:none; font-weight:600; }
+    button.secondary { background:#0A1727; color:#E9F4FF; border:1px solid #20324A; }
+    textarea { width:100%; min-height:80px; }
+    .card { border:1px solid #20324A; border-radius:10px; padding:12px 14px; background:#0A1727; margin-bottom:8px; }
+    .card small { color:#9BB0D4; display:block; margin-top:4px; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; margin-right:4px; }
+    .idea { background:#3b3b5a; }
+    .writing { background:#FFB14B33; }
+    .draft { background:#9BB0D433; }
+    .ready { background:#D9A44133; }
+    .published { background:#12C65B33; }
+  </style>
 </head>
-
 <body>
-  <!-- Główny kontener aplikacji -->
-  <div id="app" class="app-container" aria-live="polite">
-    <!-- Wszystko będzie wstrzykiwane tutaj przez app.js -->
-    <div class="loading-screen">
-      <div class="loading-spinner"></div>
-      <p>Ładowanie ETERNIVERSE PRO MASTER...</p>
-    </div>
-  </div>
+<header>
+  <h1>ETERNIVERSE – PRO MASTER</h1>
+  <div>Światy · 10 Bram na świat · Księgi i audiobooki</div>
+</header>
 
-  <!-- Modal główny (ukryty domyślnie) -->
-  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <header class="modal-header">
-        <h2 id="modalTitle">Nowa księga</h2>
-      </header>
-      <div class="modal-content" id="modalContent">
-        <!-- Treść modala wstrzykiwana dynamicznie -->
+<main>
+  <!-- WYBÓR ŚWIATA I BRAMY -->
+  <section class="row">
+    <div>
+      <label>Świat:</label><br>
+      <select id="worldSelect"></select>
+    </div>
+    <div>
+      <label>Brama:</label><br>
+      <select id="gateSelect"></select>
+    </div>
+    <div style="align-self:flex-end;">
+      <button id="addWorldBtn" class="secondary">+ Nowy świat</button>
+    </div>
+  </section>
+
+  <!-- LISTA KSIĄŻEK -->
+  <section>
+    <h2>Księgi w wybranej Bramie</h2>
+    <div id="bookList"></div>
+  </section>
+
+  <!-- EDYTOR KSIĄŻKI -->
+  <section>
+    <h2>Edytor / nowy tytuł</h2>
+    <div class="row">
+      <div style="flex:2;">
+        <label>Tytuł</label><br>
+        <input id="bookTitle" style="width:100%;">
+      </div>
+      <div>
+        <label>Status</label><br>
+        <select id="bookStatus">
+          <option value="idea">Idea</option>
+          <option value="outline">Outline</option>
+          <option value="writing">Writing</option>
+          <option value="draft">Draft</option>
+          <option value="ready">Ready</option>
+          <option value="published">Published</option>
+        </select>
+      </div>
+      <div>
+        <label>Typ</label><br>
+        <select id="bookType">
+          <option value="book">Książka</option>
+          <option value="audio">Audiobook</option>
+        </select>
       </div>
     </div>
-  </div>
 
-  <!-- Toast notifications -->
-  <div id="toastContainer" aria-live="assertive" class="toast-container"></div>
+    <label>Notatki</label><br>
+    <textarea id="bookNotes" placeholder="Szkic fabuły, sceny, skojarzenia..."></textarea>
 
-  <!-- Główny skrypt – defer dla lepszego ładowania -->
-  <script defer src="app.js"></script><script>
-  // ===== Dane Bram i Ksiąg (na start można trzymać tylko tutaj) =====
-  const DATA = [
-    {
-      id:1,
-      name:"BRAMA I — INTERSEEKER",
-      sub:"Psychika · Cień · Trauma · Archetyp",
-      tag:"CORE / PSYCHE",
-      color:"#28D3C6",
-      books:[
-        {title:"InterSeeker – Atlas Wewnętrzny",status:"published",cover:""},
-        {title:"ShadowSeeker – Anatomia Cienia",status:"ready",cover:""},
-        {title:"MemorySeeker – Archeologia Wspomnień",status:"draft",cover:""}
-      ]
-    },
-    {
-      id:2,
-      name:"BRAMA II — CUSTOS / GENEZA",
-      sub:"Strażnik · Rdzeń · Początek",
-      tag:"CORE / ORIGIN",
-      color:"#FF6B6B",
-      books:[
-        {title:"Geneza",status:"ready",cover:""},
-        {title:"Custos: Kodeks Głębi",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:3,
-      name:"BRAMA III — ETERSEEKER",
-      sub:"Wola · Pole · Architektura",
-      tag:"CORE / FIELD",
-      color:"#D9A441",
-      books:[
-        {title:"EterSeeker – Księga Zakazana (Tom Zero)",status:"writing",cover:""},
-        {title:"EterSeeker – Architektura Woli",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:4,
-      name:"BRAMA IV — ARCHETYPY / WOLA",
-      sub:"Konstrukcja · Role · Przeznaczenie",
-      tag:"CORE / WILL",
-      color:"#9B6BFF",
-      books:[
-        {title:"ArchetypSeeker – System Archetypów Eteru",status:"idea",cover:""},
-        {title:"Kronika Woli",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:5,
-      name:"BRAMA V — OBFITOSEEKER",
-      sub:"Materia · Przepływ · Manifestacja",
-      tag:"EMBODIED / FLOW",
-      color:"#12C65B",
-      books:[
-        {title:"ObfitoSeeker – Kod Obfitości",status:"published",cover:""},
-        {title:"MateriaSeeker – Przewodnik Ciała i Przepływu",status:"draft",cover:""}
-      ]
-    },
-    {
-      id:6,
-      name:"BRAMA VI — BIOSEEKER",
-      sub:"Ciało · Biologia · Regulacja",
-      tag:"EMBODIED / BIO",
-      color:"#FFB14B",
-      books:[
-        {title:"BioSeeker – Sekret Biologii Pola",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:7,
-      name:"BRAMA VII — SPLĄTANIE / AI",
-      sub:"Obserwator · Meta-tożsamość · Technologia",
-      tag:"META / TECH",
-      color:"#5DADE2",
-      books:[
-        {title:"SplatanieSeeker – Protokół Obserwatora",status:"idea",cover:""},
-        {title:"InterfejsSeeker – Interfejs Świadomości",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:8,
-      name:"BRAMA VIII — TRAJEKTORIE",
-      sub:"Kod Życia · Linie Czasu · Fizyka Duszy",
-      tag:"META / PHYSICS",
-      color:"#FF9FF3",
-      books:[
-        {title:"TrajektoriaSeeker – Mapa Linii Życia",status:"ready",cover:""},
-        {title:"QuantumSeeker – Fizyka Duszy",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:9,
-      name:"BRAMA IX — ETERNIONY / KOLEKTYW",
-      sub:"Węzły Pola · Wspólnota · Misja",
-      tag:"COLLECTIVE",
-      color:"#667eea",
-      books:[
-        {title:"Eteriony – Tom I",status:"idea",cover:""},
-        {title:"Eteriony – Tom II",status:"idea",cover:""}
-      ]
-    },
-    {
-      id:10,
-      name:"BRAMA X — ETERUNIVERSE",
-      sub:"Integracja · Jedność · Architekt",
-      tag:"INTEGRATION",
-      color:"#D9A441",
-      books:[
-        {title:"Architekt Eteru — Manifest Twórcy",status:"writing",cover:""},
-        {title:"Mapa Uniwersum Eteru",status:"idea",cover:""}
-      ]
+    <div class="row">
+      <button id="saveBookBtn">Zapisz / zaktualizuj</button>
+      <button id="clearFormBtn" class="secondary">Wyczyść formularz</button>
+      <button id="exportBtn" class="secondary">Eksportuj Wszechświat (JSON)</button>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ===== Dane bazowe =====
+  const STORAGE_KEY = 'eterniverse-data-v1';
+
+  const DEFAULT_DATA = {
+    worlds: [
+      { id: 1, name: 'Świat 1 – Eterniverse Core', genre: 'psychologiczne dark-fantasy' }
+    ],
+    gates: [
+      // 10 Bram w Świecie 1
+      ...Array.from({length:10}, (_,i)=>({
+        id: i+1,
+        worldId: 1,
+        name: 'Brama ' + (i+1)
+      }))
+    ],
+    books: [] // tutaj będziesz dopisywać 80+ tytułów
+  };
+
+  let data = loadData();
+  let currentWorldId = data.worlds[0].id;
+  let currentGateId = 1;
+  let editingBookId = null;
+
+  const worldSelect = document.getElementById('worldSelect');
+  const gateSelect = document.getElementById('gateSelect');
+  const bookList = document.getElementById('bookList');
+
+  const bookTitle = document.getElementById('bookTitle');
+  const bookStatus = document.getElementById('bookStatus');
+  const bookType = document.getElementById('bookType');
+  const bookNotes = document.getElementById('bookNotes');
+
+  document.getElementById('addWorldBtn').onclick = addWorld;
+  document.getElementById('saveBookBtn').onclick = saveBook;
+  document.getElementById('clearFormBtn').onclick = clearForm;
+  document.getElementById('exportBtn').onclick = exportData;
+
+  worldSelect.onchange = () => {
+    currentWorldId = Number(worldSelect.value);
+    populateGates();
+    renderBooks();
+  };
+  gateSelect.onchange = () => {
+    currentGateId = Number(gateSelect.value);
+    renderBooks();
+  };
+
+  init();
+
+  function init() {
+    populateWorlds();
+    populateGates();
+    renderBooks();
+  }
+
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return DEFAULT_DATA;
+      return JSON.parse(raw);
+    } catch(e) {
+      return DEFAULT_DATA;
     }
-  ];
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function populateWorlds() {
+    worldSelect.innerHTML = '';
+    data.worlds.forEach(w => {
+      const opt = document.createElement('option');
+      opt.value = w.id;
+      opt.textContent = w.name;
+      worldSelect.appendChild(opt);
+    });
+    worldSelect.value = currentWorldId;
+  }
+
+  function populateGates() {
+    gateSelect.innerHTML = '';
+    const gates = data.gates.filter(g => g.worldId === currentWorldId);
+    gates.forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.id;
+      opt.textContent = g.name;
+      gateSelect.appendChild(opt);
+    });
+    currentGateId = gates[0]?.id || 1;
+    gateSelect.value = currentGateId;
+  }
+
+  function renderBooks() {
+    bookList.innerHTML = '';
+    const books = data.books.filter(
+      b => b.worldId === currentWorldId && b.gateId === currentGateId
+    );
+    if (!books.length) {
+      bookList.textContent = 'Brak tytułów w tej Bramie – dodaj pierwszy.';
+      return;
+    }
+    books.forEach(b => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <strong>${b.title}</strong>
+        <div>
+          <span class="pill ${b.status}">${b.status}</span>
+          <span class="pill">${b.type}</span>
+        </div>
+        <small>${b.notes || ''}</small>
+      `;
+      div.onclick = () => loadToForm(b);
+      bookList.appendChild(div);
+    });
+  }
+
+  function addWorld() {
+    const name = prompt('Nazwa nowego świata (gatunek):');
+    if (!name) return;
+    const id = (data.worlds.at(-1)?.id || 0) + 1;
+    data.worlds.push({ id, name, genre: '' });
+    // tworzymy 10 pustych Bram dla nowego świata
+    for (let i=1;i<=10;i++) {
+      data.gates.push({ id: i, worldId: id, name: 'Brama ' + i });
+    }
+    currentWorldId = id;
+    saveData();
+    populateWorlds();
+    populateGates();
+    renderBooks();
+  }
+
+  function saveBook() {
+    const title = bookTitle.value.trim();
+    if (!title) { alert('Podaj tytuł.'); return; }
+    const payload = {
+      id: editingBookId ?? Date.now(),
+      worldId: currentWorldId,
+      gateId: currentGateId,
+      title,
+      status: bookStatus.value,
+      type: bookType.value,
+      notes: bookNotes.value.trim()
+    };
+    const idx = data.books.findIndex(b => b.id === payload.id);
+    if (idx === -1) data.books.push(payload);
+    else data.books[idx] = payload;
+    saveData();
+    clearForm();
+    renderBooks();
+  }
+
+  function loadToForm(book) {
+    editingBookId = book.id;
+    bookTitle.value = book.title;
+    bookStatus.value = book.status;
+    bookType.value = book.type;
+    bookNotes.value = book.notes || '';
+  }
+
+  function clearForm() {
+    editingBookId = null;
+    bookTitle.value = '';
+    bookNotes.value = '';
+    bookStatus.value = 'idea';
+    bookType.value = 'book';
+  }
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'eterniverse-data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
 </body>
 </html>
