@@ -127,6 +127,7 @@ class Eterniverse {
         <button id="exportWattpadAll">📤 Eksportuj całe uniwersum do Wattpada</button>
         <button id="exportJSON">💾 Backup JSON</button>
         <button id="importJSON">📥 Import JSON</button>
+        <button id="monaAnalyze" class="mona-btn">🛡️ MONA Analysis</button>
       </div>
     `;
 
