@@ -1,9 +1,12 @@
-// === POCZĄTEK app.js ===
+// istniejące require'y
+const express = require('express');
+const path = require('path');
+
+// Mona plugin
 const mona = require('./plugins/mona.js');  // ładuje plugin Mona
 
 class Eterniverse {
-    // tu już zostaw swój dalszy kod klasy...
-  constructor() {
+    // reszta kodu
     this.VERSION = '1.3';
     this.STORAGE_KEY = 'eterniverse-pro-master-v1.3';
     this.data = { meta: { version: this.VERSION }, gates: [] };
