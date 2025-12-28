@@ -1,19 +1,18 @@
-## ETERNIVERSE
+# 🌌 ETERNIVERSE LIBRARY v1.2
 
-**ETERNIVERSE** to interaktywna mapa świata narracyjnego projektu **EterSeeker**.
+**Biblioteka Architekta Woli**  
+*10 Bram • Multiversum narracyjne • Wattpad-ready*
 
-Projekt łączy:
-- psychologię (cień, psyche),
-- wolę i świadomość,
-- obfitość i materię,
-- pole i strukturę narracyjną.
+## 🚀 Szybki start
+1. Otwórz `index.html`
+2. Kliknij bramę → **Nowa książka**
+3. Pisz → **Zapisz** → **📤 Wattpad**
 
-Strona została zbudowana jako **statyczna aplikacja WWW (HTML / CSS / JS)**  
-i jest rozwijana oraz publikowana poprzez **GitHub Pages**.
+## ✨ Funkcje
+- ✅ **Autozapis** co 3s (localStorage)
+- ✅ **Eksport** pojedyncza książka / całość
+- ✅ **Backup/Import** JSON
+- ✅ **Modułowy kod** (6 plików <50 linii)
+- ✅ **100% offline**
 
-## Cel
-Stworzenie wizualnej mapy książek, serii i „bram” uniwersum ETERNIVERSE,
-która będzie rozwijana wraz z kolejnymi tomami i rozdziałami.
-
-## Status
-🚧 Projekt w trakcie rozwoju.
+## 🌌 Struktura światów
