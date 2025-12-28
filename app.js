@@ -1,9 +1,6 @@
-// istniejące require'y
 const express = require('express');
 const path = require('path');
-
-// Mona plugin
-const mona = require('./plugins/mona.js');  // ładuje plugin Mona
+const mona = require('./plugins/mona.js');
 
 class Eterniverse {
     // reszta kodu
