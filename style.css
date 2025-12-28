@@ -838,7 +838,6 @@ body::before {
   animation: puls 2.2s infinite ease-in-out;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .brama:hover {
   transform: scale(1.4);
   box-shadow:
