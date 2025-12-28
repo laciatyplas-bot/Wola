@@ -229,6 +229,37 @@ window.addEventListener('load', ()=>{
   loadFromStorage();
   initGateSelect();
 });
-</script>
+<button onclick="toggleStyle()">Zmień tryb</button>
+
+<style id="theme">
+  body {
+    background: black;
+    color: white;
+  }
+</style>
+
+<script>
+  let dark = true;
+
+  function toggleStyle() {
+    const style = document.getElementById("theme");
+    if (dark) {
+      style.innerHTML = `
+        body {
+          background: white;
+          color: black;
+        }
+      `;
+    } else {
+      style.innerHTML = `
+        body {
+          background: black;
+          color: white;
+        }
+      `;
+    }
+    dark = !dark;
+  }
+</script></script>
 </body>
 </html>
