@@ -902,3 +902,13 @@ body::before {
     opacity: 0.9;
   }
 }
+#mapa {
+  position: relative;
+  max-width: 1200px;
+  margin: 80px auto;
+}
+
+#mapa-img {
+  width: 100%;
+  display: block;
+}
