@@ -46,6 +46,119 @@
   <div id="toastContainer" aria-live="assertive" class="toast-container"></div>
 
   <!-- Główny skrypt – defer dla lepszego ładowania -->
-  <script defer src="app.js"></script>
+  <script defer src="app.js"></script><script>
+  // ===== Dane Bram i Ksiąg (na start można trzymać tylko tutaj) =====
+  const DATA = [
+    {
+      id:1,
+      name:"BRAMA I — INTERSEEKER",
+      sub:"Psychika · Cień · Trauma · Archetyp",
+      tag:"CORE / PSYCHE",
+      color:"#28D3C6",
+      books:[
+        {title:"InterSeeker – Atlas Wewnętrzny",status:"published",cover:""},
+        {title:"ShadowSeeker – Anatomia Cienia",status:"ready",cover:""},
+        {title:"MemorySeeker – Archeologia Wspomnień",status:"draft",cover:""}
+      ]
+    },
+    {
+      id:2,
+      name:"BRAMA II — CUSTOS / GENEZA",
+      sub:"Strażnik · Rdzeń · Początek",
+      tag:"CORE / ORIGIN",
+      color:"#FF6B6B",
+      books:[
+        {title:"Geneza",status:"ready",cover:""},
+        {title:"Custos: Kodeks Głębi",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:3,
+      name:"BRAMA III — ETERSEEKER",
+      sub:"Wola · Pole · Architektura",
+      tag:"CORE / FIELD",
+      color:"#D9A441",
+      books:[
+        {title:"EterSeeker – Księga Zakazana (Tom Zero)",status:"writing",cover:""},
+        {title:"EterSeeker – Architektura Woli",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:4,
+      name:"BRAMA IV — ARCHETYPY / WOLA",
+      sub:"Konstrukcja · Role · Przeznaczenie",
+      tag:"CORE / WILL",
+      color:"#9B6BFF",
+      books:[
+        {title:"ArchetypSeeker – System Archetypów Eteru",status:"idea",cover:""},
+        {title:"Kronika Woli",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:5,
+      name:"BRAMA V — OBFITOSEEKER",
+      sub:"Materia · Przepływ · Manifestacja",
+      tag:"EMBODIED / FLOW",
+      color:"#12C65B",
+      books:[
+        {title:"ObfitoSeeker – Kod Obfitości",status:"published",cover:""},
+        {title:"MateriaSeeker – Przewodnik Ciała i Przepływu",status:"draft",cover:""}
+      ]
+    },
+    {
+      id:6,
+      name:"BRAMA VI — BIOSEEKER",
+      sub:"Ciało · Biologia · Regulacja",
+      tag:"EMBODIED / BIO",
+      color:"#FFB14B",
+      books:[
+        {title:"BioSeeker – Sekret Biologii Pola",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:7,
+      name:"BRAMA VII — SPLĄTANIE / AI",
+      sub:"Obserwator · Meta-tożsamość · Technologia",
+      tag:"META / TECH",
+      color:"#5DADE2",
+      books:[
+        {title:"SplatanieSeeker – Protokół Obserwatora",status:"idea",cover:""},
+        {title:"InterfejsSeeker – Interfejs Świadomości",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:8,
+      name:"BRAMA VIII — TRAJEKTORIE",
+      sub:"Kod Życia · Linie Czasu · Fizyka Duszy",
+      tag:"META / PHYSICS",
+      color:"#FF9FF3",
+      books:[
+        {title:"TrajektoriaSeeker – Mapa Linii Życia",status:"ready",cover:""},
+        {title:"QuantumSeeker – Fizyka Duszy",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:9,
+      name:"BRAMA IX — ETERNIONY / KOLEKTYW",
+      sub:"Węzły Pola · Wspólnota · Misja",
+      tag:"COLLECTIVE",
+      color:"#667eea",
+      books:[
+        {title:"Eteriony – Tom I",status:"idea",cover:""},
+        {title:"Eteriony – Tom II",status:"idea",cover:""}
+      ]
+    },
+    {
+      id:10,
+      name:"BRAMA X — ETERUNIVERSE",
+      sub:"Integracja · Jedność · Architekt",
+      tag:"INTEGRATION",
+      color:"#D9A441",
+      books:[
+        {title:"Architekt Eteru — Manifest Twórcy",status:"writing",cover:""},
+        {title:"Mapa Uniwersum Eteru",status:"idea",cover:""}
+      ]
+    }
+  ];
 </body>
 </html>
