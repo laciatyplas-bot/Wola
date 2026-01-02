@@ -3,60 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TEST BELLA</title>
+<title>ETERNIVERSE</title>
+
+<link rel="stylesheet" href="styles.css">
+
 <style>
 body{
   margin:0;
-  padding:10px;
-  background:#000;
-  color:#0ff;
+  background:#050510;
+  color:#e0ffff;
   font-family:system-ui,sans-serif;
 }
-textarea{
-  width:100%;
-  height:50vh;
-  background:#111;
-  color:#0ff;
-  font-size:16px;
-  padding:10px;
+header{
+  padding:20px;
+  text-align:center;
+  border-bottom:2px solid #00ffff;
 }
-button{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  font-size:16px;
-  font-weight:700;
-  background:#0ff;
-  color:#000;
+h1{
+  margin:0;
+  font-size:2.2rem;
+  letter-spacing:2px;
+}
+nav{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:20px;
+}
+nav button{
+  padding:16px;
+  font-size:18px;
+  font-weight:900;
+  border-radius:16px;
   border:none;
+  background:#00ffff;
+  color:#000;
+}
+section{
+  padding:20px;
+  max-width:900px;
+  margin:0 auto;
+  line-height:1.6;
+}
+footer{
+  text-align:center;
+  padding:16px;
+  opacity:.6;
+  font-size:14px;
 }
 </style>
 </head>
+
 <body>
 
-<textarea id="t">Wklej tekst tutaj.</textarea>
+<header>
+  <h1>ETERNIVERSE</h1>
+  <div>System Pisarski · Bella AI · Kanon Bram</div>
+</header>
 
-<button onclick="stress()">STREŚĆ</button>
-<button onclick="expand()">ROZWIŃ</button>
-<button onclick="rewrite()">PRZEPISZ</button>
+<nav>
+  <button onclick="openWriting()">✍️ PISANIE (EDYTOR)</button>
+  <button onclick="openBella()">🧠 BELLA AI</button>
+  <button onclick="openSession()">⏱ SESJA PISARSKA</button>
+</nav>
+
+<section>
+  <h2>Status</h2>
+  <p>🟢 Repo kompletne · 📱 Mobile OK · 🧠 Bella aktywna</p>
+
+  <h2>Jak pracować</h2>
+  <ul>
+    <li><b>PISANIE</b> – główny edytor + bramy + kanon</li>
+    <li><b>BELLA AI</b> – rozwijanie scen i stylu</li>
+    <li><b>SESJA</b> – fokus, licznik czasu i słów</li>
+  </ul>
+</section>
+
+<footer>
+  © 2026 · ETERNIVERSE · Maciej Maciuszek
+</footer>
 
 <script>
-function stress(){
-  const t=document.getElementById('t');
-  const w=t.value.split(/\s+/);
-  t.value=w.slice(0,Math.min(50,w.length)).join(' ')+"\\n\\n[STRESZCZONE]";
+function openWriting(){
+  // wracamy do trybu edytora w tym samym pliku
+  window.location.href = "index.html#writing";
 }
 
-function expand(){
-  const t=document.getElementById('t');
-  t.value=t.value+"\\n\\n"+t.value+"\\n\\n[ROZWINIĘTE]";
+function openBella(){
+  window.location.href = "bella-assistant.html";
 }
 
-function rewrite(){
-  const t=document.getElementById('t');
-  t.value=t.value.split(/\\n+/).map(l=>"— "+l).join("\\n\\n")+"\\n\\n[PRZEPISANE]";
+function openSession(){
+  alert("Sesja pisarska działa w trybie pisania (CTRL + SHIFT + S)");
 }
 </script>
+
+<!-- CORE SYSTEM -->
+<script src="js/system-core.js"></script>
+<script src="js/eterniverse-core.js"></script>
+
+<!-- DATA + RENDER -->
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+
+<!-- EDITOR -->
+<script src="js/editor.js"></script>
+<script src="js/app.js"></script>
+
+<!-- BELLA -->
+<script src="js/ai-integration.js"></script>
+<script src="js/bella-ai-memory.js"></script>
+<script src="js/bella-ai-memory-compressor.js"></script>
+<script src="js/bella-ai-autoprofile.js"></script>
+
+<!-- SESSION -->
+<script src="js/bella-writing-session.js"></script>
+
+<!-- UPLOAD -->
+<script src="js/upload.js"></script>
 
 </body>
 </html>
