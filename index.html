@@ -3,20 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA PRO — KANON 2.0</title>
+<title>ETERNIVERSE — KANON PER SCENA</title>
 
 <style>
-body{margin:0;background:#000;color:#0ff;font-family:system-ui,sans-serif}
-header{padding:14px;text-align:center;font-weight:900;border-bottom:2px solid #0ff}
-textarea{width:100%;min-height:55vh;background:#111;color:#0ff;font-size:16px;padding:12px;border:none}
-button,select{width:100%;padding:14px;margin-top:10px;font-size:16px;font-weight:900;background:#0ff;color:#000;border:none}
-.note{background:#021;color:#7CFF7C;padding:10px;margin-top:10px;font-weight:800}
+body{
+  margin:0;
+  background:#000;
+  color:#0ff;
+  font-family:system-ui,sans-serif;
+}
+header{
+  padding:14px;
+  text-align:center;
+  font-weight:900;
+  border-bottom:2px solid #0ff;
+}
+textarea{
+  width:100%;
+  min-height:55vh;
+  background:#111;
+  color:#0ff;
+  font-size:16px;
+  padding:12px;
+  border:none;
+}
+button,select{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  font-size:16px;
+  font-weight:900;
+  background:#0ff;
+  color:#000;
+  border:none;
+}
+.small{
+  font-size:12px;
+  opacity:.7;
+  margin-top:6px;
+}
 </style>
 </head>
 
 <body>
 
-<header>BELLA PRO — KANON (PISZE Z TOBĄ)</header>
+<header>ETERNIVERSE · BELLA PRO — KANON PER SCENA</header>
 
 <textarea id="book">
 ROZDZIAŁ 1
@@ -25,64 +56,100 @@ Początek jeszcze nie wiedział, że jest początkiem.
 </textarea>
 
 <select id="gate">
-  <option value="inter">BRAMA I — INTERSEEKER</option>
-  <option value="eter">BRAMA III — ETERSEEKER</option>
-  <option value="obfi">BRAMA V — OBFITOSEEKER</option>
+  <option value="inter">BRAMA I — INTERSEEKER (cień)</option>
+  <option value="eter">BRAMA III — ETERSEEKER (wola)</option>
+  <option value="obfi">BRAMA V — OBFITOSEEKER (obfitość)</option>
 </select>
 
-<button onclick="canon()">KANON — PISZ DALEJ</button>
+<select id="scene">
+  <option value="enter">SCENA: Wejście</option>
+  <option value="tension">SCENA: Napięcie</option>
+  <option value="choice">SCENA: Decyzja</option>
+  <option value="result">SCENA: Konsekwencja</option>
+</select>
 
-<div id="info"></div>
+<button onclick="canonScene()">KANON — DOPISZ SCENĘ</button>
+
+<div class="small">
+Kanon działa **lokalnie**: jedna scena, jedna decyzja, jeden efekt.
+</div>
 
 <script>
-const CANON = {
+const CANON_SCENES = {
   inter: {
-    inject: [
-      "Cień nie zniknął. Został tylko przesunięty.",
-      "To, co wyparte, wróciło w najcichszy możliwy sposób."
+    enter: [
+      "Cień był obecny od początku, choć nikt nie potrafił go nazwać.",
+      "Coś niewypowiedzianego wisiało w powietrzu."
     ],
-    continue: [
-      "Konfrontacja nie była dramatem, lecz aktem uczciwości.",
-      "Prawda nie potrzebowała uzasadnienia."
+    tension: [
+      "Im dłużej to trwało, tym trudniej było ignorować wewnętrzny opór.",
+      "Myśli krążyły wokół tego, co miało pozostać ukryte."
+    ],
+    choice: [
+      "Unikanie prawdy przestało być możliwe.",
+      "Konfrontacja stała się jedyną uczciwą drogą."
+    ],
+    result: [
+      "Ujawnienie zmieniło więcej, niż się spodziewano.",
+      "Cień stracił władzę w chwili, gdy został nazwany."
     ]
   },
+
   eter: {
-    inject: [
-      "Decyzja zapadła szybciej, niż pojawiła się myśl.",
-      "Wola objawiła się jako spójność działania."
+    enter: [
+      "Przestrzeń zareagowała, jakby rozpoznała intencję.",
+      "Coś się przesunęło, zanim zapadła świadoma decyzja."
     ],
-    continue: [
-      "Świat dostosował się do wyboru.",
-      "Odpowiedzialność stała się oczywista."
+    tension: [
+      "Każda sekunda zwiększała ciężar wyboru.",
+      "Wola zaczęła dominować nad wątpliwościami."
+    ],
+    choice: [
+      "Decyzja zapadła bez świadków.",
+      "Nie było już alternatyw, tylko działanie."
+    ],
+    result: [
+      "Świat przyjął wybór bez oporu.",
+      "Nowa trajektoria została aktywowana."
     ]
   },
+
   obfi: {
-    inject: [
-      "Przepływ pojawił się dokładnie tam, gdzie wcześniej była pustka.",
-      "Obfitość nie przyszła z zewnątrz."
+    enter: [
+      "Zmiana zaczęła się od ledwie zauważalnego przesunięcia.",
+      "Potencjał pojawił się wcześniej niż rezultat."
     ],
-    continue: [
-      "Równowaga ustabilizowała się bez wysiłku.",
-      "Manifestacja była naturalną konsekwencją."
+    tension: [
+      "Im bliżej było rozwiązania, tym wyraźniejszy stawał się koszt.",
+      "Równowaga chwiała się między nadmiarem a brakiem."
+    ],
+    choice: [
+      "Akceptacja przyszła wcześniej niż zrozumienie.",
+      "To, co wybrane, zaczęło się materializować."
+    ],
+    result: [
+      "Przepływ ustabilizował się w nowej formie.",
+      "Obfitość okazała się konsekwencją spójności."
     ]
   }
 };
 
-function canon(){
-  const t=document.getElementById('book');
-  const g=document.getElementById('gate').value;
-  const info=document.getElementById('info');
+function canonScene(){
+  const t = document.getElementById('book');
+  const g = document.getElementById('gate').value;
+  const s = document.getElementById('scene').value;
 
+  const lines = CANON_SCENES[g][s];
   const add =
-`\n${pick(CANON[g].inject)}
-${pick(CANON[g].continue)}\n`;
+`\n${pick(lines)}
+${pick(lines)}\n`;
 
   t.value += add;
-  info.className='note';
-  info.textContent='KANON: treść poprowadzona zgodnie z Bramą';
 }
 
-function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function pick(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
 </script>
 
 </body>
