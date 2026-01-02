@@ -3,302 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE</title>
+<title>ETERNIVERSE — HYPERDRIVE v6.0 ⚡🌌</title>
 
 <link rel="stylesheet" href="styles.css">
 
 <style>
+/* HYPERDRIVE MASTER STYLES — MOC 600% */
 :root {
-  --bg-primary: #050510;
-  --bg-secondary: #0a0a1a;
-  --accent: #00ffff;
-  --accent-glow: #00ffff80;
-  --text-primary: #e0ffff;
-  --text-secondary: #a0d8ff;
-  --neon-glow: 0 0 20px #00ffff, 0 0 40px #00ffff, inset 0 0 10px #00ffff20;
+  --hyper-bg: radial-gradient(circle at 30% 20%, #0a001a 0%, #000011 50%, #050510 100%);
+  --hyper-accent: #00ffdd;
+  --hyper-glow: 0 0 40px #00ffdd, 0 0 80px #ff00aa, 0 0 120px #00ffdd80;
+  --text-hyper: #e0f8ff;
+  --moc-hue: 180;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+  margin: 0; padding: 0;
+  background: var(--hyper-bg);
   background-attachment: fixed;
-  color: var(--text-primary);
-  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text-hyper);
+  font-family: 'SF Mono', system-ui, sans-serif;
   overflow-x: hidden;
-  animation: bgPulse 8s ease-in-out infinite alternate;
+  animation: hyperPulse 10s ease-in-out infinite alternate;
 }
 
-@keyframes bgPulse {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+@keyframes hyperPulse {
+  0% { background-position: 0% 50%; filter: hue-rotate(0deg) brightness(1); }
+  100% { background-position: 100% 50%; filter: hue-rotate(30deg) brightness(1.05); }
 }
 
+/* HYPER HEADER — BEAST MODE */
 header {
-  padding: 40px 20px;
-  text-align: center;
-  border-bottom: 2px solid transparent;
-  background: rgba(0, 15, 30, 0.3);
-  backdrop-filter: blur(20px);
-  position: relative;
-  overflow: hidden;
+  padding: 50px 20px; text-align: center;
+  background: rgba(5,5,25,0.95); backdrop-filter: blur(40px);
+  position: relative; overflow: hidden; border-bottom: 3px solid transparent;
+  box-shadow: inset 0 0 100px rgba(0,255,221,0.1);
 }
 
 header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg, transparent 0deg, var(--accent-glow) 90deg, transparent 180deg);
-  animation: rotate 20s linear infinite;
-  opacity: 0.1;
+  content: ''; position: absolute; inset: 0;
+  background: conic-gradient(from 0deg, transparent 0deg, var(--hyper-accent) 120deg, transparent 240deg);
+  animation: hyperRotate 25s linear infinite; opacity: 0.15;
 }
 
-@keyframes rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+@keyframes hyperRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 h1 {
-  margin: 0 0 8px 0;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  letter-spacing: 4px;
-  text-shadow: var(--neon-glow);
-  position: relative;
-  animation: glow 2s ease-in-out infinite alternate;
+  margin: 0 0 12px 0; font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: 6px; font-weight: 900;
+  background: linear-gradient(45deg, #00ffdd, #ff44ff, #00ff88);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-shadow: var(--hyper-glow); position: relative;
+  animation: hyperGlow 3s ease-in-out infinite alternate;
 }
 
-@keyframes glow {
-  0% { filter: drop-shadow(0 0 5px var(--accent)); }
-  100% { filter: drop-shadow(0 0 20px var(--accent)); }
+@keyframes hyperGlow {
+  0% { filter: drop-shadow(0 0 10px var(--hyper-accent)); transform: scale(1); }
+  100% { filter: drop-shadow(0 0 40px var(--hyper-accent)); transform: scale(1.02); }
 }
 
 header div {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  letter-spacing: 1px;
-  opacity: 0;
-  animation: fadeInUp 1s ease 0.5s forwards;
+  font-size: 1.2rem; color: var(--text-secondary); letter-spacing: 2px;
+  opacity: 0; animation: hyperFade 1.5s ease 0.6s forwards;
 }
 
-@keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes hyperFade { to { opacity: 1; transform: translateY(0) scale(1); } }
 
+/* BEAST NAV — HYPER BUTTONS */
 nav {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 40px 20px;
-  max-width: 500px;
-  margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px; padding: 50px 20px; max-width: 1200px; margin: 0 auto;
 }
 
 nav button {
-  padding: 20px 24px;
-  font-size: clamp(1.1rem, 3vw, 1.4rem);
-  font-weight: 900;
-  border-radius: 24px;
-  border: 2px solid transparent;
-  background: linear-gradient(145deg, #00ffff, #00ccff);
-  color: #000;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  padding: 28px 32px; font-size: clamp(1.2rem, 3.5vw, 1.6rem); font-weight: 900;
+  border-radius: 28px; border: 3px solid transparent;
+  background: linear-gradient(145deg, rgba(0,255,221,0.2), rgba(255,68,255,0.2));
+  color: var(--text-hyper); cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; overflow: hidden; text-transform: uppercase; letter-spacing: 2px;
+  backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
 nav button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.5s;
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: translateX(-100%); transition: transform 0.6s;
 }
 
 nav button:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: var(--neon-glow), 0 20px 40px rgba(0, 255, 255, 0.3);
-  border-color: var(--accent);
+  transform: translateY(-8px) scale(1.05); border-color: var(--hyper-accent);
+  box-shadow: var(--hyper-glow), 0 30px 60px rgba(0,255,221,0.4);
+  background: linear-gradient(145deg, rgba(0,255,221,0.4), rgba(255,68,255,0.4));
 }
 
-nav button:hover::before {
-  left: 100%;
-}
+nav button:hover::before { transform: translateX(100%); }
 
-nav button:active {
-  transform: translateY(-2px) scale(1.01);
-}
-
-nav button:focus {
-  outline: 3px solid var(--accent-glow);
-  outline-offset: 2px;
-}
+nav button:active { transform: translateY(-4px) scale(1.03); }
 
 section {
-  padding: 60px 20px;
-  max-width: 900px;
-  margin: 0 auto;
-  line-height: 1.7;
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeInUp 1s ease 0.8s forwards;
+  padding: 80px 24px; max-width: 1100px; margin: 0 auto;
+  line-height: 1.8; opacity: 0; transform: translateY(50px);
+  animation: hyperReveal 1.2s ease forwards; scroll-margin-top: 100px;
+}
+
+@keyframes hyperReveal {
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 section h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px var(--accent-glow);
-  position: relative;
+  font-size: 2.2rem; margin-bottom: 30px; letter-spacing: 3px; font-weight: 900;
+  position: relative; background: linear-gradient(90deg, var(--hyper-accent), #ff44ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
 section h2::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  content: ''; position: absolute; bottom: -8px; left: 0; width: 80px;
+  height: 4px; background: linear-gradient(90deg, transparent, var(--hyper-accent), transparent);
+  border-radius: 2px; box-shadow: 0 0 20px var(--hyper-accent);
 }
 
-section p, section li {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-}
+section p, section li { font-size: 1.15rem; color: rgba(224,248,255,0.95); }
 
-section ul {
-  list-style: none;
-  padding: 0;
-}
-
+section ul { list-style: none; padding: 0; }
 section li {
-  padding: 16px 0;
-  border-left: 3px solid transparent;
-  padding-left: 24px;
-  transition: all 0.3s ease;
-  position: relative;
+  padding: 24px 0; border-left: 4px solid transparent; padding-left: 32px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
+  border-radius: 0 12px 0 12px;
 }
 
 section li:hover {
-  border-left-color: var(--accent);
-  transform: translateX(8px);
+  border-left-color: var(--hyper-accent); transform: translateX(12px);
+  background: rgba(0,255,221,0.05); box-shadow: 10px 0 30px rgba(0,255,221,0.1);
 }
 
 section li b {
-  color: var(--accent);
-  text-shadow: 0 0 8px var(--accent-glow);
+  color: var(--hyper-accent); text-shadow: 0 0 12px var(--hyper-accent);
+  background: rgba(0,255,221,0.2); padding: 2px 8px; border-radius: 4px;
 }
 
-footer {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  opacity: 0.7;
-  border-top: 1px solid var(--accent-glow);
-  margin-top: 80px;
+/* HYPER STATUS BAR */
+.status-hyper {
+  position: fixed; top: 20px; right: 20px; z-index: 999;
+  background: rgba(5,5,25,0.95); backdrop-filter: blur(30px);
+  padding: 16px 24px; border-radius: 20px; border: 2px solid var(--hyper-accent);
+  box-shadow: var(--hyper-glow); font-family: 'SF Mono', monospace;
+  font-size: 13px; opacity: 0; animation: statusSlide 0.8s 1s forwards;
 }
 
-/* Mobile enhancements */
+@keyframes statusSlide {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* MOBILE BEAST MODE */
 @media (max-width: 768px) {
-  nav { gap: 16px; padding: 30px 16px; }
-  nav button { padding: 18px 20px; font-size: 1.1rem; }
-  section { padding: 40px 16px; }
+  nav { grid-template-columns: 1fr; gap: 20px; padding: 40px 16px; }
+  nav button { padding: 24px 28px; font-size: 1.3rem; }
+  section { padding: 60px 16px; }
+  .status-hyper { position: fixed; top: 10px; right: 10px; left: 10px; font-size: 12px; }
 }
 
-/* High performance scroll reveal */
-section { scroll-snap-align: start; }
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>ETERNIVERSE</h1>
-  <div>System Pisarski · Bella AI · Kanon Bram</div>
-</header>
-
-<nav>
-  <button onclick="openWriting()">✍️ PISANIE (EDYTOR)</button>
-  <button onclick="openBella()">🧠 BELLA AI</button>
-  <button onclick="openSession()">⏱ SESJA PISARSKA</button>
-</nav>
-
-<section>
-  <h2>Status</h2>
-  <p>🟢 <strong>Repo kompletne</strong> · 📱 <strong>Mobile OK</strong> · 🧠 <strong>Bella aktywna</strong></p>
-
-  <h2>Jak pracować</h2>
-  <ul>
-    <li><b>PISANIE</b> – główny edytor + bramy + kanon (CTRL + B dla bram)</li>
-    <li><b>BELLA AI</b> – rozwijanie scen i stylu (automatyczne profile postaci)</li>
-    <li><b>SESJA</b> – fokus, licznik czasu i słów (CTRL + SHIFT + S)</li>
-  </ul>
-</section>
-
-<footer>
-  © 2026 · ETERNIVERSE · Maciej Maciuszek · Sosnowiec, Śląsk
-</footer>
-
-<script>
-function openWriting(){
-  window.location.href = "index.html#writing";
-}
-
-function openBella(){
-  window.location.href = "bella-assistant.html";
-}
-
-function openSession(){
-  alert("Sesja pisarska działa w trybie pisania (CTRL + SHIFT + S)
-
-Funkcje: timer, licznik słów, fokus mode, auto-save.");
-}
-
-// Smooth scroll reveal na scroll (natywny JS, bez lib)
-window.addEventListener('scroll', () => {
-  const sections = document.querySelectorAll('section');
-  sections.forEach(section => {
-    const rect = section.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      section.style.opacity = '1';
-      section.style.transform = 'translateY(0)';
-    }
-  });
-});
-
-// Preload dla smooth performance
-window.addEventListener('load', () => {
-  document.body.style.opacity = '1';
-});
-</script>
-
-<!-- CORE SYSTEM (bez zmian) -->
-<script src="js/system-core.js"></script>
-<script src="js/eterniverse-core.js"></script>
-<script src="js/data.js"></script>
-<script src="js/render.js"></script>
-<script src="js/editor.js"></script>
-<script src="js/app.js"></script>
-<script src="js/ai-integration.js"></script>
-<script src="js/bella-ai-memory.js"></script>
-<script src="js/bella-ai-memory-compressor.js"></script>
-<script src="js/bella-ai-autoprofile.js"></script>
-<script src="js/bella-writing-session.js"></script>
-<script src="js/upload.js"></script>
-
-</body>
-</html>
+/* PERFORMANCE PERFECTION */
+section { scroll-snap-align: start; scroll-margin-top: 120px; }
+html { scroll-behavior: smooth; }
