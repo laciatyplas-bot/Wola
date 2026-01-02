@@ -3,59 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TEST BELLA</title>
+<title>ETERNIVERSE — BOOK MASTER</title>
+
 <style>
 body{
   margin:0;
-  padding:10px;
   background:#000;
   color:#0ff;
   font-family:system-ui,sans-serif;
 }
-textarea{
+header{
+  padding:12px;
+  text-align:center;
+  font-weight:700;
+  border-bottom:2px solid #0ff;
+}
+textarea, .editor{
   width:100%;
-  height:50vh;
+  min-height:30vh;
   background:#111;
   color:#0ff;
   font-size:16px;
   padding:10px;
+  border:none;
 }
 button{
   width:100%;
   padding:14px;
-  margin-top:10px;
+  margin-top:8px;
   font-size:16px;
   font-weight:700;
   background:#0ff;
   color:#000;
   border:none;
 }
+.list button{
+  background:#111;
+  color:#0ff;
+}
+.hidden{display:none}
 </style>
 </head>
+
 <body>
 
-<textarea id="t">Wklej tekst tutaj.</textarea>
+<header>ETERNIVERSE · BOOK MASTER</header>
 
-<button onclick="stress()">STREŚĆ</button>
-<button onclick="expand()">ROZWIŃ</button>
-<button onclick="rewrite()">PRZEPISZ</button>
+<textarea id="input">Wklej TU całą książkę.</textarea>
+<button onclick="split()">PODZIEL NA ROZDZIAŁY</button>
+
+<div class="list" id="chapters"></div>
+
+<div id="work" class="hidden">
+  <div class="editor" id="editor" contenteditable="true"></div>
+
+  <button onclick="shorten()">STREŚĆ</button>
+  <button onclick="expand()">ROZWIŃ</button>
+  <button onclick="rewrite()">PRZEPISZ</button>
+  <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
+</div>
 
 <script>
-function stress(){
-  const t=document.getElementById('t');
-  const w=t.value.split(/\s+/);
-  t.value=w.slice(0,Math.min(50,w.length)).join(' ')+"\\n\\n[STRESZCZONE]";
+let chapters=[];
+let active=null;
+
+function split(){
+  const t=document.getElementById('input').value.trim();
+  if(!t) return;
+  chapters=t.split(/(?=ROZDZIAŁ|Rozdział|CHAPTER|Chapter)/g)
+    .filter(x=>x.trim().length>40)
+    .map(x=>x.trim());
+  localStorage.setItem('CHAPTERS',JSON.stringify(chapters));
+  render();
+}
+
+function render(){
+  const l=document.getElementById('chapters');
+  l.innerHTML='';
+  chapters.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.textContent='ROZDZIAŁ '+(i+1);
+    b.onclick=()=>openChapter(i);
+    l.appendChild(b);
+  });
+}
+
+function openChapter(i){
+  active=i;
+  document.getElementById('editor').innerText=chapters[i];
+  document.getElementById('work').classList.remove('hidden');
+}
+
+function save(){
+  if(active===null) return;
+  chapters[active]=document.getElementById('editor').innerText;
+  localStorage.setItem('CHAPTERS',JSON.stringify(chapters));
+}
+
+function shorten(){
+  const e=document.getElementById('editor');
+  const w=e.innerText.split(/\s+/);
+  e.innerText=w.slice(0,Math.min(80,w.length)).join(' ')+"\n\n[STRESZCZONE]";
 }
 
 function expand(){
-  const t=document.getElementById('t');
-  t.value=t.value+"\\n\\n"+t.value+"\\n\\n[ROZWINIĘTE]";
+  const e=document.getElementById('editor');
+  e.innerText=e.innerText+"\n\n"+e.innerText+"\n\n[ROZWINIĘTE]";
 }
 
 function rewrite(){
-  const t=document.getElementById('t');
-  t.value=t.value.split(/\\n+/).map(l=>"— "+l).join("\\n\\n")+"\\n\\n[PRZEPISANE]";
+  const e=document.getElementById('editor');
+  e.innerText=e.innerText.split(/\n+/).map(l=>"— "+l).join("\n\n")+"\n\n[PRZEPISANE]";
 }
+
+(function load(){
+  const s=localStorage.getItem('CHAPTERS');
+  if(s){
+    chapters=JSON.parse(s);
+    render();
+  }
+})();
 </script>
 
 </body>
