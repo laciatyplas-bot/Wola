@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE · BOOK MASTER (MOBILE + SYSTEM)</title>
+<title>ETERNIVERSE — PISANIE</title>
 
 <style>
 *{box-sizing:border-box}
@@ -11,10 +11,8 @@ body{
   margin:0;
   background:#050510;
   color:#e0ffff;
-  font-family:system-ui, sans-serif;
+  font-family:system-ui,sans-serif;
 }
-
-/* HEADER */
 header{
   padding:12px;
   background:#070720;
@@ -23,10 +21,6 @@ header{
   justify-content:space-between;
   align-items:center;
 }
-header strong{font-size:16px}
-
-/* TOP BUTTONS */
-.top-buttons{display:flex;gap:8px}
 button{
   padding:10px 12px;
   font-size:14px;
@@ -36,8 +30,6 @@ button{
   border:none;
   border-radius:6px;
 }
-
-/* NAV */
 nav{
   display:flex;
   overflow-x:auto;
@@ -48,14 +40,10 @@ nav button{
   flex:1;
   background:none;
   color:#00ffff;
-  border:none;
-  padding:12px;
 }
-
-/* LAYOUT */
 main{padding:10px}
-
-/* EDITOR */
+.panel{display:none}
+.panel.active{display:block}
 #editor{
   min-height:55vh;
   padding:14px;
@@ -65,18 +53,7 @@ main{padding:10px}
   background:#0a0a25;
   border-radius:8px;
 }
-
-/* PANELS */
-.panel{display:none}
-.panel.active{display:block}
-
-/* LISTS */
-.list button{
-  width:100%;
-  margin-bottom:6px;
-}
-
-/* SESSION OVERLAY */
+.list button{width:100%;margin-bottom:6px}
 #overlay{
   position:fixed;
   top:10px;
@@ -85,15 +62,9 @@ main{padding:10px}
   color:#00ffff;
   padding:10px;
   border-radius:8px;
-  font-size:14px;
   z-index:9999;
 }
-
-/* SESSION MODE */
-.session nav,
-.session .top-buttons{
-  opacity:0.15;
-}
+.session nav{opacity:.2}
 </style>
 </head>
 
@@ -101,60 +72,41 @@ main{padding:10px}
 
 <header>
   <strong>ETERNIVERSE</strong>
-  <div class="top-buttons">
-    <button id="sessionBtn">SESJA</button>
-    <button onclick="exportText()">EKSPORT</button>
-  </div>
+  <button id="sessionBtn">SESJA</button>
 </header>
 
 <nav>
   <button onclick="show('book')">KSIĄŻKA</button>
   <button onclick="show('gates')">BRAMY</button>
   <button onclick="show('bella')">BELLA</button>
-  <button onclick="show('media')">MEDIA</button>
 </nav>
 
 <main>
 
-<!-- BOOK -->
 <div id="book" class="panel active">
   <div id="editor" contenteditable="true">Zacznij pisać…</div>
 </div>
 
-<!-- GATES -->
 <div id="gates" class="panel">
   <div class="list" id="gateList"></div>
 </div>
 
-<!-- BELLA -->
 <div id="bella" class="panel">
-  <textarea id="bellaInput" style="width:100%;min-height:120px">Polecenie dla Belli…</textarea>
+  <textarea id="bellaInput" style="width:100%;min-height:100px">Polecenie…</textarea>
   <button onclick="bellaGenerate()">GENERUJ</button>
   <pre id="bellaOut"></pre>
-</div>
-
-<!-- MEDIA -->
-<div id="media" class="panel">
-  <p>OKŁADKA</p>
-  <input type="file" accept="image/*">
-  <p>AUDIO</p>
-  <input type="file" accept="audio/*">
 </div>
 
 </main>
 
 <script>
-/* =========================
-   TABS
-========================= */
+/* ================= TABS ================= */
 function show(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-/* =========================
-   SYSTEM DATA
-========================= */
+/* ================= SYSTEM ================= */
 const GATES=[
  {id:1,name:'CIENIA'},
  {id:2,name:'GENEZY'},
@@ -169,6 +121,9 @@ const GATES=[
 ];
 
 const gateList=document.getElementById('gateList');
+const editor=document.getElementById('editor');
+let activeGate=null;
+
 GATES.forEach(g=>{
   const b=document.createElement('button');
   b.textContent='BRAMA '+g.id+' — '+g.name;
@@ -176,41 +131,35 @@ GATES.forEach(g=>{
   gateList.appendChild(b);
 });
 
-let activeGate=null;
-
 function selectGate(g){
   activeGate=g;
   show('book');
-  loadGateText();
+  load();
 }
 
-function loadGateText(){
+function save(){
   if(!activeGate)return;
-  editor.innerText=localStorage.getItem('gate_'+activeGate.id)||'';
+  localStorage.setItem('GATE_'+activeGate.id,editor.innerText);
 }
 
-function saveGateText(){
+function load(){
   if(!activeGate)return;
-  localStorage.setItem('gate_'+activeGate.id,editor.innerText);
+  editor.innerText=localStorage.getItem('GATE_'+activeGate.id)||'';
 }
 
-/* =========================
-   BELLA (OFFLINE)
-========================= */
+setInterval(save,2000);
+
+/* ================= BELLA ================= */
 function bellaGenerate(){
   const p=document.getElementById('bellaInput').value;
-  const out=document.getElementById('bellaOut');
-  out.textContent=
+  document.getElementById('bellaOut').textContent=
     activeGate
     ? 'BRAMA '+activeGate.id+'\\n'+p+'\\n\\nNie jesteś myślą. Jesteś polem.'
     : 'Wybierz Bramę.';
 }
 
-/* =========================
-   SESSION
-========================= */
+/* ================= SESJA ================= */
 let active=false,startTime=0,startWords=0,timer=null;
-const editor=document.getElementById('editor');
 const btn=document.getElementById('sessionBtn');
 
 btn.onclick=()=>active?stop():start();
@@ -239,7 +188,7 @@ function overlay(){
 }
 
 function update(){
-  saveGateText();
+  save();
   document.getElementById('t').textContent=time();
   document.getElementById('w').textContent=words()-startWords;
 }
@@ -253,17 +202,6 @@ function time(){
   const m=Math.floor(s/60);
   const r=s%60;
   return m.toString().padStart(2,'0')+':'+r.toString().padStart(2,'0');
-}
-
-/* =========================
-   EXPORT
-========================= */
-function exportText(){
-  const blob=new Blob([editor.innerText],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='eterniverse.txt';
-  a.click();
 }
 </script>
 
