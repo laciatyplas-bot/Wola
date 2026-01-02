@@ -3,185 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — KANON ROZWIJANIA</title>
+<title>ETERNIVERSE</title>
+
+<link rel="stylesheet" href="styles.css">
 
 <style>
 body{
   margin:0;
-  background:#000;
-  color:#0ff;
+  background:#050510;
+  color:#e0ffff;
   font-family:system-ui,sans-serif;
 }
 header{
-  padding:14px;
+  padding:20px;
   text-align:center;
-  font-weight:900;
-  border-bottom:2px solid #0ff;
+  border-bottom:2px solid #00ffff;
 }
-textarea{
-  width:100%;
-  min-height:55vh;
-  background:#111;
-  color:#0ff;
-  font-size:16px;
-  padding:12px;
+h1{
+  margin:0;
+  font-size:2.2rem;
+  letter-spacing:2px;
+}
+nav{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:20px;
+}
+nav button{
+  padding:16px;
+  font-size:18px;
+  font-weight:900;
+  border-radius:16px;
   border:none;
-}
-button,select{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  font-size:16px;
-  font-weight:900;
-  background:#0ff;
+  background:#00ffff;
   color:#000;
-  border:none;
 }
-.small{font-size:12px;opacity:.7;margin-top:6px}
+section{
+  padding:20px;
+  max-width:900px;
+  margin:0 auto;
+  line-height:1.6;
+}
+footer{
+  text-align:center;
+  padding:16px;
+  opacity:.6;
+  font-size:14px;
+}
 </style>
 </head>
 
 <body>
 
-<header>ETERNIVERSE · BELLA PRO — ROZWIJANIE SCEN</header>
+<header>
+  <h1>ETERNIVERSE</h1>
+  <div>System Pisarski · Bella AI · Kanon Bram</div>
+</header>
 
-<textarea id="book">
-ROZDZIAŁ 1
+<nav>
+  <button onclick="openWriting()">✍️ PISANIE (EDYTOR)</button>
+  <button onclick="openBella()">🧠 BELLA AI</button>
+  <button onclick="openSession()">⏱ SESJA PISARSKA</button>
+</nav>
 
-Początek jeszcze nie wiedział, że jest początkiem.
-</textarea>
+<section>
+  <h2>Status</h2>
+  <p>🟢 Repo kompletne · 📱 Mobile OK · 🧠 Bella aktywna</p>
 
-<select id="gate">
-  <option value="inter">BRAMA I — INTERSEEKER (cień)</option>
-  <option value="eter">BRAMA III — ETERSEEKER (wola)</option>
-  <option value="obfi">BRAMA V — OBFITOSEEKER (obfitość)</option>
-</select>
+  <h2>Jak pracować</h2>
+  <ul>
+    <li><b>PISANIE</b> – główny edytor + bramy + kanon</li>
+    <li><b>BELLA AI</b> – rozwijanie scen i stylu</li>
+    <li><b>SESJA</b> – fokus, licznik czasu i słów</li>
+  </ul>
+</section>
 
-<select id="scene">
-  <option value="enter">SCENA: Wejście</option>
-  <option value="tension">SCENA: Narastanie</option>
-  <option value="choice">SCENA: Decyzja</option>
-  <option value="result">SCENA: Konsekwencja</option>
-</select>
-
-<button onclick="expandScene()">KANON — ROZWIŃ SCENĘ</button>
-
-<div class="small">
-Rozwijanie = 2–3 akapity logicznej kontynuacji, nie streszczenie.
-</div>
+<footer>
+  © 2026 · ETERNIVERSE · Maciej Maciuszek
+</footer>
 
 <script>
-const EXPAND = {
-  inter: {
-    enter: [
-      [
-        "Cień był obecny od pierwszej chwili, choć nikt nie potrafił wskazać jego źródła.",
-        "To napięcie nie miało kształtu strachu — było raczej przeczuciem, że coś zostało pominięte.",
-        "Im dłużej trwała cisza, tym wyraźniej stawało się, że nie jest ona neutralna."
-      ],
-      [
-        "Prawda nie pojawiła się nagle. Najpierw przyszło uczucie dyskomfortu.",
-        "To, co wyparte, zaczęło delikatnie naciskać od środka.",
-        "Nie było jeszcze konfrontacji, ale nie było już spokoju."
-      ]
-    ],
-    tension: [
-      [
-        "Myśli krążyły wokół jednego punktu, którego nie dało się nazwać wprost.",
-        "Każda próba odsunięcia go na bok tylko wzmacniała jego obecność.",
-        "Cień rósł nie dlatego, że był potężny, ale dlatego, że był ignorowany."
-      ]
-    ],
-    choice: [
-      [
-        "Moment decyzji nie przyszedł z ulgą.",
-        "Był raczej zgodą na to, że dalsze unikanie nie ma sensu.",
-        "Konfrontacja stała się jedyną formą uczciwości wobec samego siebie."
-      ]
-    ],
-    result: [
-      [
-        "Nazwanie tego, co dotąd było ukryte, zmieniło strukturę całej sytuacji.",
-        "Cień nie zniknął, ale przestał rządzić z ukrycia.",
-        "Od tej chwili relacja z nim była świadoma."
-      ]
-    ]
-  },
+function openWriting(){
+  // wracamy do trybu edytora w tym samym pliku
+  window.location.href = "index.html#writing";
+}
 
-  eter: {
-    enter: [
-      [
-        "Przestrzeń zareagowała subtelnie, niemal niezauważalnie.",
-        "To nie był impuls, lecz zmiana napięcia w tle.",
-        "Wola zaczęła się formować, zanim została rozpoznana jako decyzja."
-      ]
-    ],
-    tension: [
-      [
-        "Każda kolejna chwila wzmacniała potrzebę działania.",
-        "Wątpliwości nie znikały, ale traciły swoją dominującą pozycję.",
-        "Ciężar wyboru stawał się coraz bardziej konkretny."
-      ]
-    ],
-    choice: [
-      [
-        "Decyzja zapadła bez ceremonii.",
-        "Nie towarzyszyło jej poczucie zwycięstwa, tylko spójności.",
-        "Wola objawiła się jako gotowość do poniesienia konsekwencji."
-      ]
-    ],
-    result: [
-      [
-        "Świat nie zaprotestował.",
-        "Nowa trajektoria zdarzeń zaczęła się stabilizować.",
-        "To, co zostało wybrane, domagało się teraz realizacji."
-      ]
-    ]
-  },
+function openBella(){
+  window.location.href = "bella-assistant.html";
+}
 
-  obfi: {
-    enter: [
-      [
-        "Zmiana zaczęła się od przesunięcia akcentów, nie faktów.",
-        "To, co wcześniej wydawało się brakiem, zaczęło wyglądać jak potencjał.",
-        "Obfitość nie była jeszcze widoczna, ale była już obecna."
-      ]
-    ],
-    tension: [
-      [
-        "Im bliżej było materializacji, tym wyraźniej pojawiał się koszt.",
-        "Nadmiar i niedobór przestały być przeciwieństwami.",
-        "Równowaga wymagała nowej definicji."
-      ]
-    ],
-    choice: [
-      [
-        "Akceptacja przyszła wcześniej niż pełne zrozumienie.",
-        "Wybór nie dotyczył posiadania, lecz relacji do przepływu.",
-        "To, co zostało przyjęte, zaczęło się porządkować."
-      ]
-    ],
-    result: [
-      [
-        "Przepływ ustabilizował się w nowej formie.",
-        "Obfitość okazała się konsekwencją spójności, nie wysiłku.",
-        "Zmiana miała charakter trwały."
-      ]
-    ]
-  }
-};
-
-function expandScene(){
-  const t = document.getElementById('book');
-  const g = document.getElementById('gate').value;
-  const s = document.getElementById('scene').value;
-
-  const blocks = EXPAND[g][s];
-  const block = blocks[Math.floor(Math.random()*blocks.length)];
-
-  t.value += '\n\n' + block.join('\n\n');
+function openSession(){
+  alert("Sesja pisarska działa w trybie pisania (CTRL + SHIFT + S)");
 }
 </script>
+
+<!-- CORE SYSTEM -->
+<script src="js/system-core.js"></script>
+<script src="js/eterniverse-core.js"></script>
+
+<!-- DATA + RENDER -->
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+
+<!-- EDITOR -->
+<script src="js/editor.js"></script>
+<script src="js/app.js"></script>
+
+<!-- BELLA -->
+<script src="js/ai-integration.js"></script>
+<script src="js/bella-ai-memory.js"></script>
+<script src="js/bella-ai-memory-compressor.js"></script>
+<script src="js/bella-ai-autoprofile.js"></script>
+
+<!-- SESSION -->
+<script src="js/bella-writing-session.js"></script>
+
+<!-- UPLOAD -->
+<script src="js/upload.js"></script>
 
 </body>
 </html>
