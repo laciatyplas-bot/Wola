@@ -3,48 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — PISANIE</title>
+<title>ETERNIVERSE · BOOK MASTER (MOBILE)</title>
 
 <style>
-body {
+*{box-sizing:border-box}
+body{
   margin:0;
   background:#050510;
   color:#e0ffff;
-  font-family: system-ui, sans-serif;
+  font-family:system-ui, sans-serif;
 }
 
-header {
-  padding:1rem;
+/* HEADER */
+header{
+  padding:12px;
   background:#070720;
   border-bottom:2px solid #00ffff;
-  text-align:center;
-  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
+header strong{font-size:16px}
 
-button {
-  width:100%;
-  padding:1rem;
+/* TOP BUTTONS */
+.top-buttons{
+  display:flex;
+  gap:8px;
+}
+button{
+  padding:10px 12px;
+  font-size:14px;
+  font-weight:700;
   background:#00ffff;
   color:#000;
   border:none;
-  font-size:1rem;
-  font-weight:bold;
+  border-radius:6px;
 }
 
-#editor {
-  min-height:60vh;
-  padding:1rem;
-  outline:none;
-  font-size:1.05rem;
+/* NAV */
+nav{
+  display:flex;
+  overflow-x:auto;
+  background:#080820;
+  border-bottom:1px solid #00ffff;
+}
+nav button{
+  flex:1;
+  background:none;
+  color:#00ffff;
+  border:none;
+  padding:12px;
+}
+
+/* LAYOUT */
+main{
+  padding:10px;
+}
+
+/* EDITOR */
+#editor{
+  min-height:55vh;
+  padding:14px;
+  font-size:16px;
   line-height:1.7;
+  outline:none;
+  background:#0a0a25;
+  border-radius:8px;
 }
 
-.session-active header,
-.session-active #startBtn {
-  display:none;
-}
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
 
-#overlay {
+/* SESSION OVERLAY */
+#overlay{
   position:fixed;
   top:10px;
   right:10px;
@@ -52,65 +84,117 @@ button {
   color:#00ffff;
   padding:10px;
   border-radius:8px;
-  font-size:0.9rem;
+  font-size:14px;
+  z-index:9999;
+}
+
+/* SESSION MODE = TYLKO EDYTOR */
+.session nav,
+.session .top-buttons{
+  opacity:0.2;
 }
 </style>
 </head>
 
 <body>
 
-<header>ETERNIVERSE · PISANIE</header>
+<header>
+  <strong>ETERNIVERSE</strong>
+  <div class="top-buttons">
+    <button id="sessionBtn">SESJA</button>
+    <button onclick="alert('Eksport w kolejnym kroku')">EKSPORT</button>
+  </div>
+</header>
 
-<button id="startBtn">▶ SESJA PISARSKA</button>
+<nav>
+  <button onclick="show('book')">KSIĄŻKA</button>
+  <button onclick="show('cover')">OKŁADKA</button>
+  <button onclick="show('audio')">AUDIO</button>
+  <button onclick="show('bella')">BELLA</button>
+</nav>
 
-<div id="editor" contenteditable="true">
-Dotknij tutaj i pisz.
+<main>
+
+<!-- BOOK -->
+<div id="book" class="panel active">
+  <div id="editor" contenteditable="true">
+Zacznij pisać.
+  </div>
 </div>
 
-<script>
-let active=false;
-let startTime=0;
-let startWords=0;
+<!-- COVER -->
+<div id="cover" class="panel">
+  <p>OKŁADKA</p>
+  <input type="file" accept="image/*">
+</div>
 
+<!-- AUDIO -->
+<div id="audio" class="panel">
+  <p>AUDIO</p>
+  <input type="file" accept="audio/*">
+</div>
+
+<!-- BELLA -->
+<div id="bella" class="panel">
+  <p>BELLA AI</p>
+  <textarea style="width:100%;min-height:150px"></textarea>
+</div>
+
+</main>
+
+<script>
+/* TABS */
+function show(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* SESSION */
+let active=false,startTime=0,startWords=0,timer=null;
 const editor=document.getElementById('editor');
-const btn=document.getElementById('startBtn');
+const btn=document.getElementById('sessionBtn');
 
 btn.onclick=()=>{
-  active=true;
-  startTime=Date.now();
-  startWords=countWords();
-  document.body.classList.add('session-active');
-  showOverlay();
+  active?stop():start();
 };
 
-function showOverlay(){
-  const o=document.createElement('div');
-  o.id='overlay';
-  o.innerHTML=`SESJA<br><span id="t">00:00</span><br><span id="w">0</span> słów<br><br><button onclick="stop()">ZAKOŃCZ</button>`;
-  document.body.appendChild(o);
+function start(){
+  active=true;
+  startTime=Date.now();
+  startWords=words();
+  document.body.classList.add('session');
+  overlay();
   timer=setInterval(update,1000);
 }
 
 function stop(){
   active=false;
   clearInterval(timer);
-  document.body.classList.remove('session-active');
+  document.body.classList.remove('session');
   document.getElementById('overlay').remove();
 }
 
-function update(){
-  document.getElementById('t').textContent=formatTime((Date.now()-startTime)/1000);
-  document.getElementById('w').textContent=countWords()-startWords;
+function overlay(){
+  const o=document.createElement('div');
+  o.id='overlay';
+  o.innerHTML=`SESJA<br><span id="t">00:00</span><br><span id="w">0</span> słów<br><br><button onclick="stop()">STOP</button>`;
+  document.body.appendChild(o);
 }
 
-function countWords(){
+function update(){
+  document.getElementById('t').textContent=time();
+  document.getElementById('w').textContent=words()-startWords;
+}
+
+function words(){
   return editor.innerText.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function formatTime(s){
+function time(){
+  const s=Math.floor((Date.now()-startTime)/1000);
   const m=Math.floor(s/60);
-  const sec=Math.floor(s%60);
-  return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+  const r=s%60;
+  return `${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
 }
 </script>
 
