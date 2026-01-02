@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bella AI Assistant</title>
+  <style>
+    body { margin: 0; background: #0a1228; color: white; font-family: Inter; }
+    .chat { height: 100vh; padding: 2rem; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <div class="chat">
+    <h2>🧠 Bella AI</h2>
+    <div id="chat-log"></div>
+    <input id="bella-input" placeholder="Wpisz komendę...">
+  </div>
+  
+  <script>
+    const parent = window.parent;
+    document.getElementById('bella-input').addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        parent.postMessage({
+          type: 'BELLA_COMMAND',
+          command: 'INSERT_TEXT',
+          data: { text: e.target.value }
+        }, '*');
+        e.target.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
