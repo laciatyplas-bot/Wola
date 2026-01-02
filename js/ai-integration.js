@@ -1,6 +1,7 @@
 // ========================================
-// ETERNIVERSE MASTER 2026 - ai-integration.js v2.1
-// Bella AI • Profiles • Editor Integration • Offline AI Engine
+// ETERNIVERSE MASTER 2026
+// Bella AI • Offline AI Engine • Editor Integration
+// ai-integration.js v2.2 STABLE
 // ========================================
 
 'use strict';
@@ -17,6 +18,8 @@ class BellaAI {
 
     this.activeProfile = 'eterseeker';
     this.isProcessing = false;
+
+    this.dynamicProfileContext = {};
 
     this.profiles = {
       amazon: {
@@ -58,7 +61,15 @@ class BellaAI {
     this.bindEvents();
     this.detectProfileButtons();
 
-    console.log('🤖 Bella AI v2.1 READY');
+    if (!this.editor) {
+      console.warn('Bella AI: brak edytora');
+      window.CoreEngine?.showToast(
+        '⚠️ Bella: nie wykryto edytora tekstu',
+        'warn'
+      );
+    }
+
+    console.log('Bella AI v2.2 READY');
   }
 
   // =========================
@@ -88,6 +99,7 @@ class BellaAI {
 
   setProfile(profile) {
     if (!this.profiles[profile]) return;
+
     this.activeProfile = profile;
 
     document
@@ -98,8 +110,8 @@ class BellaAI {
       .querySelector(`[data-profile="${profile}"]`)
       ?.classList.add('active');
 
-    CoreEngine?.showToast(
-      `🤖 Bella: tryb ${this.profiles[profile].name}`,
+    window.CoreEngine?.showToast(
+      `Bella: tryb ${this.profiles[profile].name}`,
       'info'
     );
   }
@@ -112,44 +124,57 @@ class BellaAI {
 
     const prompt = this.promptInput?.value.trim();
     if (!prompt) {
-      CoreEngine?.showToast('⚠️ Wpisz polecenie dla AI', 'warn');
+      window.CoreEngine?.showToast('⚠️ Wpisz polecenie dla AI', 'warn');
       return;
     }
 
     this.isProcessing = true;
     this.showLoading();
 
-    // OFFLINE AI MOCK (STABILNE)
     setTimeout(() => {
-      const result = this.mockAI(prompt);
-      this.displayResult(result);
-      this.injectToEditor(result);
-      this.isProcessing = false;
-    }, 1200);
+      try {
+        const result = this.mockAI(prompt);
+        this.displayResult(result);
+        this.injectToEditor(result);
+      } finally {
+        this.isProcessing = false;
+      }
+    }, 1000);
   }
 
   mockAI(prompt) {
     const profile = this.profiles[this.activeProfile];
+    const extra = this.dynamicProfileContext[this.activeProfile] || '';
+
+    let generatedText = '';
+
+    if (this.activeProfile === 'amazon') {
+      generatedText =
+        'To nie jest zwykły produkt. To decyzja, która zmienia codzienność. Każdy element tej historii prowadzi do jednego wyboru. Zamów teraz.';
+    } else if (this.activeProfile === 'wattpad') {
+      generatedText =
+        'Zatrzymała się. Oddech zamarł. Świat nie pękł głośno — pękł dokładnie tam, gdzie bolało najbardziej. A ty? Czytasz dalej?';
+    } else {
+      generatedText =
+        'Nie jesteś myślą. Jesteś przestrzenią, w której myśl się pojawia. System działa tylko tak długo, jak długo w niego wierzysz.';
+    }
 
     return `
 ${profile.name.toUpperCase()} MODE
 
+PROMPT:
 ${prompt}
 
-—
-Styl: ${profile.tone}
-Zasady:
+STYL:
+${profile.tone}
+
+ZASADY:
 ${profile.rules.map(r => `• ${r}`).join('\n')}
 
-Tekst:
+${extra}
 
-${
-  this.activeProfile === 'amazon'
-    ? 'To nie jest zwykły produkt. To decyzja, która zmienia codzienność. Zamów teraz i poczuj różnicę.'
-    : this.activeProfile === 'wattpad'
-    ? 'Zatrzymała się. Oddech zamarł. A potem świat pękł dokładnie w tym miejscu.'
-    : 'Nie jesteś myślą. Jesteś przestrzenią, w której myśl się pojawia.'
-}
+TEKST:
+${generatedText}
 `.trim();
   }
 
@@ -158,7 +183,7 @@ ${
   // =========================
   showLoading() {
     if (!this.output) return;
-    this.output.innerHTML = '🤖 Bella analizuje…';
+    this.output.textContent = 'Bella analizuje…';
   }
 
   displayResult(text) {
@@ -170,7 +195,12 @@ ${
     if (!this.editor) return;
 
     this.editor.focus();
-    document.execCommand('insertText', false, '\n\n' + text);
+
+    if (this.editor.isContentEditable) {
+      this.editor.innerText += '\n\n' + text;
+    } else if ('value' in this.editor) {
+      this.editor.value += '\n\n' + text;
+    }
 
     document.dispatchEvent(
       new CustomEvent('editorContentChanged', {
@@ -183,10 +213,10 @@ ${
   // CONTEXT
   // =========================
   injectContext(world) {
-    if (!this.promptInput) return;
+    if (!this.promptInput || !world) return;
 
     this.promptInput.value =
-      `Kontekst świata:\n${world.name}\n${world.description}\n\n` +
+      `KONTEKST ŚWIATA:\n${world.name}\n${world.description || ''}\n\n` +
       this.promptInput.value;
   }
 
