@@ -5,7 +5,7 @@ class UploadManager {
   }
 
   init() {
-    // Upload okładki
+    // === OKŁADKA ===
     const coverInput = document.getElementById('coverUpload');
     const coverPreview = document.getElementById('coverPreview');
     const coverInfo = document.getElementById('coverInfo');
@@ -23,9 +23,8 @@ class UploadManager {
       reader.onload = (ev) => {
         coverPreview.src = ev.target.result;
         coverPreview.style.display = 'block';
-        coverInfo.textContent = `Załadowano: \( {file.name} ( \){this.formatBytes(file.size)})`;
+        coverInfo.textContent = `Załadowano: ${file.name} (${this.formatBytes(file.size)})`;
 
-        // Zapis w localStorage
         localStorage.setItem('eterniverse_cover', ev.target.result);
         localStorage.setItem('eterniverse_cover_name', file.name);
         this.toast('Okładka zapisana lokalnie');
@@ -33,7 +32,7 @@ class UploadManager {
       reader.readAsDataURL(file);
     });
 
-    // Upload MP3
+    // === MP3 ===
     const audioInput = document.getElementById('audioUpload');
     const audioPlayer = document.getElementById('audioPlayer');
     const audioInfo = document.getElementById('audioInfo');
@@ -42,22 +41,23 @@ class UploadManager {
       const file = e.target.files[0];
       if (!file) return;
 
-      if (!file.type.includes('audio') && !file.name.endsWith('.mp3')) {
-        this.toast('Tylko pliki MP3');
+      if (!file.type.includes('audio')) {
+        this.toast('Tylko pliki audio (MP3)');
         return;
       }
 
-      const url = URL.createObjectURL(file);
-      audioPlayer.src = url;
-      audioInfo.textContent = `Załadowano: \( {file.name} ( \){this.formatBytes(file.size)})`;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        audioPlayer.src = ev.target.result;
+        audioInfo.textContent = `Załadowano: ${file.name} (${this.formatBytes(file.size)})`;
 
-      // Zapis w localStorage (URL + nazwa)
-      localStorage.setItem('eterniverse_audio_url', url);
-      localStorage.setItem('eterniverse_audio_name', file.name);
-      this.toast('Plik MP3 zapisany lokalnie');
+        localStorage.setItem('eterniverse_audio', ev.target.result);
+        localStorage.setItem('eterniverse_audio_name', file.name);
+        this.toast('MP3 zapisane lokalnie');
+      };
+      reader.readAsDataURL(file);
     });
 
-    // Wczytaj zapisane przy otwarciu
     this.loadSavedCover();
     this.loadSavedAudio();
   }
@@ -66,18 +66,21 @@ class UploadManager {
     const saved = localStorage.getItem('eterniverse_cover');
     const name = localStorage.getItem('eterniverse_cover_name');
     if (saved) {
-      document.getElementById('coverPreview').src = saved;
-      document.getElementById('coverPreview').style.display = 'block';
-      document.getElementById('coverInfo').textContent = `Załadowano: ${name || 'okładka.jpg'}`;
+      const img = document.getElementById('coverPreview');
+      img.src = saved;
+      img.style.display = 'block';
+      document.getElementById('coverInfo').textContent =
+        `Załadowano: ${name || 'okładka.jpg'}`;
     }
   }
 
   loadSavedAudio() {
-    const url = localStorage.getItem('eterniverse_audio_url');
+    const saved = localStorage.getItem('eterniverse_audio');
     const name = localStorage.getItem('eterniverse_audio_name');
-    if (url) {
-      document.getElementById('audioPlayer').src = url;
-      document.getElementById('audioInfo').textContent = `Załadowano: ${name || 'audio.mp3'}`;
+    if (saved) {
+      document.getElementById('audioPlayer').src = saved;
+      document.getElementById('audioInfo').textContent =
+        `Załadowano: ${name || 'audio.mp3'}`;
     }
   }
 
@@ -96,7 +99,6 @@ class UploadManager {
   }
 }
 
-// Uruchomienie
 document.addEventListener('DOMContentLoaded', () => {
   new UploadManager();
 });
