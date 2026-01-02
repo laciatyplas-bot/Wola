@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bella AI v3.0 — ETERNIVERSE Hyper Control 🧠</title>
+
+  <style>
+    /* BELLA v3.0 — HYPER CONTROL CSS */
+    :root {
+      --bella-purple: #8b5cf6; 
+      --bella-cyan: #06b6d4;
+      --bella-glow: 0 0 40px rgba(139, 92, 246, 0.6);
+      --bg-gradient: linear-gradient(135deg, #0f0f23 0%, #1a0f2e 50%, #0a001a 100%);
+      --glass: rgba(255,255,255,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace; 
+      background: var(--bg-gradient);
+      color: #e2e8f0; 
+      min-height: 100vh; 
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* FLOATING PARTICLES */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #8b5cf6, transparent),
+        radial-gradient(2px 2px at 80% 20%, #06b6d4, transparent);
+      background-repeat: repeat;
+      background-size: 200px 200px;
+      animation: bellaFloat 20s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes bellaFloat {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-20px) rotate(360deg); }
+    }
+
+    /* HEADER v3 */
+    .bella-header {
+      text-align: center; padding: 2rem 1.5rem; 
+      background: rgba(15,15,35,0.95); backdrop-filter: blur(50px);
+      position: relative; z-index: 10;
+      border-bottom: 1px solid rgba(139,92,246,0.3);
+    }
+
+    .bella-title {
+      font-size: clamp(2.5rem, 8vw, 4.5rem); 
+      font-weight: 900; 
+      background: linear-gradient(45deg, var(--bella-purple), var(--bella-cyan), #ec4899);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      filter: drop-shadow(var(--bella-glow));
+      margin-bottom: 0.5rem;
+    }
+
+    .status-bar {
+      display: flex; justify-content: center; gap: 2rem;
+      font-size: 0.95rem; color: #94a3b8;
+    }
+
+    .status-connected { color: #10b981; }
+    .status-active { color: var(--bella-cyan); }
+
+    /* MAIN CONTAINER */
+    .bella-main {
+      height: calc(100vh - 140px); display: flex; flex-direction: column;
+      max-width: 1100px; margin: 0 auto; padding: 2rem;
+    }
+
+    /* CHAT HISTORY v3 */
+    .chat-history {
+      flex: 1; overflow-y: auto; 
+      background: var(--glass); backdrop-filter: blur(30px);
+      border-radius: var(--radius-lg); padding: 2rem;
+      margin-bottom: 1.5rem; border: 1px solid rgba(139,92,246,0.2);
+      scrollbar-width: thin; scrollbar-color: var(--bella-purple) transparent;
+    }
+
+    .chat-history::-webkit-scrollbar {
+      width: 8px; background: transparent;
+    }
+
+    .chat-history::-webkit-scrollbar-thumb {
+      background: var(--bella-purple); border-radius: 4px;
+    }
+
+    .message {
+      margin-bottom: 1.5rem; opacity: 0; 
+      animation: messageSlide 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+      display: flex; gap: 1rem;
+    }
+
+    .message-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: bold;
+    }
+
+    .bella-avatar { background: linear-gradient(135deg, var(--bella-purple), var(--bella-cyan)); color: white; }
+    .user-avatar { background: rgba(255,255,255,0.2); color: var(--bella-cyan); border: 2px solid rgba(6,182,212,0.5); }
+
+    .message.bella { flex-direction: row-reverse; }
+
+    .message-content {
+      max-width: 75%; padding: 1.25rem 1.75rem; border-radius: 22px;
+      font-size: 1.05rem; line-height: 1.65; position: relative;
+    }
+
+    .bella .message-content {
+      background: linear-gradient(145deg, var(--bella-purple), rgba(139,92,246,0.8));
+      color: white; box-shadow: 0 12px 40px rgba(139,92,246,0.3);
+    }
+
+    .user .message-content {
+      background: rgba(255,255,255,0.12); 
+      border: 1px solid rgba(6,182,212,0.4);
+      backdrop-filter: blur(20px);
+    }
+
+    @keyframes messageSlide {
+      to { opacity: 1; transform: translateY(0) translateX(0); }
+    }
+
+    /* CONTROL PANEL */
+    .control-panel {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem;
+      margin-bottom: 1.5rem; padding: 1rem; background: var(--glass);
+      border-radius: var(--radius-md); border: 1px solid rgba(139,92,246,0.2);
+    }
+
+    .brama-control {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+
+    .brama-badge {
+      padding: 0.5rem 1rem; background: rgba(139,92,246,0.2);
+      border-radius: 20px; font-weight: 700; font-size: 0.9rem;
+      border: 1px solid rgba(139,92,246,0.4);
+    }
+
+    /* BUTTONS v3 */
+    .bella-buttons {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+
+    .bella-btn {
+      padding: 1rem 1.5rem; border: 2px solid rgba(139,92,246,0.4);
+      border-radius: var(--radius-md); background: transparent;
+      color: #e2e8f0; font-family: inherit; font-weight: 700;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+      position: relative; overflow: hidden;
+    }
+
+    .bella-btn::before {
+      content: ''; position: absolute; inset: 0; background: var(--bella-purple);
+      opacity: 0; transition: opacity 0.3s;
+    }
+
+    .bella-btn:hover::before { opacity: 0.15; }
+    .bella-btn:hover { transform: translateY(-2px); border-color: var(--bella-purple); }
+
+    .btn-primary { border-color: var(--bella-cyan); }
+    .btn-primary:hover::before { background: var(--bella-cyan); }
+
+    /* INPUT v3 */
+    .bella-input-container {
+      position: relative; background: var(--glass); 
+      border-radius: var(--radius-lg); padding: 1.5rem;
+      border: 2px solid rgba(139,92,246,0.2); backdrop-filter: blur(25px);
+    }
+
+    .bella-input-row {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: end;
+    }
+
+    .brama-selector {
+      padding: 1rem 1.25rem; background: rgba(139,92,246,0.15);
+      border: 2px solid rgba(139,92,246,0.4); border-radius: var(--radius-sm);
+      color: #e2e8f0; font-weight: 600; min-width: 120px;
+    }
+
+    .input-main {
+      padding: 1.25rem 1.75rem; background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(139,92,246,0.2); border-radius: var(--radius-lg);
+      color: #e2e8f0; font-family: inherit; font-size: 1.05rem; resize: vertical;
+      min-height: 110px; backdrop-filter: blur(20px); outline: none;
+    }
+
+    .input-main:focus {
+      border-color: var(--bella-purple); box-shadow: var(--bella-glow);
+    }
+
+    .send-btn {
+      padding: 1.25rem 2rem; background: linear-gradient(145deg, var(--bella-purple), var(--bella-cyan));
+      border: none; border-radius: var(--radius-lg); color: white;
+      font-weight: 900; font-size: 1.05rem; cursor: pointer;
+      transition: all 0.3s; min-width: 140px;
+    }
+
+    .send-btn:hover { transform: scale(1.05); filter: drop-shadow(var(--bella-glow)); }
+
+    /* HYPER MODAL */
+    .hyper-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center; z-index: 10000;
+      backdrop-filter: blur(20px);
+    }
+
+    .modal-content {
+      background: rgba(15,15,35,0.98); border-radius: var(--radius-lg);
+      padding: 2.5rem; max-width: 500px; width: 90%; max-height: 80vh;
+      overflow-y: auto; border: 2px solid var(--bella-purple);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .bella-main { padding: 1rem; height: calc(100vh - 120px); }
+      .bella-input-row { grid-template-columns: 1fr; }
+      .control-panel { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span id="connectionStatus">🔌 Połączono z ETERNIVERSE</span>
+    <span id="bramaStatus">🌀 Brama 1</span>
+    <span id="aiStatus">🤖 Bella Online</span>
+  </div>
+
+  <header class="bella-header">
+    <h1 class="bella-title">Bella AI v3.0</h1>
+    <p>Hyper Control · Real-time Sync · Full ETERNIVERSE DOM</p>
+  </header>
+
+  <div class="bella-main">
+
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+      <div class="brama-control">
+        <span>🎯 Aktywna:</span>
+        <span class="brama-badge" id="activeBrama">INTER</span>
+      </div>
+
+      <button class="bella-btn btn-primary" onclick="syncWithMain()">🔄 SYNC MAIN</button>
+
+      <div style="text-align:right">
+        <button class="bella-btn" onclick="toggleGodMode()">🦾 GOD MODE</button>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="bella-buttons">
+      <button class="bella-btn" onclick="aiBurst('fabuła')">📖 FABUŁA BURST</button>
+      <button class="bella-btn" onclick="aiBurst('postacie')">👤 POSTACIE</button>
+      <button class="bella-btn" onclick="aiBurst('scena')">🎬 SCENA</button>
+      <button class="bella-btn" onclick="exportSession()">💾 SESJA</button>
+      <button class="bella-btn" onclick="clearChat()">🗑️ CLEAR</button>
+    </div>
+
+    <!-- CHAT -->
+    <div class="chat-history" id="chatHistory">
+      <div class="message bella">
+        <div class="message-avatar bella-avatar">🧠</div>
+        <div class="message-content">
+          <strong>Bella v3.0 online!</strong><br><br>
+          Pełna integracja z ETERNIVERSE MASTER.<br>
+          • Real-time sync z edytorem<br>
+          • Kontrola Bram i światów<br>
+          • God Mode (Ctrl+G)<br>
+          • Burst AI commands<br><br>
+          <em>Gotowa do hiper-kontroli...</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUT -->
+    <div class="bella-input-container">
+      <div class="bella-input-row">
+        <select class="brama-selector" id="bramaSelector">
+          <option value="1">🌀 INTER</option>
+          <option value="2">🌌 ETER</option>
+          <option value="3">🔮 OBFI</option>
+          <option value="4">💥 CHAOS</option>
+          <option value="5">⚡ NEURAL</option>
+          <option value="6">🌊 AQUA</option>
+          <option value="7">🔥 IGNIS</option>
+          <option value="8">🌙 LUNAR</option>
+        </select>
+
+        <textarea class="input-main" id="bellaInput" 
+          placeholder="Komenda dla Bella... (Ctrl+Enter = wyślij) 
+          • 'napisz rozdział o [temat]' 
+          • 'stwórz postać [cechy]' 
+          • 'kontynuuj od [ostatnie zdanie]'
+          • 'godmode [akcja]'"></textarea>
+
+        <button class="send-btn" onclick="sendBella()">🚀 WYŚLIJ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HYPER MODAL -->
+  <div class="hyper-modal" id="hyperModal">
+    <div class="modal-content">
+      <h3>🌌 Hyper Control Panel</h3>
+      <div id="modalContent"></div>
+      <button class="bella-btn" onclick="closeModal()" style="margin-top:1rem;width:100%">Zamknij</button>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // BELLA v3.0 — FULL ETERNIVERSE CONTROL
+    // ========================================
+
+    class BellaAI {
+      constructor() {
+        this.chat = [];
+        this.isGodMode = false;
+        this.currentBrama = 1;
+        this.init();
+      }
+
+      init() {
+        this.setupEventListeners();
+        this.requestMainData();
+        this.startHeartbeat();
+      }
+
+      setupEventListeners() {
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            switch(e.key.toLowerCase()) {
+              case 'enter': e.preventDefault(); this.sendBella(); break;
+              case 'g': e.preventDefault(); this.toggleGodMode(); break;
+              case 'b': e.preventDefault(); this.cycleBrama(); break;
+            }
+          }
+        });
+
+        // Elements
+        document.getElementById('bellaInput').focus();
+        document.getElementById('bramaSelector').addEventListener('change', (e) => {
+          this.currentBrama = parseInt(e.target.value);
+          this.syncBramaToMain();
+        });
+      }
+
+      // COMMUNICATION WITH MAIN APP
+      requestMainData() {
+        window.parent.postMessage({
+          type: 'BELLA_INIT',
+          data: { timestamp: Date.now() }
+        }, '*');
+      }
+
+      sendCommand(command, data = {}) {
+        window.parent.postMessage({
+          type: 'BELLA_COMMAND',
+          command,
+          data: { ...data, brama: this.currentBrama, timestamp: Date.now() }
+        }, '*');
+      }
+
+      syncBramaToMain() {
+        this.sendCommand('SET_BRAMA', { bramaId: this.currentBrama });
+      }
+
+      // UI METHODS
+      async addMessage(sender, content, options = {}) {
+        const history = document.getElementById('chatHistory');
+        const div = document.createElement('div');
+        div.className = `message ${sender}`;
+        div.style.animationDelay = '0.1s';
+
+        const avatar = options.avatar || (sender === 'bella' ? '🧠' : '👤');
+        div.innerHTML = `
+          <div class="message-avatar ${sender}-avatar">${avatar}</div>
+          <div class="message-content">${this.parseContent(content)}</div>
+        `;
+
+        history.appendChild(div);
+        history.scrollTop = history.scrollHeight;
+        return div;
+      }
+
+      parseContent(content) {
+        // Basic markdown-like parsing
+        return content
+          .replace(/**(.*?)**/g, '<strong>$1</strong>')
+          .replace(/*(.*?)*/g, '<em>$1</em>')
+          .replace(/`(.*?)`/g, '<code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px">$1</code>');
+      }
+
+      updateStatus(status, bramaName) {
+        document.getElementById('connectionStatus').textContent = `🔌 ${status}`;
+        document.getElementById('bramaStatus').textContent = `🌀 ${bramaName || 'Brama ' + this.currentBrama}`;
+      }
+
+      // AI RESPONSES
+      async generateResponse(prompt, context) {
+        // Mock AI - replace with real API
+        const responses = {
+          fabuła: `**${context.brama.nazwa} FABUŁA BURST**  
+          Elara wchodzi do komnaty. Powietrze gęstnieje od napięcia.  
+          *„Wybierz ścieżkę...”* szepcze głos z eteru.  
+          Kontynuacja gotowa w edytorze! ✨`,
+
+          postacie: `**POSTAĆ: ${context.userName || 'Wędrowiec'}**  
+          Wiek: ${Math.floor(Math.random()*40)+20} | Siła: ${Math.floor(Math.random()*10)+5}  
+          Historia: Uciekł z ${context.brama.nazwa} po zdradzie...  
+          Dodano do kanonu! 👤`,
+
+          scena: `**SCENA: Kulminacja ${context.brama.nazwa}**  
+          Cienie tańczą na ścianach. Ostrze błyszczy w blasku gwiazd.  
+          *Serce bije jak bęben wojny.*  
+          Wklejono do aktywnego rozdziału! 🎬`
+        };
+
+        return responses[prompt] || `**Bella przetwarza:** ${prompt} w kontekście ${context.brama.nazwa}...`;
+      }
+
+      // COMMANDS
+      async sendBella() {
+        const input = document.getElementById('bellaInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        // Add user message
+        await this.addMessage('user', text, { avatar: '👤' });
+        input.value = '';
+
+        // Send to main app
+        this.sendCommand('USER_INPUT', { text });
+
+        // Generate Bella response
+        const context = { brama: { nazwa: document.getElementById('bramaSelector').options[this.currentBrama-1].text } };
+        const response = await this.generateResponse('default', context);
+        setTimeout(() => this.addMessage('bella', response), 600);
+      }
+
+      aiBurst(type) {
+        this.sendCommand('AI_BURST', { type });
+        this.addMessage('bella', `**BURST ${type.toUpperCase()}** uruchomiono w głównym edytorze!`, { avatar: '🚀' });
+      }
+
+      cycleBrama() {
+        this.currentBrama = (this.currentBrama % 8) + 1;
+        document.getElementById('bramaSelector').value = this.currentBrama;
+        this.syncBramaToMain();
+      }
+
+      toggleGodMode() {
+        this.isGodMode = !this.isGodMode;
+        this.sendCommand('GOD_MODE', { enabled: this.isGodMode });
+        this.addMessage('bella', this.isGodMode ? '🦾 **GOD MODE ON** - Pełna kontrola DOM' : '😌 God Mode off', { avatar: '⚡' });
+      }
+
+      syncWithMain() {
+        this.requestMainData();
+        this.addMessage('system', '🔄 Synchronizacja z głównym edytorem...', { avatar: '🔗' });
+      }
+
+      exportSession() {
+        const session = { chat: this.chat, brama: this.currentBrama, timestamp: Date.now() };
+        const dataStr = JSON.stringify(session, null, 2);
+        this.download(dataStr, 'bella-session.json');
+        this.addMessage('system', '💾 Sesja wyeksportowana!', { avatar: '📁' });
+      }
+
+      download(content, filename) {
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = filename; a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      startHeartbeat() {
+        setInterval(() => {
+          if (document.visibilityState === 'visible') {
+            this.requestMainData();
+          }
+        }, 30000);
+      }
+
+      // MODALS
+      showModal(title, content) {
+        document.getElementById('hyperModal').style.display = 'flex';
+        document.getElementById('modalContent').innerHTML = content;
+      }
+
+      closeModal() {
+        document.getElementById('hyperModal').style.display = 'none';
+      }
+    }
+
+    // GLOBAL FUNCTIONS
+    const Bella = new BellaAI();
+
+    window.sendBella = () => Bella.sendBella();
+    window.aiBurst = (type) => Bella.aiBurst(type);
+    window.toggleGodMode = () => Bella.toggleGodMode();
+    window.syncWithMain = () => Bella.syncWithMain();
+    window.exportSession = () => Bella.exportSession();
+    window.clearChat = () => {
+      document.getElementById('chatHistory').innerHTML = '';
+      Bella.addMessage('system', '🧹 Chat wyczyszczony', { avatar: '🗑️' });
+    };
+    window.closeModal = () => Bella.closeModal();
+
+    // MAIN APP COMMUNICATION
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'ETERNIVERSE_DATA') {
+        const data = event.data.data;
+        Bella.updateStatus('🔄 Zsynchronizowano', data.activeBrama?.nazwa);
+
+        if (data.activeBrama) {
+          Bella.currentBrama = data.activeBrama.id;
+          document.getElementById('bramaSelector').value = data.activeBrama.id;
+          document.getElementById('activeBrama').textContent = data.activeBrama.nazwa;
+        }
+      }
+    });
+
+    // AUTO-FOCUS
+    document.getElementById('bellaInput').focus();
+  </script>
+
+</body>
+</html>
