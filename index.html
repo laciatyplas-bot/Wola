@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA PRO — REALNE ROZDZIAŁY</title>
+<title>ETERNIVERSE — BELLA PRO</title>
 
 <style>
 body{
@@ -13,103 +13,153 @@ body{
   font-family:system-ui,sans-serif;
 }
 header{
-  padding:14px;
+  padding:12px;
   text-align:center;
   font-weight:900;
   border-bottom:2px solid #0ff;
 }
-textarea{
+textarea,.editor,select{
   width:100%;
-  min-height:45vh;
   background:#111;
   color:#0ff;
   font-size:16px;
-  padding:12px;
+  padding:10px;
   border:none;
 }
-button,select{
+textarea{min-height:22vh}
+.editor{min-height:30vh}
+button{
   width:100%;
   padding:14px;
-  margin-top:10px;
+  margin-top:8px;
   font-size:16px;
   font-weight:900;
   background:#0ff;
   color:#000;
   border:none;
 }
+.list button{
+  background:#111;
+  color:#0ff;
+}
+.badge{font-size:12px;opacity:.7}
+.hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<header>BELLA PRO — GENERATOR ROZDZIAŁÓW</header>
+<header>ETERNIVERSE · BELLA PRO</header>
 
-<textarea id="book">
-ROZDZIAŁ 1
+<textarea id="input">Wklej TU całą książkę albo zostaw puste.</textarea>
+<button onclick="split()">PODZIEL NA ROZDZIAŁY</button>
 
-Początek jeszcze nie wiedział, że jest początkiem.
-</textarea>
+<div class="list" id="chapters"></div>
 
-<select id="gate">
-  <option value="inter">BRAMA I — INTERSEEKER (cień)</option>
-  <option value="eter">BRAMA III — ETERSEEKER (wola)</option>
-  <option value="obfi">BRAMA V — OBFITOSEEKER (manifestacja)</option>
-</select>
+<div id="work" class="hidden">
 
-<button onclick="bella()">BELLA — NAPISZ KOLEJNY ROZDZIAŁ</button>
+  <div class="editor" id="editor" contenteditable="true"></div>
+
+  <select id="gate">
+    <option value="0">BRAMA I — INTERSEEKER (CIENIA)</option>
+    <option value="1">BRAMA II — GENEZA</option>
+    <option value="2">BRAMA III — ETERSEEKER (WOLA)</option>
+    <option value="3">BRAMA IV — ARCHETYPY</option>
+    <option value="4">BRAMA V — OBFITOSEEKER</option>
+    <option value="5">BRAMA VI — CIAŁO</option>
+    <option value="6">BRAMA VII — SPLĄTANIE</option>
+    <option value="7">BRAMA VIII — CZAS</option>
+    <option value="8">BRAMA IX — KOLEKTYW</option>
+    <option value="9">BRAMA X — INTEGRACJA</option>
+  </select>
+
+  <select id="style">
+    <option value="inter">Styl: InterSeeker (psychika, cień)</option>
+    <option value="eter">Styl: EterSeeker (wola, decyzja)</option>
+    <option value="obfi">Styl: ObfitoSeeker (manifestacja)</option>
+  </select>
+
+  <button onclick="bellaGenerate()">BELLA — NAPISZ KOLEJNY ROZDZIAŁ</button>
+  <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
+</div>
 
 <script>
-const SEEDS = {
-  inter: [
-    "Nie wszystko, co zostało wyparte, zniknęło.",
-    "Cień nie pyta o pozwolenie, kiedy wraca.",
-    "Najgorsze wspomnienie było jednocześnie kluczem."
-  ],
-  eter: [
-    "Decyzja zapadła szybciej niż myśl.",
-    "Wola nie rodzi się z odwagi, tylko z braku odwrotu.",
-    "Świat zmienił trajektorię w jednej sekundzie."
-  ],
-  obfi: [
-    "Obfitość nie przyszła z zewnątrz.",
-    "To, co nazwano szczęściem, było skutkiem wyboru.",
-    "Nadmiar pojawił się tam, gdzie wcześniej była pustka."
-  ]
-};
-
-const BODIES = [
-  "Przestrzeń wokół niego zgęstniała, jakby świat słuchał.",
-  "Nie było fanfar. Było zrozumienie.",
-  "To nie był moment triumfu, tylko punkt bez powrotu.",
-  "Czas na chwilę stracił znaczenie.",
-  "W tym miejscu kończyły się stare reguły."
+const GATES=[
+  'INTERSEEKER','GENEZA','ETERSEEKER','ARCHETYPY','OBFITOSEEKER',
+  'CIAŁO','SPLĄTANIE','CZAS','KOLEKTYW','INTEGRACJA'
 ];
 
-function bella(){
-  const t=document.getElementById('book');
-  const gate=document.getElementById('gate').value;
+let chapters=[];
+let active=null;
 
-  const chapters=(t.value.match(/ROZDZIAŁ/g)||[]).length+1;
+function split(){
+  const t=input.value.trim();
+  if(!t) return;
+  chapters=t.split(/(?=ROZDZIAŁ|Rozdział|CHAPTER|Chapter)/g)
+    .filter(x=>x.trim().length>40)
+    .map(x=>({text:x.trim(),gate:0}));
+  saveAll();
+  render();
+}
 
-  const seed=pick(SEEDS[gate]);
-  const body=pick(BODIES);
+function render(){
+  chaptersDiv.innerHTML='';
+  chapters.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.innerHTML=`ROZDZIAŁ ${i+1}<br><span class="badge">BRAMA ${c.gate+1} — ${GATES[c.gate]}</span>`;
+    b.onclick=()=>openChapter(i);
+    chaptersDiv.appendChild(b);
+  });
+}
+
+function openChapter(i){
+  active=i;
+  editor.innerText=chapters[i].text;
+  gate.value=chapters[i].gate;
+  work.classList.remove('hidden');
+}
+
+function save(){
+  if(active===null) return;
+  chapters[active].text=editor.innerText;
+  chapters[active].gate=parseInt(gate.value,10);
+  saveAll();
+  render();
+}
+
+function bellaGenerate(){
+  const g=parseInt(gate.value,10);
+  const s=style.value;
+
+  let seed='';
+  if(s==='inter') seed='To nie jest opowieść o bohaterze. To jest konfrontacja z cieniem.';
+  if(s==='eter') seed='Decyzja nie zapada w myśli. Zapada w polu.';
+  if(s==='obfi') seed='Obfitość nie przychodzi. Jest aktywowana.';
 
   const text =
-`\n\nROZDZIAŁ ${chapters}
+`ROZDZIAŁ ${chapters.length+1}
+BRAMA ${g+1} — ${GATES[g]}
 
 ${seed}
 
-${body}
+${seed}
+${seed}
 
-Nie było już potrzeby tłumaczyć czegokolwiek.
-To, co się stało, było wystarczające.\n`;
+[BELLA PRO — GENERACJA KANONICZNA]`;
 
-  t.value+=text;
+  chapters.push({ text, gate:g });
+  saveAll();
+  render();
 }
 
-function pick(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
+function saveAll(){
+  localStorage.setItem('ETERNIVERSE_BELLA_PRO',JSON.stringify(chapters));
 }
+
+(function load(){
+  const s=localStorage.getItem('ETERNIVERSE_BELLA_PRO');
+  if(s){chapters=JSON.parse(s);render();}
+})();
 </script>
 
 </body>
