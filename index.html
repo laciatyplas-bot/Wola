@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — BOOK MASTER (BRAMY)</title>
+<title>ETERNIVERSE — BELLA PRO</title>
 
 <style>
 body{
@@ -15,7 +15,7 @@ body{
 header{
   padding:12px;
   text-align:center;
-  font-weight:800;
+  font-weight:900;
   border-bottom:2px solid #0ff;
 }
 textarea,.editor,select{
@@ -26,14 +26,14 @@ textarea,.editor,select{
   padding:10px;
   border:none;
 }
-textarea{min-height:25vh}
+textarea{min-height:22vh}
 .editor{min-height:30vh}
 button{
   width:100%;
   padding:14px;
   margin-top:8px;
   font-size:16px;
-  font-weight:800;
+  font-weight:900;
   background:#0ff;
   color:#000;
   border:none;
@@ -42,19 +42,16 @@ button{
   background:#111;
   color:#0ff;
 }
-.badge{
-  font-size:12px;
-  opacity:.7;
-}
+.badge{font-size:12px;opacity:.7}
 .hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<header>ETERNIVERSE · BOOK MASTER — BRAMY</header>
+<header>ETERNIVERSE · BELLA PRO</header>
 
-<textarea id="input">Wklej TU całą książkę.</textarea>
+<textarea id="input">Wklej TU całą książkę albo zostaw puste.</textarea>
 <button onclick="split()">PODZIEL NA ROZDZIAŁY</button>
 
 <div class="list" id="chapters"></div>
@@ -64,30 +61,32 @@ button{
   <div class="editor" id="editor" contenteditable="true"></div>
 
   <select id="gate">
-    <option value="0">BRAMA I — CIENIA</option>
-    <option value="1">BRAMA II — GENEZY</option>
-    <option value="2">BRAMA III — WOLI</option>
-    <option value="3">BRAMA IV — ARCHETYPÓW</option>
-    <option value="4">BRAMA V — OBFITOŚCI</option>
-    <option value="5">BRAMA VI — CIAŁA</option>
-    <option value="6">BRAMA VII — SPLĄTANIA</option>
-    <option value="7">BRAMA VIII — CZASU</option>
-    <option value="8">BRAMA IX — KOLEKTYWU</option>
-    <option value="9">BRAMA X — INTEGRACJI</option>
+    <option value="0">BRAMA I — INTERSEEKER (CIENIA)</option>
+    <option value="1">BRAMA II — GENEZA</option>
+    <option value="2">BRAMA III — ETERSEEKER (WOLA)</option>
+    <option value="3">BRAMA IV — ARCHETYPY</option>
+    <option value="4">BRAMA V — OBFITOSEEKER</option>
+    <option value="5">BRAMA VI — CIAŁO</option>
+    <option value="6">BRAMA VII — SPLĄTANIE</option>
+    <option value="7">BRAMA VIII — CZAS</option>
+    <option value="8">BRAMA IX — KOLEKTYW</option>
+    <option value="9">BRAMA X — INTEGRACJA</option>
   </select>
 
-  <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
-  <button onclick="shorten()">STREŚĆ</button>
-  <button onclick="expand()">ROZWIŃ</button>
-  <button onclick="rewrite()">PRZEPISZ</button>
+  <select id="style">
+    <option value="inter">Styl: InterSeeker (psychika, cień)</option>
+    <option value="eter">Styl: EterSeeker (wola, decyzja)</option>
+    <option value="obfi">Styl: ObfitoSeeker (manifestacja)</option>
+  </select>
 
-  <button onclick="exportGate()">EKSPORT TEJ BRAMY</button>
+  <button onclick="bellaGenerate()">BELLA — NAPISZ KOLEJNY ROZDZIAŁ</button>
+  <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
 </div>
 
 <script>
 const GATES=[
-  'CIENIA','GENEZY','WOLI','ARCHETYPÓW','OBFITOŚCI',
-  'CIAŁA','SPLĄTANIA','CZASU','KOLEKTYWU','INTEGRACJI'
+  'INTERSEEKER','GENEZA','ETERSEEKER','ARCHETYPY','OBFITOSEEKER',
+  'CIAŁO','SPLĄTANIE','CZAS','KOLEKTYW','INTEGRACJA'
 ];
 
 let chapters=[];
@@ -128,41 +127,37 @@ function save(){
   render();
 }
 
-function shorten(){
-  const w=editor.innerText.split(/\s+/);
-  editor.innerText=w.slice(0,80).join(' ')+"\n\n[STRESZCZONE]";
-}
-function expand(){
-  editor.innerText=editor.innerText+"\n\n"+editor.innerText+"\n\n[ROZWINIĘTE]";
-}
-function rewrite(){
-  editor.innerText=editor.innerText.split(/\n+/).map(l=>"— "+l).join("\n\n")+"\n\n[PRZEPISANE]";
-}
-
-function exportGate(){
-  if(active===null) return;
+function bellaGenerate(){
   const g=parseInt(gate.value,10);
-  const txt=chapters
-    .filter(c=>c.gate===g)
-    .map((c,i)=>`ROZDZIAŁ ${i+1}\n\n${c.text}`)
-    .join('\n\n\n');
-  download(txt,'brama_'+(g+1)+'_'+GATES[g]+'.txt');
-}
+  const s=style.value;
 
-function download(t,n){
-  const b=new Blob([t],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(b);
-  a.download=n;
-  a.click();
+  let seed='';
+  if(s==='inter') seed='To nie jest opowieść o bohaterze. To jest konfrontacja z cieniem.';
+  if(s==='eter') seed='Decyzja nie zapada w myśli. Zapada w polu.';
+  if(s==='obfi') seed='Obfitość nie przychodzi. Jest aktywowana.';
+
+  const text =
+`ROZDZIAŁ ${chapters.length+1}
+BRAMA ${g+1} — ${GATES[g]}
+
+${seed}
+
+${seed}
+${seed}
+
+[BELLA PRO — GENERACJA KANONICZNA]`;
+
+  chapters.push({ text, gate:g });
+  saveAll();
+  render();
 }
 
 function saveAll(){
-  localStorage.setItem('ETERNIVERSE_FULL',JSON.stringify(chapters));
+  localStorage.setItem('ETERNIVERSE_BELLA_PRO',JSON.stringify(chapters));
 }
 
 (function load(){
-  const s=localStorage.getItem('ETERNIVERSE_FULL');
+  const s=localStorage.getItem('ETERNIVERSE_BELLA_PRO');
   if(s){chapters=JSON.parse(s);render();}
 })();
 </script>
