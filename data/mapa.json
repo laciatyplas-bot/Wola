@@ -1,0 +1,173 @@
+{
+  "version": "2.1",
+  "name": "ETERNIVERSE KANONICZNA MAPA 10 KRĘGÓW",
+  "created": "2026-01-02T11:13:00.000Z",
+  "universe": {
+    "totalWorlds": 2,
+    "worlds": {
+      "1": "ETERNIVERSE SYSTEM (Świat 1)",
+      "2": "POLARIS (Świat 2 - Fantasy Za Lodową Ścianą)"
+    },
+    "circles": 10,
+    "layout": "concentric-circles",
+    "scale": 1.0
+  },
+  "circles": [
+    {
+      "id": 1,
+      "name": "CIENIA",
+      "question": "Kim jestem, gdy nie uciekam?",
+      "function": "Rozpad iluzji. Pierwszy ból.",
+      "world1": "InterSeeker / ShadowSeeker",
+      "world2": "Strefa Cienia / Kraina Luster",
+      "status": "kanon"
+    },
+    {
+      "id": 2,
+      "name": "GENEZY",
+      "question": "Skąd naprawdę pochodzę?",
+      "function": "Zerwanie z fałszywym mitem początku.",
+      "world1": "MemorySeeker / RootSeeker",
+      "world2": "Archiwum Genezy / Ruiny Stworzenia",
+      "status": "kanon"
+    },
+    {
+      "id": 3,
+      "name": "WOLI",
+      "question": "Czy naprawdę wybieram?",
+      "function": "Uświadomienie, że wybór zmienia rzeczywistość.",
+      "world1": "EterSeeker / WolaSeeker",
+      "world2": "Pole Architektów / Kuźnia Losu",
+      "status": "kanon"
+    },
+    {
+      "id": 4,
+      "name": "ARCHETYPÓW",
+      "question": "Czy to ja żyję, czy rola żyje mną?",
+      "function": "Rozpoznanie struktur, które sterują światem.",
+      "world1": "ArchetypSeeker",
+      "world2": "Teatr Archetypów / Królestwa Ról",
+      "status": "kanon"
+    },
+    {
+      "id": 5,
+      "name": "OBFITOŚCI",
+      "question": "Czy dostatek daje sens?",
+      "function": "Demaskacja iluzji 'idealnego świata'.",
+      "world1": "ObfitoSeeker",
+      "world2": "Strefy Obfitości / Złote Miasta",
+      "status": "kanon"
+    },
+    {
+      "id": 6,
+      "name": "CIAŁA",
+      "question": "Gdzie kończę się ja?",
+      "function": "Konfrontacja z ceną adaptacji.",
+      "world1": "BioSeeker",
+      "world2": "Biosfery Granic / Kręgi Mutacji",
+      "status": "kanon"
+    },
+    {
+      "id": 7,
+      "name": "SPLĄTANIA",
+      "question": "Czy wolna wola istnieje?",
+      "function": "Złamanie liniowego myślenia.",
+      "world1": "SplatanieSeeker",
+      "world2": "Węzły Splątania / Sieci Proroctw",
+      "status": "kanon"
+    },
+    {
+      "id": 8,
+      "name": "CZASU",
+      "question": "Czy zmieniłbyś drogę, znając koniec?",
+      "function": "Spotkanie z alternatywnymi wersjami siebie.",
+      "world1": "TrajektoriaSeeker / CzasSeeker",
+      "world2": "Trajektorie Czasu / Pętle Ery",
+      "status": "kanon"
+    },
+    {
+      "id": 9,
+      "name": "KOLEKTYWU",
+      "question": "Czy 'ja' jest potrzebne?",
+      "function": "Decyzja: zniknąć czy pozostać sobą.",
+      "world1": "Eterniony / OjciecSeeker",
+      "world2": "Kolektywy Węzłów / Umysły Zbiorowe",
+      "status": "kanon"
+    },
+    {
+      "id": 10,
+      "name": "INTEGRACJI",
+      "question": "Czy poznanie wszystkiego kończy historię?",
+      "function": "Meta-poziom. Pojawia się Twójca Światów.",
+      "world1": "EterUniverse / SilenceForge",
+      "world2": "Horyzont Integracji / Alemuria",
+      "status": "kanon"
+    }
+  ],
+  "worlds": {
+    "1": {
+      "name": "ETERNIVERSE SYSTEM",
+      "type": "system-world",
+      "status": "kanon",
+      "circlesProgress": [100, 90, 85, 75, 60, 50, 40, 30, 20, 10]
+    },
+    "2": {
+      "name": "POLARIS",
+      "type": "fantasy-inner-earth",
+      "status": "kanon",
+      "description": "Świat Fantasy Za Lodową Ścianą",
+      "fundament": "Wewnętrzny świat Ziemi za Antarktydą",
+      "energySource": "Aurion — Złote Słońce Wewnętrzne",
+      "mainQuestion": "Co się dzieje, gdy wola nie ma granic?",
+      "heroes": {
+        "maciej": {
+          "role": "Ojciec / Architekt Struktury",
+          "power": "Geometria Eteru",
+          "function": "Stabilizuje rzeczywistość Polaris"
+        },
+        "nikodem": {
+          "role": "Syn / Iskra Manifestacji",
+          "power": "Transmutacja Istnienia",
+          "function": "Uruchamia potencjał Polaris"
+        }
+      },
+      "structure": {
+        "iceWall": "Bariera selektywna",
+        "ring1": ["Olimp", "Asgard", "Dinozaury", "Alfheim", "Mity", "Syreny", "Kowale"],
+        "ring2": ["Lemuria", "Atlantyda", "Olbrzymy", "Wróżki", "Smoki", "Cisza", "Echo", "Pamięć", "Koniec"]
+      },
+      "circlesProgress": [0, 10, 25, 35, 45, 55, 65, 75, 85, 95]
+    }
+  },
+  "connections": [
+    {
+      "from": "world1-circle10",
+      "to": "world2-circle1",
+      "type": "initiation-bridge",
+      "strength": 1.0,
+      "description": "Zakończenie Świata 1 otwiera Polaris"
+    },
+    {
+      "from": "world2-circle10",
+      "to": "meta-center",
+      "type": "transcendence-gate",
+      "strength": 0.8,
+      "description": "Powrót do centrum ETERNIVERSE"
+    }
+  ],
+  "render": {
+    "layout": "concentric-10-circles",
+    "center": {"x": 0, "y": 0},
+    "radiusStep": 120,
+    "worldSeparation": 400,
+    "connections": "curved-lines"
+  },
+  "stats": {
+    "totalCircles": 20,
+    "world1Progress": 56.5,
+    "world2Progress": 48.0,
+    "globalProgress": 52.25,
+    "nextMilestone": "World2-Circle3 (WOLI)"
+  },
+  "kanon": true
+}
