@@ -1,211 +1,117 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ETERNIVERSE · BOOK MASTER (SAFE)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETERNIVERSE — PISANIE</title>
 
-  <!-- FONTS -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  background:#050510;
+  color:#e0ffff;
+  font-family: system-ui, sans-serif;
+}
 
-  <style>
-    body {
-      margin: 0;
-      background: #050510;
-      color: #e0ffff;
-      font-family: 'Inter', sans-serif;
-      height: 100vh;
-      overflow: hidden;
-    }
+header {
+  padding:1rem;
+  background:#070720;
+  border-bottom:2px solid #00ffff;
+  text-align:center;
+  font-weight:bold;
+}
 
-    header {
-      padding: 1rem 2rem;
-      background: #070720;
-      border-bottom: 2px solid #00ffff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+button {
+  width:100%;
+  padding:1rem;
+  background:#00ffff;
+  color:#000;
+  border:none;
+  font-size:1rem;
+  font-weight:bold;
+}
 
-    .logo {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: #00ffff;
-    }
+#editor {
+  min-height:60vh;
+  padding:1rem;
+  outline:none;
+  font-size:1.05rem;
+  line-height:1.7;
+}
 
-    .main {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      height: calc(100vh - 70px);
-    }
+.session-active header,
+.session-active #startBtn {
+  display:none;
+}
 
-    aside {
-      background: #080820;
-      border-right: 2px solid #00ffff;
-      padding: 1rem;
-      overflow-y: auto;
-    }
-
-    .content {
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    #mainEditor {
-      flex: 1;
-      background: #0a0a25;
-      border: 2px solid #00ffff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      font-family: 'Merriweather', serif;
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: #e0ffff;
-      outline: none;
-      overflow-y: auto;
-    }
-
-    .hint {
-      opacity: 0.6;
-      font-size: 0.85rem;
-    }
-
-    /* ===== SESJA PISARSKA ===== */
-    .writing-session header,
-    .writing-session aside {
-      display: none !important;
-    }
-
-    .writing-session .main {
-      grid-template-columns: 1fr !important;
-    }
-
-    #writingSessionOverlay {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.9);
-      color: #00ffff;
-      padding: 14px;
-      border-radius: 12px;
-      z-index: 99999;
-      font-weight: bold;
-      box-shadow: 0 0 25px rgba(0,255,255,0.4);
-    }
-
-    #wsExit {
-      margin-top: 8px;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 8px;
-      background: #00ffff;
-      color: #000;
-      cursor: pointer;
-      font-weight: bold;
-    }
-  </style>
+#overlay {
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#000;
+  color:#00ffff;
+  padding:10px;
+  border-radius:8px;
+  font-size:0.9rem;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo">ETERNIVERSE</div>
-  <div class="hint">CTRL + SHIFT + S — Sesja Pisarska</div>
-</header>
+<header>ETERNIVERSE · PISANIE</header>
 
-<div class="main">
-  <aside>
-    <strong>Bramy</strong>
-    <p class="hint">Tu później podepniesz system</p>
-  </aside>
+<button id="startBtn">▶ SESJA PISARSKA</button>
 
-  <section class="content">
-    <div class="hint">Piszesz bezpiecznie. Nic tu się nie rozsypie.</div>
-
-    <!-- JEDYNY EDYTOR -->
-    <div id="mainEditor" contenteditable="true" spellcheck="false">
-Zacznij pisać tutaj…
-    </div>
-  </section>
+<div id="editor" contenteditable="true">
+Dotknij tutaj i pisz.
 </div>
 
 <script>
-'use strict';
+let active=false;
+let startTime=0;
+let startWords=0;
 
-/* ========================================
-   SESJA PISARSKA — BUILT-IN, IDIOT-RESISTANT
-======================================== */
+const editor=document.getElementById('editor');
+const btn=document.getElementById('startBtn');
 
-class WritingSession {
-  constructor() {
-    this.active = false;
-    this.startTime = 0;
-    this.startWords = 0;
-    this.editor = document.getElementById('mainEditor');
+btn.onclick=()=>{
+  active=true;
+  startTime=Date.now();
+  startWords=countWords();
+  document.body.classList.add('session-active');
+  showOverlay();
+};
 
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
-        e.preventDefault();
-        this.toggle();
-      }
-    });
-  }
-
-  toggle() {
-    this.active ? this.exit() : this.enter();
-  }
-
-  enter() {
-    this.active = true;
-    this.startTime = Date.now();
-    this.startWords = this.countWords();
-    document.body.classList.add('writing-session');
-    this.showOverlay();
-    this.timer = setInterval(() => this.update(), 1000);
-  }
-
-  exit() {
-    this.active = false;
-    clearInterval(this.timer);
-    document.body.classList.remove('writing-session');
-    document.getElementById('writingSessionOverlay')?.remove();
-  }
-
-  update() {
-    const t = Math.floor((Date.now() - this.startTime) / 1000);
-    const w = this.countWords() - this.startWords;
-    document.getElementById('wsTime').textContent = this.formatTime(t);
-    document.getElementById('wsWords').textContent = w;
-  }
-
-  countWords() {
-    return this.editor.innerText.trim().split(/\s+/).filter(Boolean).length;
-  }
-
-  formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  }
-
-  showOverlay() {
-    const o = document.createElement('div');
-    o.id = 'writingSessionOverlay';
-    o.innerHTML = `
-      <div>SESJA PISARSKA</div>
-      <div><span id="wsTime">00:00</span></div>
-      <div><span id="wsWords">0</span> słów</div>
-      <button id="wsExit">Zakończ</button>
-    `;
-    document.body.appendChild(o);
-    document.getElementById('wsExit').onclick = () => this.exit();
-  }
+function showOverlay(){
+  const o=document.createElement('div');
+  o.id='overlay';
+  o.innerHTML=`SESJA<br><span id="t">00:00</span><br><span id="w">0</span> słów<br><br><button onclick="stop()">ZAKOŃCZ</button>`;
+  document.body.appendChild(o);
+  timer=setInterval(update,1000);
 }
 
-new WritingSession();
+function stop(){
+  active=false;
+  clearInterval(timer);
+  document.body.classList.remove('session-active');
+  document.getElementById('overlay').remove();
+}
+
+function update(){
+  document.getElementById('t').textContent=formatTime((Date.now()-startTime)/1000);
+  document.getElementById('w').textContent=countWords()-startWords;
+}
+
+function countWords(){
+  return editor.innerText.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function formatTime(s){
+  const m=Math.floor(s/60);
+  const sec=Math.floor(s%60);
+  return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+}
 </script>
 
 </body>
