@@ -1,102 +1,143 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ETERNIVERSE · BOOK MASTER 2026</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ETERNIVERSE · BOOK MASTER v2.1</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --bg:#0a0a0f;
-      --cyber:#28d3c6;
-      --purple:#8b5cf6;
-      --glass:rgba(255,255,255,.08);
-      --glow:0 0 20px rgba(40,211,198,.4);
-    }
-    *{box-sizing:border-box;margin:0}
-    body{
-      font-family:Inter,sans-serif;
-      background:linear-gradient(135deg,var(--bg),#1a0d2e);
-      color:#e2e8f0;
-      min-height:100vh;
-    }
-    header{
-      position:sticky;top:0;z-index:10;
-      background:rgba(10,10,15,.95);
-      backdrop-filter:blur(16px);
-      border-bottom:1px solid rgba(40,211,198,.3);
-      padding:1rem 2rem;
-    }
-    .header-grid{
-      max-width:1400px;margin:auto;
-      display:grid;grid-template-columns:1fr auto 1fr;
-      align-items:center;gap:2rem;
-    }
-    .logo{
-      font-family:Orbitron,monospace;
-      font-size:1.8rem;
-      background:linear-gradient(45deg,var(--cyber),var(--purple));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-    .world-btn{
-      background:none;border:none;color:inherit;
-      padding:.5rem 1rem;border-radius:8px;
-      cursor:pointer;
-    }
-    .world-btn.active{
-      background:var(--cyber);
-      color:#000;
-      box-shadow:var(--glow);
-    }
-    nav{
-      display:flex;
-      background:rgba(0,0,0,.5);
-      border-bottom:1px solid rgba(40,211,198,.2);
-    }
-    .tab-btn{
-      background:none;border:none;color:inherit;
-      padding:.75rem 1.5rem;
-      cursor:pointer;
-    }
-    .tab-btn.active{background:var(--cyber);color:#000}
-    .main{
-      max-width:1400px;margin:auto;padding:2rem;
-      display:grid;grid-template-columns:300px 1fr;gap:2rem;
-    }
-    aside{
-      background:var(--glass);
-      border:1px solid rgba(40,211,198,.2);
-      border-radius:16px;padding:1.25rem;
-    }
-    .gate{
-      padding:.6rem;border-radius:8px;
-      cursor:pointer;margin-bottom:.4rem;
-    }
-    .gate.active{background:var(--cyber);color:#000}
-    .editor{
-      background:rgba(0,0,0,.7);
-      border:1px solid rgba(40,211,198,.3);
-      border-radius:12px;
-      padding:1.5rem;
-      min-height:420px;
-      font-family:Georgia,serif;
-      line-height:1.7;
-      outline:none;
-    }
-    iframe{
-      width:100%;
-      height:520px;
-      border:none;
-      border-radius:16px;
-      box-shadow:var(--glow);
-      background:#000;
-    }
-    .tab{display:none}
-    .tab.active{display:block}
-  </style>
+<style>
+:root{
+  --bg:#0a0a0f;
+  --glass:rgba(255,255,255,.08);
+  --cyan:#28d3c6;
+  --purple:#8b5cf6;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  font-family:Inter,sans-serif;
+  background:linear-gradient(135deg,var(--bg),#1a0d2e);
+  color:#e2e8f0;
+  min-height:100vh;
+}
+header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(10,10,15,.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(40,211,198,.3);
+  padding:1rem 2rem;
+}
+.header-grid{
+  max-width:1400px;margin:auto;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:1.5rem;
+}
+.logo{
+  font-family:Orbitron,monospace;
+  font-size:1.8rem;
+  background:linear-gradient(45deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.world-selector button{
+  background:none;border:none;
+  padding:.4rem .8rem;
+  margin:.2rem;
+  border-radius:6px;
+  color:inherit;
+  cursor:pointer;
+}
+.world-btn.active{
+  background:var(--cyan);
+  color:#000;
+}
+.tab-nav{
+  display:flex;
+  background:rgba(0,0,0,.45);
+  border-bottom:1px solid rgba(40,211,198,.2);
+}
+.tab-btn{
+  background:none;border:none;
+  padding:.7rem 1.4rem;
+  cursor:pointer;
+  color:inherit;
+}
+.tab-btn.active{
+  background:var(--cyan);
+  color:#000;
+}
+.main{
+  max-width:1400px;
+  margin:auto;
+  padding:2rem;
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:2rem;
+}
+.sidebar{
+  background:var(--glass);
+  border:1px solid rgba(40,211,198,.2);
+  border-radius:14px;
+  padding:1rem;
+}
+.world-item{
+  padding:.6rem;
+  margin:.3rem 0;
+  border-radius:6px;
+  cursor:pointer;
+}
+.world-item.active{
+  background:var(--cyan);
+  color:#000;
+}
+.editor{
+  background:rgba(0,0,0,.7);
+  border:1px solid rgba(40,211,198,.3);
+  border-radius:12px;
+  padding:1.2rem;
+  min-height:420px;
+  font-family:Georgia,serif;
+  line-height:1.7;
+  outline:none;
+}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.chapters-panel{
+  background:var(--glass);
+  border-radius:10px;
+  padding:.8rem;
+  margin-bottom:1rem;
+}
+.chapter-item{
+  padding:.4rem;
+  border-radius:6px;
+  cursor:pointer;
+}
+.chapter-item.active{
+  background:var(--cyan);
+  color:#000;
+}
+.cover-canvas{
+  width:480px;
+  height:640px;
+  background:#000;
+  display:block;
+  margin-bottom:1rem;
+}
+.toast{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#000;
+  border:1px solid var(--cyan);
+  padding:.7rem 1rem;
+  border-radius:8px;
+  opacity:.9;
+}
+</style>
 </head>
 
 <body>
@@ -105,120 +146,97 @@
   <div class="header-grid">
     <div>
       <div class="logo">ETERNIVERSE</div>
-      <small>BOOK MASTER 2026</small>
+      <small>BOOK MASTER v2.1</small>
     </div>
-    <div id="worldSelector"></div>
+
+    <div class="world-selector">
+      <button class="world-btn active" data-world="1">Świat 1</button>
+      <button class="world-btn" data-world="2">Świat 2</button>
+      <button class="world-btn" data-world="3">Świat 3</button>
+      <button class="world-btn" data-world="4">Świat 4</button>
+      <button class="world-btn" data-world="5">Świat 5</button>
+      <button class="world-btn" data-world="6">Świat 6</button>
+      <button class="world-btn" data-world="7">Świat 7</button>
+      <button class="world-btn" data-world="8">Świat 8</button>
+    </div>
+
     <div style="text-align:right">
-      <span id="status">Autozapis aktywny</span>
+      <span id="status">Gotowy</span>
     </div>
   </div>
 </header>
 
-<nav>
+<nav class="tab-nav">
   <button class="tab-btn active" data-tab="book">📖 Książka</button>
+  <button class="tab-btn" data-tab="cover">🖼 Okładka</button>
+  <button class="tab-btn" data-tab="audio">🎧 Audio</button>
   <button class="tab-btn" data-tab="bella">🧠 Bella</button>
+  <button class="tab-btn" data-tab="ai">🤖 AI</button>
 </nav>
 
 <div class="main">
-  <aside id="gateList"></aside>
+
+  <aside class="sidebar">
+    <h3>🚪 Bramy</h3>
+    <div id="gateList">
+      <div class="world-item active" data-brama="1">Brama 1</div>
+      <div class="world-item" data-brama="2">Brama 2</div>
+      <div class="world-item" data-brama="3">Brama 3</div>
+      <div class="world-item" data-brama="4">Brama 4</div>
+      <div class="world-item" data-brama="5">Brama 5</div>
+      <div class="world-item" data-brama="6">Brama 6</div>
+      <div class="world-item" data-brama="7">Brama 7</div>
+      <div class="world-item" data-brama="8">Brama 8</div>
+      <div class="world-item" data-brama="9">Brama 9</div>
+      <div class="world-item" data-brama="10">Brama 10</div>
+    </div>
+  </aside>
 
   <section>
-    <div id="bookTab" class="tab active">
-      <h2 id="title"></h2>
-      <div id="editor" class="editor" contenteditable="true"></div>
+
+    <!-- BOOK -->
+    <div id="bookTab" class="tab-content active">
+      <h2 id="bookTitle">Świat 1 | Brama 1</h2>
+
+      <div class="chapters-panel">
+        <div id="chaptersList">
+          <div class="chapter-item active">Rozdział 1</div>
+        </div>
+      </div>
+
+      <div id="mainEditor" class="editor" contenteditable="true"></div>
     </div>
 
-    <div id="bellaTab" class="tab">
-      <iframe src="bella-assistant.html"></iframe>
+    <!-- COVER -->
+    <div id="coverTab" class="tab-content">
+      <div id="coverContainer">
+        <canvas class="cover-canvas"></canvas>
+      </div>
     </div>
+
+    <!-- AUDIO -->
+    <div id="audioTab" class="tab-content">
+      <h3 id="audioTitle">Rozdział 1</h3>
+    </div>
+
+    <!-- BELLA -->
+    <div id="bellaTab" class="tab-content">
+      <iframe src="bella-assistant.html" style="width:100%;height:600px;border:none;"></iframe>
+    </div>
+
+    <!-- AI -->
+    <div id="aiTab" class="tab-content">
+      <div id="aiOutput" class="editor" style="min-height:200px"></div>
+      <input id="aiCommand" placeholder="Komenda AI…" style="width:100%;padding:.6rem;margin-top:.5rem">
+    </div>
+
   </section>
 </div>
 
-<script>
-/* =============================
-   GLOBAL STATE
-============================= */
-let MAPA=null;
-let state={world:1,brama:1,chapter:1};
-
-/* =============================
-   INIT
-============================= */
-fetch('mapa.json')
-  .then(r=>r.json())
-  .then(data=>{
-    MAPA=data;
-    renderWorlds();
-    renderGates();
-    bindTabs();
-    loadContent();
-    autoSave();
-    updateTitle();
-  });
-
-/* =============================
-   RENDER
-============================= */
-function renderWorlds(){
-  const el=document.getElementById('worldSelector');
-  el.innerHTML='';
-  Object.values(MAPA.worlds.list).forEach(w=>{
-    const b=document.createElement('button');
-    b.className='world-btn'+(w.id===state.world?' active':'');
-    b.textContent=w.name;
-    b.onclick=()=>{state.world=w.id;state.brama=1;renderWorlds();renderGates();loadContent();updateTitle();}
-    el.appendChild(b);
-  });
-}
-
-function renderGates(){
-  const el=document.getElementById('gateList');
-  el.innerHTML='<h3>🚪 Bramy</h3>';
-  MAPA.bramas.forEach(g=>{
-    const d=document.createElement('div');
-    d.className='gate'+(g.id===state.brama?' active':'');
-    d.textContent=`${g.id}. ${g.name}`;
-    d.onclick=()=>{state.brama=g.id;renderGates();loadContent();updateTitle();}
-    el.appendChild(d);
-  });
-}
-
-/* =============================
-   CONTENT
-============================= */
-function storageKey(){
-  return `eter-w${state.world}b${state.brama}-ch${state.chapter}`;
-}
-function loadContent(){
-  const t=localStorage.getItem(storageKey())||
-    `${MAPA.bramas[state.brama-1].fullName}\n\n${MAPA.bramas[state.brama-1].question}\n\nZacznij pisać…`;
-  document.getElementById('editor').innerText=t;
-}
-function autoSave(){
-  setInterval(()=>{
-    localStorage.setItem(storageKey(),document.getElementById('editor').innerText);
-    document.getElementById('status').textContent='Zapisano '+new Date().toLocaleTimeString();
-  },2000);
-}
-function updateTitle(){
-  document.getElementById('title').textContent=
-    `${MAPA.worlds.list[state.world].name} · ${MAPA.bramas[state.brama-1].fullName}`;
-}
-
-/* =============================
-   TABS
-============================= */
-function bindTabs(){
-  document.querySelectorAll('.tab-btn').forEach(b=>{
-    b.onclick=()=>{
-      document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      document.getElementById(b.dataset.tab+'Tab').classList.add('active');
-    }
-  });
-}
-</script>
+<!-- SCRIPTS — KOLEJNOŚĆ KRYTYCZNA -->
+<script src="js/data.js"></script>
+<script src="js/render.js"></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
