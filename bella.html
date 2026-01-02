@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bella AI — ETERNIVERSE Hyper Assistant 🧠</title>
+  
+  <style>
+    /* BELLA HYPER CSS — MOC 900% */
+    :root {
+      --bella-purple: #aa00ff; --bella-glow: 0 0 50px #aa00ff;
+      --bg-bella: linear-gradient(135deg, #0a001a 0%, #1a0033 50%, #050510 100%);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'SF Mono', monospace; background: var(--bg-bella);
+      color: #e0f8ff; min-height: 100vh; overflow-x: hidden;
+    }
+    
+    header {
+      text-align: center; padding: 70px 25px; background: rgba(10,0,26,0.95);
+      backdrop-filter: blur(50px); position: relative;
+    }
+    
+    header::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle, var(--bella-purple) 0%, transparent 70%);
+      animation: bellaPulse 3s ease infinite;
+    }
+    
+    @keyframes bellaPulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.1); }
+    }
+    
+    h1 {
+      font-size: clamp(3.5rem, 10vw, 6rem); font-weight: 900; position: relative; z-index: 1;
+      background: linear-gradient(45deg, #aa00ff, #ff44ff, #00ffdd); 
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: bellaGlow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes bellaGlow {
+      to { filter: drop-shadow(0 0 60px var(--bella-purple)); }
+    }
+    
+    /* BELLA CHAT INTERFACE */
+    .bella-container {
+      max-width: 900px; margin: 0 auto; padding: 40px 25px; height: 80vh;
+      display: flex; flex-direction: column;
+    }
+    
+    .chat-history {
+      flex: 1; overflow-y: auto; background: rgba(255,255,255,0.02);
+      border-radius: 25px; padding: 30px; margin-bottom: 25px;
+      backdrop-filter: blur(20px); border: 2px solid rgba(170,0,255,0.3);
+    }
+    
+    .message {
+      margin-bottom: 25px; opacity: 0; animation: messageSlide 0.5s forwards;
+    }
+    
+    .message.bella { text-align: right; }
+    .message.user { text-align: left; }
+    
+    .message-content {
+      display: inline-block; padding: 20px 28px; border-radius: 22px; max-width: 80%;
+      font-size: 1.1rem; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    
+    .bella .message-content {
+      background: linear-gradient(145deg, var(--bella-purple), #6600cc);
+      color: white; border: 2px solid rgba(255,255,255,0.2);
+    }
+    
+    .user .message-content {
+      background: rgba(255,255,255,0.1); color: #e0f8ff;
+      border: 2px solid rgba(0,255,221,0.3);
+    }
+    
+    @keyframes messageSlide {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* INPUT BEAST */
+    .bella-input-row {
+      display: flex; gap: 15px; align-items: flex-end;
+    }
+    
+    .brama-selector {
+      flex: none; padding: 15px 20px; background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(170,0,255,0.4); border-radius: 20px;
+      color: #e0f8ff; font-family: inherit; font-size: 1rem;
+      backdrop-filter: blur(20px);
+    }
+    
+    .input-main {
+      flex: 1; padding: 20px 28px; background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(170,0,255,0.3); border-radius: 25px;
+      color: #e0f8ff; font-family: inherit; font-size: 1.1rem;
+      resize: vertical; min-height: 120px; backdrop-filter: blur(20px);
+    }
+    
+    .input-main:focus {
+      outline: none; border-color: var(--bella-purple);
+      box-shadow: var(--bella-glow);
+    }
+    
+    .bella-send {
+      flex: none; padding: 20px 32px; background: linear-gradient(145deg, var(--bella-purple), #6600cc);
+      border: none; border-radius: 25px; color: white; font-weight: 900;
+      font-size: 1.1rem; cursor: pointer; font-family: inherit;
+      transition: all 0.3s; min-width: 140px;
+    }
+    
+    .bella-send:hover {
+      transform: scale(1.05); box-shadow: var(--bella-glow);
+    }
+    
+    /* BUTTONS GRID */
+    .bella-buttons {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px; margin: 30px 0;
+    }
+    
+    .bella-btn {
+      padding: 18px 24px; background: rgba(170,0,255,0.2);
+      border: 2px solid rgba(170,0,255,0.5); border-radius: 20px;
+      color: #e0f8ff; font-family: inherit; font-weight: 900; cursor: pointer;
+      transition: all 0.3s; text-transform: uppercase; font-size: 0.95rem;
+      backdrop-filter: blur(20px);
+    }
+    
+    .bella-btn:hover { background: var(--bella-purple); color: white; transform: translateY(-3px); }
+    
+    /* MASTER PANEL */
+    .scr-master-panel { z-index: 10000 !important; }
+    
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .bella-container { padding: 20px 15px; height: 100vh; }
+      .input-main { min-height: 100px; }
+      .bella-input-row { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  
+  <!-- SCR MASTER PANEL -->
+  <div class="scr-master-panel" id="scr-master-panel">
+    <div>🧠 BELLA AI MODE</div>
+  </div>
+
+  <header>
+    <h1>Bella AI</h1>
+    <p>Hyper Assistant · ETERNIVERSE Context · MOC Reactive</p>
+  </header>
+
+  <div class="bella-container">
+    
+    <!-- CHAT HISTORY -->
+    <div class="chat-history" id="chat-history">
+      <div class="message bella">
+        <div class="message-content">
+          <strong>🧠 Witaj w Bella Hyper Mode!</strong><br><br>
+          Jestem zintegrowana z SCR.js. Wiem która Brama aktywna.<br>
+          Ctrl+B = cycle brama | Ctrl+A = burst sugestia<br>
+          Napisz co chcesz rozwinąć...
+        </div>
+      </div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="bella-buttons">
+      <button class="bella-btn" onclick="bellaBurst()">🤖 AI BURST</button>
+      <button class="bella-btn" onclick="EterAPI.cycleBrama()">🔄 BRAMA</button>
+      <button class="bella-btn" onclick="EterAPI.godMode()">🦾 GOD MODE</button>
+      <button class="bella-btn" onclick="clearChat()">🗑️ CLEAR</button>
+    </div>
+
+    <!-- INPUT -->
+    <div class="bella-input-row">
+      <select class="brama-selector" id="brama-select">
+        <option value="1">INTER</option>
+        <option value="2">ETER</option>
+        <option value="3">OBFI</option>
+        <option value="4">CHAOS</option>
+      </select>
+      
+      <textarea class="input-main" id="bella-input" 
+        placeholder="Opisz scenę, postać lub problem... Bella rozwinie z kontekstem Bramy"></textarea>
+      
+      <button class="bella-send" onclick="sendToBella()">WYŚLIJ DO BELLI</button>
+    </div>
+    
+  </div>
+
+  <!-- 🔥 SCR.JS — BELLA PEŁNA INTEGRACJA -->
+  <script src="scr.js"></script>
+
+  <script>
+    // ==================== BELLA FUNCTIONS ====================
+    let chatMessages = [];
+    
+    function sendToBella() {
+      const input = document.getElementById('bella-input');
+      const bramaSelect = document.getElementById('brama-select');
+      const history = document.getElementById('chat-history');
+      
+      const userText = input.value.trim();
+      if (!userText) return;
+      
+      // USER MESSAGE
+      addMessage('user', userText);
+      
+      // BELLA RESPONSE (hyper context-aware)
+      const brama = window.eterniverseData.kanon.bramy[parseInt(bramaSelect.value) - 1];
+      const bellaResponse = generateBellaResponse(userText, brama);
+      
+      setTimeout(() => addMessage('bella', bellaResponse), 800);
+      
+      input.value = '';
+      input.focus();
+    }
+    
+    function addMessage(sender, text) {
+      chatMessages.push({ sender, text });
+      const history = document.getElementById('chat-history');
+      
+      const div = document.createElement('div');
+      div.className = `message ${sender}`;
+      div.innerHTML = `<div class="message-content">${text}</div>`;
+      history.appendChild(div);
+      history.scrollTop = history.scrollHeight;
+    }
+    
+    function generateBellaResponse(userInput, brama) {
+      const templates = {
+        INTER: "Interfejs reaguje na Twoje słowa. Algorytm analizuje...",
+        ETER: "Eteryczna sieć pulsuje. Twoje intencje rezonują...",
+        OBFI: "Obfuskacja pęka. Widzę ukryte wzorce w Twoim tekście...",
+        CHAOS: "Chaos formuje się wokół Twojej wizji. Nic nie jest przypadkowe..."
+      };
+      
+      return `
+        <strong>${brama.nazwa}</strong> Context:<br>
+        ${templates[brama.nazwa]}<br><br>
+        <em>${userInput.slice(0, 50)}...</em><br>
+        Sugestia: Kontynuuj z napięciem. Elara obserwuje. 
+        <strong>Co dalej?</strong>
+      `;
+    }
+    
+    function bellaBurst() {
+      EterAPI.aiBurst();
+    }
+    
+    function clearChat() {
+      document.getElementById('chat-history').innerHTML = '';
+      chatMessages = [];
+    }
+    
+    // ENTER TO SEND
+    document.getElementById('bella-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendToBella();
+      }
+    });
+    
+    // BRAMA SYNC
+    document.getElementById('brama-select').addEventListener('change', e => {
+      EterAPI.cycleBrama(e.target.value);
+    });
+  </script>
+
+</body>
+</html>
