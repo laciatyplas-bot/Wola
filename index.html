@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — BOOK MASTER</title>
+<title>ETERNIVERSE — BOOK MASTER + EXPORT</title>
 
 <style>
 body{
@@ -61,6 +61,9 @@ button{
   <button onclick="expand()">ROZWIŃ</button>
   <button onclick="rewrite()">PRZEPISZ</button>
   <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
+
+  <button onclick="exportOne()">EKSPORT TEGO ROZDZIAŁU (TXT)</button>
+  <button onclick="exportAll()">EKSPORT CAŁEJ KSIĄŻKI (TXT)</button>
 </div>
 
 <script>
@@ -114,6 +117,25 @@ function expand(){
 function rewrite(){
   const e=document.getElementById('editor');
   e.innerText=e.innerText.split(/\n+/).map(l=>"— "+l).join("\n\n")+"\n\n[PRZEPISANE]";
+}
+
+function exportOne(){
+  if(active===null) return;
+  download(chapters[active],'rozdzial_'+(active+1)+'.txt');
+}
+
+function exportAll(){
+  if(!chapters.length) return;
+  const full=chapters.map((c,i)=>'ROZDZIAŁ '+(i+1)+'\n\n'+c).join('\n\n\n');
+  download(full,'ksiazka.txt');
+}
+
+function download(text,name){
+  const blob=new Blob([text],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=name;
+  a.click();
 }
 
 (function load(){
