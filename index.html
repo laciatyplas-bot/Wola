@@ -3,32 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA · ROZDZIAŁY (EDYCJA + ZAPIS)</title>
-
+<title>TEST BELLA</title>
 <style>
 body{
   margin:0;
-  background:#050510;
-  color:#e0ffff;
+  padding:10px;
+  background:#000;
+  color:#0ff;
   font-family:system-ui,sans-serif;
 }
-header{
-  padding:14px;
-  background:#070720;
-  border-bottom:2px solid #00ffff;
-  font-weight:700;
-  text-align:center;
-}
-main{padding:12px}
 textarea{
   width:100%;
-  min-height:30vh;
-  background:#0a0a25;
-  color:#e0ffff;
-  border:none;
-  padding:12px;
-  font-size:15px;
-  line-height:1.6;
+  height:50vh;
+  background:#111;
+  color:#0ff;
+  font-size:16px;
+  padding:10px;
 }
 button{
   width:100%;
@@ -36,91 +26,36 @@ button{
   margin-top:10px;
   font-size:16px;
   font-weight:700;
-  background:#00ffff;
+  background:#0ff;
   color:#000;
   border:none;
 }
-.list button{
-  width:100%;
-  margin-top:6px;
-  background:#000;
-  color:#00ffff;
-}
-#editor{
-  min-height:40vh;
-  background:#000;
-  padding:12px;
-  margin-top:10px;
-  white-space:pre-wrap;
-}
 </style>
 </head>
-
 <body>
 
-<header>BELLA · ROZDZIAŁY</header>
+<textarea id="t">Wklej tekst tutaj.</textarea>
 
-<main>
-
-<textarea id="input">
-Wklej TU całą książkę.
-</textarea>
-
-<button onclick="splitAndSave()">PODZIEL I ZAPISZ</button>
-
-<div class="list" id="chapterList"></div>
-
-<h3>EDYCJA ROZDZIAŁU</h3>
-<div id="editor" contenteditable="true"></div>
-
-<button onclick="saveChapter()">ZAPISZ ROZDZIAŁ</button>
-
-</main>
+<button onclick="stress()">STREŚĆ</button>
+<button onclick="expand()">ROZWIŃ</button>
+<button onclick="rewrite()">PRZEPISZ</button>
 
 <script>
-let chapters=[];
-let activeIndex=null;
-
-function splitAndSave(){
-  const text=document.getElementById('input').value.trim();
-  if(!text) return;
-
-  chapters=text.split(/(?=ROZDZIAŁ|Rozdział|CHAPTER|Chapter|KAPITEL|Kapitel)/g)
-    .filter(t=>t.trim().length>50);
-
-  localStorage.setItem('BELLA_CHAPTERS',JSON.stringify(chapters));
-  renderList();
+function stress(){
+  const t=document.getElementById('t');
+  const w=t.value.split(/\s+/);
+  t.value=w.slice(0,Math.min(50,w.length)).join(' ')+"\\n\\n[STRESZCZONE]";
 }
 
-function renderList(){
-  const list=document.getElementById('chapterList');
-  list.innerHTML='';
-  chapters.forEach((c,i)=>{
-    const b=document.createElement('button');
-    b.textContent='ROZDZIAŁ '+(i+1);
-    b.onclick=()=>openChapter(i);
-    list.appendChild(b);
-  });
+function expand(){
+  const t=document.getElementById('t');
+  t.value=t.value+"\\n\\n"+t.value+"\\n\\n[ROZWINIĘTE]";
 }
 
-function openChapter(i){
-  activeIndex=i;
-  document.getElementById('editor').innerText=chapters[i];
+function rewrite(){
+  const t=document.getElementById('t');
+  t.value=t.value.split(/\\n+/).map(l=>"— "+l).join("\\n\\n")+"\\n\\n[PRZEPISANE]";
 }
-
-function saveChapter(){
-  if(activeIndex===null) return;
-  chapters[activeIndex]=document.getElementById('editor').innerText;
-  localStorage.setItem('BELLA_CHAPTERS',JSON.stringify(chapters));
-}
-
-(function load(){
-  const saved=localStorage.getItem('BELLA_CHAPTERS');
-  if(saved){
-    chapters=JSON.parse(saved);
-    renderList();
-  }
-})();
 </script>
 
 </body>
