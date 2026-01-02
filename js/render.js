@@ -1,6 +1,7 @@
-// render.js — ETERNIVERSE BOOK MASTER v2.1
+
+// js/render.js — ETERNIVERSE BOOK MASTER v2.2
 // Quantum Render Engine — stabilny, deterministyczny, SPA-ready
-// 8 Światów × 10 Bram | 2026 | Maciej Maciuszek
+// 8 Światów × 10 Bram | Master Edition 2026 | Maciej Maciuszek
 
 'use strict';
 
@@ -9,144 +10,153 @@ class QuantumRender {
     this.components = new Map();
     this.cache = new Map();
     this.dirty = new Set();
-    this.lastFrame = 0;
 
     this.initComponents();
     this.bindEvents();
-    this.startRenderLoop();
+    this.renderAll(); // Pierwsze renderowanie
 
-    console.log('🌀 QuantumRender v2.1 uruchomiony');
+    console.log('🌀 QuantumRender v2.2 uruchomiony');
   }
 
   // ===============================
   // REJESTRACJA KOMPONENTÓW
   // ===============================
   initComponents() {
-    this.components.set('chapter-list', this.renderChapterList);
-    this.components.set('world-stats', this.renderWorldStats);
-    this.components.set('cover-generator', this.renderCoverGenerator);
-    this.components.set('audio-waveform', this.renderAudioWaveform);
-    this.components.set('ai-console-history', this.renderAIHistory);
+    this.components.set('chapter-list', this.renderChapterList.bind(this));
+    this.components.set('world-stats', this.renderWorldStats.bind(this));
+    this.components.set('cover-generator', this.renderCoverGenerator.bind(this));
+    this.components.set('audio-waveform', this.renderAudioWaveform.bind(this));
+    this.components.set('ai-history', this.renderAIHistory.bind(this));
+    this.components.set('gate-list', this.renderGateList.bind(this));
   }
 
   // ===============================
   // EVENTY GLOBALNE
   // ===============================
   bindEvents() {
-    document.addEventListener('worldChanged', () => this.markDirty('chapter-list', 'world-stats', 'cover-generator'));
-    document.addEventListener('bramaChanged', () => this.markDirty('chapter-list'));
+    document.addEventListener('worldChanged', () => this.markDirty('gate-list', 'cover-generator', 'world-stats'));
+    document.addEventListener('gateChanged', () => this.markDirty('chapter-list', 'cover-generator'));
     document.addEventListener('chapterChanged', () => this.markDirty('chapter-list'));
     document.addEventListener('statsUpdated', () => this.markDirty('world-stats'));
-    document.addEventListener('aiHistoryUpdated', () => this.markDirty('ai-console-history'));
+    document.addEventListener('contentSaved', () => this.markDirty('world-stats'));
+    document.addEventListener('aiResponse', () => this.markDirty('ai-history'));
   }
 
   markDirty(...components) {
     components.forEach(c => this.dirty.add(c));
+    this.renderDirty();
   }
 
   // ===============================
-  // GŁÓWNA PĘTLA RENDER
+  // RENDER LOOP
   // ===============================
-  startRenderLoop() {
-    const loop = (ts) => {
-      if (ts - this.lastFrame > 120) {
-        this.renderDirtyComponents();
-        this.lastFrame = ts;
-      }
-      requestAnimationFrame(loop);
-    };
-    requestAnimationFrame(loop);
+  renderDirty() {
+    if (this.dirty.size === 0) return;
+
+    // Chapter list
+    if (this.dirty.has('chapter-list')) {
+      this.render('chapter-list', '#chaptersList');
+    }
+
+    // Gate list
+    if (this.dirty.has('gate-list')) {
+      this.render('gate-list', '#gateList');
+    }
+
+    // Stats
+    if (this.dirty.has('world-stats')) {
+      this.render('world-stats', '#statsContainer');
+    }
+
+    // Cover
+    if (this.dirty.has('cover-generator')) {
+      this.render('cover-generator', '#coverContainer');
+    }
+
+    // AI history
+    if (this.dirty.has('ai-history')) {
+      this.render('ai-history', '#aiHistory');
+    }
+
+    this.dirty.clear();
+  }
+
+  renderAll() {
+    this.render('gate-list', '#gateList');
+    this.render('chapter-list', '#chaptersList');
+    this.render('world-stats', '#statsContainer');
+    this.render('cover-generator', '#coverContainer');
+    this.render('ai-history', '#aiHistory');
   }
 
   // ===============================
   // CORE RENDER
   // ===============================
-  render(componentId, targetSelector, data) {
+  render(componentId, targetSelector) {
     const renderer = this.components.get(componentId);
     if (!renderer) return;
 
     const target = document.querySelector(targetSelector);
     if (!target) return;
 
-    const key = componentId + ':' + JSON.stringify(data || {});
-    if (this.cache.get(key)) {
-      target.innerHTML = this.cache.get(key);
-      return;
-    }
-
-    const html = renderer.call(this, data);
-    this.cache.set(key, html);
+    const html = renderer();
     target.innerHTML = html;
-    this.applyMorph(target);
+    this.applyTransition(target);
   }
 
-  applyMorph(el) {
+  applyTransition(el) {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(6px) scale(0.98)';
+    el.style.transform = 'translateY(10px)';
     requestAnimationFrame(() => {
-      el.style.transition = 'all 0.25s ease';
+      el.style.transition = 'all 0.4s ease';
       el.style.opacity = '1';
-      el.style.transform = 'none';
+      el.style.transform = 'translateY(0)';
     });
-  }
-
-  // ===============================
-  // DIRTY RENDER
-  // ===============================
-  renderDirtyComponents() {
-    if (!window.eterNiverse) return;
-
-    if (this.dirty.has('chapter-list')) {
-      this.render('chapter-list', '#chaptersList', {
-        chapters: window.eterNiverse.data?.[window.eterNiverse.currentWorld]?.[window.eterNiverse.currentBrama]?.chapters || []
-      });
-      this.dirty.delete('chapter-list');
-    }
-
-    if (this.dirty.has('world-stats') && window.eterDataAPI) {
-      this.render('world-stats', '#statsContainer', {
-        stats: window.eterDataAPI.getStats()
-      });
-      this.dirty.delete('world-stats');
-    }
-
-    if (this.dirty.has('cover-generator')) {
-      this.render('cover-generator', '#coverContainer', {
-        world: window.eterNiverse.currentWorld
-      });
-      this.dirty.delete('cover-generator');
-    }
-
-    if (this.dirty.has('ai-console-history')) {
-      this.render('ai-console-history', '#aiHistory', {
-        history: window.eterAI?.history || []
-      });
-      this.dirty.delete('ai-console-history');
-    }
   }
 
   // ===============================
   // KOMPONENTY
   // ===============================
-  renderChapterList({ chapters }) {
-    if (!chapters.length) {
-      return `<div class="empty">Brak rozdziałów</div>`;
+  renderGateList() {
+    const currentWorld = window.eterApp?.state.world || 1;
+    return Array.from({ length: 10 }, (_, i) => i + 1).map(gate => `
+      <div class="world-item \( {gate === (window.eterApp?.state.gate || 1) ? 'active' : ''}" data-brama=" \){gate}">
+        Brama ${gate} — ${window.eterData?.gateTemplates[gate - 1]?.name || 'Nieznana'}
+      </div>
+    `).join('');
+  }
+
+  renderChapterList() {
+    // Symulacja rozdziałów – w przyszłości z localStorage
+    const chapters = [];
+    let ch = 1;
+    let key;
+    do {
+      key = window.eterDataAPI?.contentKey(window.eterApp.state.world, window.eterApp.state.gate, ch);
+      if (localStorage.getItem(key)) {
+        const text = localStorage.getItem(key);
+        const words = text.trim().split(/\s+/).filter(Boolean).length;
+        chapters.push({ id: ch, title: `Rozdział ${ch}`, words });
+      }
+      ch++;
+    } while (localStorage.getItem(key));
+
+    if (chapters.length === 0) {
+      chapters.push({ id: 1, title: 'Rozdział 1', words: 0 });
     }
 
-    return chapters.map((ch, i) => `
-      <div class="chapter-item ${ch.active ? 'active' : ''}" data-chapter="${i + 1}">
-        <div class="chapter-title">${ch.title || `Rozdział ${i + 1}`}</div>
+    return chapters.map(ch => `
+      <div class="chapter-item \( {ch.id === window.eterApp.state.chapter ? 'active' : ''}" data-chapter=" \){ch.id}">
+        <div class="chapter-title">${ch.title}</div>
         <div class="chapter-meta">
-          <span>${ch.words || 0} słów</span>
-          <span class="status ${ch.status || 'draft'}">${ch.status || 'draft'}</span>
+          <span>${ch.words} słów</span>
         </div>
       </div>
     `).join('');
   }
 
-  renderWorldStats({ stats }) {
-    if (!stats) return '';
-
+  renderWorldStats() {
+    const stats = window.eterDataAPI?.getStats() || { totalWords: 0, progress: 0 };
     return `
       <div class="stats-grid">
         <div class="stat">
@@ -158,70 +168,72 @@ class QuantumRender {
           <span>Postęp</span>
         </div>
         <div class="stat">
-          <strong>${stats.worldsActive}</strong>
-          <span>Światy</span>
-        </div>
-        <div class="stat">
-          <strong>${stats.avgWords.toLocaleString()}</strong>
-          <span>Śr./Brama</span>
+          <strong>${stats.completedGates || 0}/80</strong>
+          <span>Ukończone bramy</span>
         </div>
       </div>
     `;
   }
 
-  renderCoverGenerator({ world }) {
+  renderCoverGenerator() {
+    const world = window.eterApp?.state.world || 1;
+    setTimeout(() => CoverRenderer.generate(world), 100); // Opóźnienie dla canvas
+
     return `
-      <canvas class="cover-canvas" width="480" height="640" data-world="${world}"></canvas>
-      <div class="cover-actions">
-        <button class="ai-cover">🤖 AI</button>
-        <button class="save-cover">💾 PNG</button>
+      <canvas class="cover-canvas" id="coverCanvas" width="480" height="640"></canvas>
+      <div class="cover-actions" style="margin-top:1rem;">
+        <button class="ai-cover"><i class="fas fa-brain"></i> Generuj AI</button>
+        <button class="save-cover"><i class="fas fa-download"></i> Zapisz PNG</button>
       </div>
     `;
   }
 
-  renderAudioWaveform({ progress = 0 }) {
+  renderAudioWaveform() {
     return `
-      <div class="waveform">
-        ${Array.from({ length: 24 }).map(() => `<span></span>`).join('')}
-        <div class="progress" style="width:${progress}%"></div>
+      <div class="waveform" style="display:flex;gap:4px;height:60px;align-items:end;">
+        \( {Array.from({ length: 40 }, () => `<span style="width:4px;background:var(--cyan);border-radius:2px;height: \){Math.random() * 100 + 20}%"></span>`).join('')}
       </div>
     `;
   }
 
-  renderAIHistory({ history }) {
-    if (!history.length) return `<div class="empty">Brak historii AI</div>`;
-
-    return history.map(h => `
-      <div class="ai-entry">
-        <div class="cmd">${h.command}</div>
-        <div class="resp">${h.response}</div>
-        <small>${new Date(h.time).toLocaleTimeString()}</small>
-      </div>
-    `).join('');
+  renderAIHistory() {
+    // Symulacja – w przyszłości z AI modułu
+    return '<div class="empty" style="opacity:0.6;padding:2rem;text-align:center;">Brak historii AI</div>';
   }
 }
 
 // ===============================
-// COVER RENDERER
+// COVER RENDERER – prosty generator
 // ===============================
 class CoverRenderer {
   static generate(world) {
-    const canvas = document.querySelector('.cover-canvas');
+    const canvas = document.getElementById('coverCanvas');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const g = ctx.createLinearGradient(0, 0, 480, 640);
+    const preset = window.eterData?.worldPresets[world] || { color: '#28d3c6', name: 'Nieznany' };
 
-    g.addColorStop(0, '#28D3C6');
-    g.addColorStop(1, '#0A0A1A');
-
-    ctx.fillStyle = g;
+    // Tło gradient
+    const grad = ctx.createLinearGradient(0, 0, 480, 640);
+    grad.addColorStop(0, preset.color);
+    grad.addColorStop(1, '#000011');
+    ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 480, 640);
 
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 48px Orbitron';
+    // Neonowy tekst
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 52px Orbitron';
     ctx.textAlign = 'center';
-    ctx.fillText(`ŚWIAT ${world}`, 240, 320);
+    ctx.fillText(preset.name.toUpperCase(), 240, 280);
+
+    ctx.font = 'bold 36px Orbitron';
+    ctx.fillText(`ŚWIAT ${world}`, 240, 340);
+
+    // Glow efekt
+    ctx.shadowColor = preset.color;
+    ctx.shadowBlur = 40;
+    ctx.fillText(preset.name.toUpperCase(), 240, 280);
+    ctx.fillText(`ŚWIAT ${world}`, 240, 340);
   }
 }
 
@@ -231,8 +243,20 @@ class CoverRenderer {
 document.addEventListener('DOMContentLoaded', () => {
   window.qRender = new QuantumRender();
 
+  // Generuj okładkę przy zmianie świata
   document.addEventListener('worldChanged', e => {
     CoverRenderer.generate(e.detail.world);
+  });
+
+  // Przyciski cover
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('save-cover')) {
+      const canvas = document.getElementById('coverCanvas');
+      const link = document.createElement('a');
+      link.download = `okladka_swiat_${window.eterApp.state.world}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
   });
 });
 
