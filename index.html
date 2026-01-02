@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="ETERNIVERSE BOOK MASTER v4.0 – najsilniejszy panel redakcyjny wszechświata EterSeeker. Edytor, upload okładek i MP3, Bella AI, eksport. Master Edition 2026."/>
-  <title>ETERNIVERSE · BOOK MASTER v4.0 — Silniejszy</title>
+  <meta name="description" content="ETERNIVERSE BOOK MASTER v4.0 – Panel redakcyjny EterSeeker. Edytor, światy, bramy, Bella AI, audio, okładki, eksport."/>
+  <title>ETERNIVERSE · BOOK MASTER v4.0</title>
 
-  <!-- Fonts -->
+  <!-- FONTS -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- Icons -->
+  <!-- ICONS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <!-- Twój kwantowy CSS – wklej z poprzedniej wiadomości -->
+  <!-- CSS -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<header>
+<!-- ================= HEADER ================= -->
+<header class="header">
   <div class="header-grid">
     <div>
       <div class="logo">ETERNIVERSE</div>
-      <small>BOOK MASTER v4.0 — Silniejszy</small>
+      <small>BOOK MASTER v4.0</small>
     </div>
 
     <div class="world-selector">
@@ -30,12 +31,13 @@
       <button class="world-btn" data-world="polaris">Polaris</button>
     </div>
 
-    <div style="text-align:right">
+    <div class="status">
       <span id="status">Splątanie aktywne</span>
     </div>
   </div>
 </header>
 
+<!-- ================= TABS ================= -->
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="book"><i class="fas fa-book"></i> Książka</button>
   <button class="tab-btn" data-tab="cover"><i class="fas fa-image"></i> Okładka</button>
@@ -45,94 +47,104 @@
   <button class="tab-btn" data-tab="preview"><i class="fas fa-eye"></i> Podgląd</button>
 </nav>
 
-<div class="main">
+<!-- ================= MAIN ================= -->
+<main class="main-container">
 
+  <!-- ===== SIDEBAR / BRAMY ===== -->
   <aside class="sidebar">
     <h3><i class="fas fa-portal-enter"></i> Bramy</h3>
-    <div id="gateList">
-      <!-- Dynamicznie z JS -->
-    </div>
+    <div id="gateList"></div>
   </aside>
 
-  <section>
+  <!-- ===== CONTENT ===== -->
+  <section class="content">
 
-    <!-- BOOK -->
+    <!-- ===== BOOK ===== -->
     <div id="bookTab" class="tab-content active">
-      <h2 id="bookTitle">Wybierz bramę</h2>
-
-      <div class="chapters-panel">
-        <button id="addChapterBtn"><i class="fas fa-plus"></i> Nowy rozdział</button>
-        <div id="chaptersList">
-          <div class="chapter-item active">Rozdział 1</div>
+      <div class="editor-header">
+        <h2 id="bookTitle">Świat · Brama</h2>
+        <div class="editor-tools">
+          <button id="addChapterBtn"><i class="fas fa-plus"></i> Rozdział</button>
         </div>
       </div>
 
-      <div id="mainEditor" class="editor" contenteditable="true"></div>
+      <div class="chapters-panel">
+        <div id="chaptersList"></div>
+      </div>
+
+      <div id="mainEditor" class="editor-area" contenteditable="true" spellcheck="false"></div>
     </div>
 
-    <!-- COVER -->
+    <!-- ===== COVER ===== -->
     <div id="coverTab" class="tab-content">
       <h3>Okładka książki</h3>
-      
-      <div style="margin-bottom:2rem;">
-        <label class="upload-btn">
-          <i class="fas fa-upload"></i> Wrzuć okładkę z telefonu
-          <input type="file" id="coverUpload" accept="image/*" style="display:none;">
-        </label>
-        <p id="coverInfo" style="margin-top:0.5rem;opacity:0.7;"></p>
-      </div>
 
-      <div id="coverPreviewContainer">
-        <img id="coverPreview" class="cover-canvas" src="" alt="Podgląd okładki" style="display:none;">
+      <label class="upload-btn">
+        <i class="fas fa-upload"></i> Wgraj okładkę
+        <input type="file" id="coverUpload" accept="image/*" hidden>
+      </label>
+
+      <p id="coverInfo" class="status"></p>
+
+      <div class="cover-preview">
+        <img id="coverPreview" class="cover-canvas" style="display:none;">
       </div>
     </div>
 
-    <!-- AUDIO -->
+    <!-- ===== AUDIO ===== -->
     <div id="audioTab" class="tab-content">
-      <h3>Nagranie rozdziału (MP3)</h3>
-      
-      <div style="margin-bottom:2rem;">
-        <label class="upload-btn">
-          <i class="fas fa-upload"></i> Wrzuć plik MP3 z telefonu
-          <input type="file" id="audioUpload" accept="audio/mp3,audio/mpeg" style="display:none;">
-        </label>
-        <p id="audioInfo" style="margin-top:0.5rem;opacity:0.7;"></p>
-      </div>
+      <h3>Audiobook / MP3</h3>
 
-      <div id="audioPlaybackContainer" style="margin-top:1rem;">
-        <audio id="audioPlayer" controls style="width:100%;"></audio>
-      </div>
+      <label class="upload-btn">
+        <i class="fas fa-upload"></i> Wgraj MP3
+        <input type="file" id="audioUpload" accept="audio/mpeg,audio/mp3" hidden>
+      </label>
+
+      <p id="audioInfo" class="status"></p>
+
+      <audio id="audioPlayer" controls style="width:100%;margin-top:1rem;"></audio>
     </div>
 
-    <!-- BELLA -->
+    <!-- ===== BELLA AI ===== -->
     <div id="bellaTab" class="tab-content">
-      <iframe src="bella-assistant.html" style="width:100%;height:700px;border:none;border-radius:16px;"></iframe>
+      <iframe
+        src="bella-assistant.html"
+        title="Bella AI"
+        style="width:100%;height:720px;border:none;border-radius:18px;">
+      </iframe>
     </div>
 
-    <!-- EXPORT -->
+    <!-- ===== EXPORT ===== -->
     <div id="exportTab" class="tab-content">
-      <h3>Eksportuj książkę</h3>
-      <button id="exportPDF">PDF</button>
-      <button id="exportDOCX">Word (.docx)</button>
-      <button id="exportEPUB">EPUB</button>
+      <h3>Eksport książki</h3>
+      <div class="export-buttons">
+        <button id="exportPDF"><i class="fas fa-file-pdf"></i> PDF</button>
+        <button id="exportDOCX"><i class="fas fa-file-word"></i> DOCX</button>
+        <button id="exportEPUB"><i class="fas fa-book-open"></i> EPUB</button>
+      </div>
     </div>
 
-    <!-- PREVIEW -->
+    <!-- ===== PREVIEW ===== -->
     <div id="previewTab" class="tab-content">
-      <div id="bookPreview" class="editor"></div>
+      <h3>Podgląd książki</h3>
+      <div id="bookPreview" class="editor-area"></div>
     </div>
 
   </section>
-</div>
+</main>
 
+<!-- ================= TOAST ================= -->
 <div id="toastContainer"></div>
 
-<!-- Skrypty -->
+<!-- ================= SCRIPTS ================= -->
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 <script src="js/editor.js"></script>
+<script src="js/app.js"></script>
 <script src="js/ai-integration.js"></script>
-<script src="js/upload.js"></script> <!-- upload okładek i MP3 -->
+<script src="js/upload.js"></script>
+
+<!-- DOCX -->
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
 
 </body>
