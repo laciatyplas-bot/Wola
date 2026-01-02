@@ -1,383 +1,283 @@
-// app.js — ETERNIVERSE BOOK MASTER v2.0 — KWANTOWE PIÓRO
-// Architektura 8 Światów × 10 Bram | Wydawnictwo Architekta Woli
-// 2026 | Maciej Maciuszek — Pełna funkcjonalność narracyjna
+// app.js — ETERNIVERSE BOOK MASTER v2.1 — KWANTOWE PIÓRO (STABLE)
+// Architektura 8 Światów × 10 Bram
+// 2026 | Maciej Maciuszek
 
 class EterNiverse {
   constructor() {
     this.currentWorld = 1;
     this.currentBrama = 1;
     this.currentChapter = 1;
+
+    this.STORAGE_KEY = 'ETERNIVERSE_BOOK_DATA';
     this.data = this.loadData();
+
+    this.saveTimeout = null;
     this.init();
   }
 
-  // 🌌 INICJALIZACJA POLA NARRACJI
+  // 🌌 INIT
   init() {
     this.bindEvents();
     this.updateUI();
     this.loadCurrentContent();
     this.startAutoSave();
-    this.initAnimations();
-    console.log('🚀 ETERNIVERSE BOOK MASTER 2.0 zainicjowany');
+    console.log('🚀 ETERNIVERSE BOOK MASTER v2.1 uruchomiony');
   }
 
-  // 🔗 WIĄZANIE IMPULSÓW
+  // 🔗 EVENTS
   bindEvents() {
-    // Światy
     document.querySelectorAll('.world-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => this.switchWorld(e.target.dataset.world));
+      btn.addEventListener('click', () => this.switchWorld(btn.dataset.world));
     });
 
-    // Bramy
     document.querySelectorAll('.world-item').forEach(item => {
-      item.addEventListener('click', (e) => this.switchBrama(e.currentTarget.dataset.brama));
+      item.addEventListener('click', () => this.switchBrama(item.dataset.brama));
     });
 
-    // Zakładki
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+      btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
     });
 
-    // Rozdziały
-    document.getElementById('chaptersList').addEventListener('click', (e) => {
-      if (e.target.classList.contains('chapter-item')) {
-        this.switchChapter(e.target);
-      }
-    });
+    const chaptersList = document.getElementById('chaptersList');
+    if (chaptersList) {
+      chaptersList.addEventListener('click', e => {
+        if (e.target.classList.contains('chapter-item')) {
+          this.switchChapter(e.target);
+        }
+      });
+    }
 
-    // Editor
-    document.getElementById('mainEditor').addEventListener('input', () => {
-      this.debounceSave();
-    });
+    const editor = document.getElementById('mainEditor');
+    if (editor) {
+      editor.addEventListener('input', () => this.debounceSave());
+    }
 
-    // AI Console
-    document.getElementById('aiCommand').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') this.executeAI();
-    });
-    document.querySelector('.ai-input button').addEventListener('click', () => this.executeAI());
+    const aiInput = document.getElementById('aiCommand');
+    if (aiInput) {
+      aiInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.executeAI();
+        }
+      });
+    }
 
-    // Cover
+    document.addEventListener('keydown', e => this.handleHotkeys(e));
+
     this.initCoverControls();
     this.initAudioControls();
-
-    // Hotkeys
-    document.addEventListener('keydown', (e) => this.handleHotkeys(e));
   }
 
-  // 🌍 PRZEŁĄCZANIE ŚWIATÓW
-  switchWorld(worldId) {
-    this.currentWorld = parseInt(worldId);
-    document.querySelectorAll('.world-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`[data-world="${worldId}"]`).classList.add('active');
+  // 🌍 WORLD
+  switchWorld(id) {
+    this.currentWorld = Number(id);
+    document.querySelectorAll('.world-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-world="${id}"]`)?.classList.add('active');
+    this.currentChapter = 1;
     this.updateUI();
     this.loadCurrentContent();
-    this.notify(`Aktywowano Świat ${worldId}`, 'world');
+    this.notify(`Świat ${id} aktywny`, 'world');
   }
 
-  // 🚪 PRZEŁĄCZANIE BRAM
-  switchBrama(bramaId) {
-    this.currentBrama = parseInt(bramaId);
-    document.querySelectorAll('.world-item').forEach(item => item.classList.remove('active'));
-    document.querySelector(`[data-brama="${bramaId}"]`).classList.add('active');
+  // 🚪 BRAMA
+  switchBrama(id) {
+    this.currentBrama = Number(id);
+    document.querySelectorAll('.world-item').forEach(i => i.classList.remove('active'));
+    document.querySelector(`[data-brama="${id}"]`)?.classList.add('active');
+    this.currentChapter = 1;
     this.updateUI();
     this.loadCurrentContent();
-    this.notify(`Otwarto Bramę ${bramaId}`, 'gate');
+    this.notify(`Brama ${id} otwarta`, 'gate');
   }
 
-  // 📑 PRZEŁĄCZANIE ZAKŁADEK
+  // 📑 TAB
   switchTab(tabId) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    
-    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-    document.getElementById(tabId + 'Tab').classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+    document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+    document.getElementById(`${tabId}Tab`)?.classList.add('active');
   }
 
-  // 📖 PRZEŁĄCZANIE ROZDZIAŁÓW
-  switchChapter(chapterEl) {
-    document.querySelectorAll('.chapter-item').forEach(ch => ch.classList.remove('active'));
-    chapterEl.classList.add('active');
-    this.currentChapter = Array.from(document.querySelectorAll('.chapter-item')).indexOf(chapterEl) + 1;
-    this.notify(`Aktywny rozdział: ${chapterEl.textContent}`, 'chapter');
+  // 📖 CHAPTER
+  switchChapter(el) {
+    document.querySelectorAll('.chapter-item').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    this.currentChapter = [...el.parentNode.children].indexOf(el) + 1;
+    this.loadCurrentContent();
+    this.notify(el.textContent, 'chapter');
   }
 
-  // ✨ AKTUALIZACJA INTERFEJSU
+  // ✨ UI
   updateUI() {
-    document.getElementById('currentWorld').textContent = this.currentWorld;
-    document.getElementById('currentBrama').textContent = this.currentBrama;
-    document.getElementById('bookTitle').textContent = 
-      `Świat ${this.currentWorld} • Brama ${this.currentBrama}`;
-    
-    document.getElementById('audioTitle').textContent = 
-      `Rozdział ${this.currentChapter} - Świat ${this.currentWorld}`;
-    
-    document.querySelector('.cover-canvas').dataset.world = this.currentWorld;
+    const cw = document.getElementById('currentWorld');
+    const cb = document.getElementById('currentBrama');
+    const title = document.getElementById('bookTitle');
+    const audio = document.getElementById('audioTitle');
+
+    if (cw) cw.textContent = this.currentWorld;
+    if (cb) cb.textContent = this.currentBrama;
+    if (title) title.textContent = `Świat ${this.currentWorld} | Brama ${this.currentBrama}`;
+    if (audio) audio.textContent = `Rozdział ${this.currentChapter} – Świat ${this.currentWorld}`;
   }
 
-  // 💾 SYSTEM ZAPISÓW
+  // 💾 DATA
   loadData() {
+    const raw = localStorage.getItem(this.STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+
     const data = {};
-    for (let world = 1; world <= 8; world++) {
-      data[world] = {};
-      for (let brama = 1; brama <= 10; brama++) {
-        data[world][brama] = {
-          chapters: this.getSavedChapters(world, brama),
-          metadata: JSON.parse(localStorage.getItem(`eter-world${world}-brama${brama}`) || '{}')
+    for (let w = 1; w <= 8; w++) {
+      data[w] = {};
+      for (let b = 1; b <= 10; b++) {
+        data[w][b] = {
+          chapters: {
+            1: { title: 'Rozdział 1', content: '' }
+          }
         };
       }
     }
     return data;
   }
 
-  getSavedChapters(world, brama) {
-    const chapters = localStorage.getItem(`eter-chapters-w${world}b${brama}`);
-    return chapters ? JSON.parse(chapters) : ['Rozdział 1: Początek'];
-  }
-
-  saveData() {
-    const editorContent = document.getElementById('mainEditor').innerText;
-    const key = `eter-w${this.currentWorld}b${this.currentBrama}-ch${this.currentChapter}`;
-    
-    localStorage.setItem(key, editorContent);
-    
-    // Metadata
-    const metadata = {
-      title: document.getElementById('bookTitle').textContent,
-      lastEdit: new Date().toISOString(),
-      wordCount: editorContent.split(/s+/).length,
-      world: this.currentWorld,
-      brama: this.currentBrama
-    };
-    
-    localStorage.setItem(`eter-world${this.currentWorld}-brama${this.currentBrama}`, JSON.stringify(metadata));
+  persist() {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data));
   }
 
   loadCurrentContent() {
-    const key = `eter-w${this.currentWorld}b${this.currentBrama}-ch${this.currentChapter}`;
-    const content = localStorage.getItem(key) || 
-      `Witaj w Świecie ${this.currentWorld}, Bramie ${this.currentBrama}!
+    const editor = document.getElementById('mainEditor');
+    if (!editor) return;
 
-Rozpocznij swoją narrację...`;
-    
-    document.getElementById('mainEditor').innerText = content;
+    const node = this.data[this.currentWorld][this.currentBrama].chapters[this.currentChapter];
+    editor.innerText = node?.content || '';
   }
 
-  // ⏱️ AUTOZAPIS
-  startAutoSave() {
-    this.saveTimeout = null;
-    this.lastSave = Date.now();
+  saveData() {
+    const editor = document.getElementById('mainEditor');
+    if (!editor) return;
+
+    const text = editor.innerText;
+    const world = this.currentWorld;
+    const brama = this.currentBrama;
+    const ch = this.currentChapter;
+
+    if (!this.data[world][brama].chapters[ch]) {
+      this.data[world][brama].chapters[ch] = { title: `Rozdział ${ch}`, content: '' };
+    }
+
+    this.data[world][brama].chapters[ch].content = text;
+    this.persist();
   }
+
+  startAutoSave() {}
 
   debounceSave() {
     clearTimeout(this.saveTimeout);
     this.saveTimeout = setTimeout(() => {
       this.saveData();
-      document.getElementById('status').textContent = 
-        `Zapisano: ${new Date().toLocaleTimeString()}`;
-      this.lastSave = Date.now();
-    }, 1500);
+      const status = document.getElementById('status');
+      if (status) status.textContent = `Zapisano ${new Date().toLocaleTimeString()}`;
+    }, 1200);
   }
 
-  // 🤖 AI CONSOLE
+  // 🤖 AI
   executeAI() {
-    const command = document.getElementById('aiCommand').value.trim().toLowerCase();
+    const input = document.getElementById('aiCommand');
     const output = document.getElementById('aiOutput');
-    
-    if (!command) return;
-    
-    const response = this.processAICommand(command);
-    output.innerHTML += `<div style="color: var(--gate-teal); margin-top: 0.5rem;">[AI] ${response}</div>`;
-    output.scrollTop = output.scrollHeight;
-    document.getElementById('aiCommand').value = '';
-  }
+    if (!input || !output) return;
 
-  processAICommand(cmd) {
+    const cmd = input.value.trim().toLowerCase();
+    if (!cmd) return;
+
+    let res = 'Nieznana komenda';
+
     if (cmd.includes('add chapter')) {
       this.addChapter();
-      return '📖 Nowy rozdział dodany';
-    }
-    
-    if (cmd.includes('generate plot')) {
+      res = 'Dodano nowy rozdział';
+    } else if (cmd.includes('generate plot')) {
       this.generatePlot();
-      return '✨ Fabuła wygenerowana dla bieżącego świata';
-    }
-    
-    if (cmd.includes('create cover')) {
-      this.generateCover();
-      return '🖼️ Okładka AI wygenerowana';
-    }
-    
-    if (cmd.includes('tts') || cmd.includes('audio')) {
+      res = 'Wygenerowano fabułę';
+    } else if (cmd.includes('tts')) {
       this.generateTTS();
-      return '🎧 Audiobook generowany...';
+      res = 'TTS uruchomiony';
     }
-    
-    if (cmd.includes('expand')) {
-      this.expandContent();
-      return '📝 Treść rozbudowana';
-    }
-    
-    return '❓ Nieznana komenda. Spróbuj: "add chapter", "generate plot", "create cover"';
+
+    output.innerHTML += `<div>[AI] ${res}</div>`;
+    output.scrollTop = output.scrollHeight;
+    input.value = '';
   }
 
   addChapter() {
-    const chaptersList = document.getElementById('chaptersList');
-    const newChapter = document.createElement('div');
-    newChapter.className = 'chapter-item active';
-    newChapter.textContent = `Rozdział ${chaptersList.children.length + 1}: Nowy`;
-    newChapter.addEventListener('click', (e) => this.switchChapter(newChapter));
-    chaptersList.appendChild(newChapter);
-    this.currentChapter = chaptersList.children.length;
+    const list = document.getElementById('chaptersList');
+    if (!list) return;
+
+    const id = Object.keys(this.data[this.currentWorld][this.currentBrama].chapters).length + 1;
+    this.data[this.currentWorld][this.currentBrama].chapters[id] = {
+      title: `Rozdział ${id}`,
+      content: ''
+    };
+    this.persist();
+
+    const el = document.createElement('div');
+    el.className = 'chapter-item';
+    el.textContent = `Rozdział ${id}`;
+    list.appendChild(el);
   }
 
   generatePlot() {
-    const plots = [
-      `W Świecie ${this.currentWorld} rozpoczyna się kosmiczna epopeja...`,
-      `Brama ${this.currentBrama} otwiera portal do nieznanych wymiarów...`,
-      `Postać główna staje przed niemożliwym wyborem...`
-    ];
-    
     const editor = document.getElementById('mainEditor');
-    editor.innerText += `
-
-${plots[Math.floor(Math.random() * plots.length)]}
-
-`;
-    editor.scrollTop = editor.scrollHeight;
-  }
-
-  generateCover() {
-    const canvas = document.querySelector('.cover-canvas');
-    canvas.style.background = `linear-gradient(135deg, var(--world-${this.currentWorld}), hsl(${Math.random()*360}, 70%, 60%))`;
+    editor.innerText += `\n\n[AI]\nW Bramie ${this.currentBrama} świat zaczyna pękać...\n`;
   }
 
   generateTTS() {
-    const utterance = new SpeechSynthesisUtterance(
-      `Bella czyta rozdział ${this.currentChapter} z Świata ${this.currentWorld}. `
-      + document.getElementById('mainEditor').innerText.slice(0, 200) + '...'
-    );
-    utterance.lang = 'pl-PL';
-    utterance.rate = 0.9;
-    speechSynthesis.speak(utterance);
-  }
-
-  expandContent() {
     const editor = document.getElementById('mainEditor');
-    const currentText = editor.innerText;
-    editor.innerText = currentText + 
-      `
-
-[Rozbudowa AI]
-Nowa warstwa narracji rozwija konflikt w Bramie ${this.currentBrama}...`;
+    const utter = new SpeechSynthesisUtterance(editor.innerText.slice(0, 300));
+    utter.lang = 'pl-PL';
+    speechSynthesis.speak(utter);
   }
 
-  // 🖼️ COVER CONTROLS
+  // 🎧 AUDIO
+  initAudioControls() {
+    // bezpiecznie puste – nie wywala
+  }
+
+  // 🖼️ COVER
   initCoverControls() {
     const canvas = document.querySelector('.cover-canvas');
-    let isDragging = false;
-    let rotation = 0;
+    if (!canvas) return;
 
-    canvas.addEventListener('mousedown', () => isDragging = true);
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        rotation += e.movementX * 0.5;
-        canvas.style.transform = `rotateY(${rotation}deg)`;
+    let rot = 0, drag = false;
+    canvas.addEventListener('mousedown', () => drag = true);
+    document.addEventListener('mouseup', () => drag = false);
+    document.addEventListener('mousemove', e => {
+      if (drag) {
+        rot += e.movementX * 0.4;
+        canvas.style.transform = `rotateY(${rot}deg)`;
       }
-    });
-    document.addEventListener('mouseup', () => isDragging = false);
-
-    document.querySelectorAll('input[type="color"]').forEach(input => {
-      input.addEventListener('change', (e) => {
-        if (e.target.id === 'bgColor') {
-          canvas.style.backgroundColor = e.target.value;
-        }
-      });
-    });
-  }
-
-  // 🎧 AUDIO CONTROLS
-  initAudioControls() {
-    const playBtn = document.querySelector('.audiobook-panel button[style*="▶️"]');
-    const stopBtn = document.querySelector('.audiobook-panel button[style*="⏹️"]');
-    
-    playBtn.addEventListener('click', () => {
-      this.generateTTS();
-      playBtn.style.display = 'none';
-      stopBtn.style.display = 'inline-block';
-    });
-    
-    stopBtn.addEventListener('click', () => {
-      speechSynthesis.cancel();
-      playBtn.style.display = 'inline-block';
-      stopBtn.style.display = 'none';
     });
   }
 
   // ⌨️ HOTKEYS
   handleHotkeys(e) {
-    if (e.ctrlKey || e.metaKey) {
-      switch(e.key) {
-        case 's': 
-          e.preventDefault();
-          this.saveData();
-          this.notify('💾 Ręczny zapis', 'save');
-          break;
-        case 'n':
-          e.preventDefault();
-          this.addChapter();
-          break;
-        case 'Enter':
-          e.preventDefault();
-          this.executeAI();
-          break;
-      }
+    if (!e.ctrlKey && !e.metaKey) return;
+    if (e.key === 's') {
+      e.preventDefault();
+      this.saveData();
+      this.notify('Zapis ręczny', 'save');
     }
   }
 
-  // 🔔 NOTYFIKACJE
-  notify(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = 'toast show';
-    toast.innerHTML = `🌌 ${message}`;
-    toast.style.background = type === 'world' ? 'linear-gradient(135deg, var(--world-1), var(--world-2))' :
-                             type === 'gate' ? 'linear-gradient(135deg, var(--gate-gold), var(--gate-teal))' :
-                             type === 'save' ? 'linear-gradient(135deg, var(--gate-purple), #A57EFF)' : 
-                             'linear-gradient(135deg, var(--gate-teal), var(--gate-gold))';
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
-  }
-
-  // 🎭 ANIMACJE
-  initAnimations() {
-    // Pulsujące światy
-    document.querySelectorAll('.world-btn.active').forEach(btn => {
-      btn.style.animation = 'worldPulse 2s ease-in-out infinite';
-    });
+  // 🔔 TOAST
+  notify(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast show';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
   }
 }
 
-// 🚀 URUCHOMIENIE MISTRZA
+// 🚀 START
 document.addEventListener('DOMContentLoaded', () => {
   window.eterNiverse = new EterNiverse();
-  
-  // PWA Ready
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
 });
-
-// Export dla Bella Bridge
-window.exportToBella = () => {
-  const content = document.getElementById('mainEditor').innerText;
-  window.parent.postMessage({
-    type: 'BELLA_EXPORT',
-    payload: content,
-    world: window.eterNiverse.currentWorld,
-    brama: window.eterNiverse.currentBrama
-  }, '*');
-};
