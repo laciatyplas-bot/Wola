@@ -1,7 +1,7 @@
 // ========================================
-// ETERNIVERSE CORE 2026
-// World + Brama Registry • AI Context Bridge
-// eterniverse-core.js v1.0 STABLE
+// ETERNIVERSE CORE 2026 v3.0 MEGA
+// World + Brama Registry • AI Context Bridge • Live Sync
+// Wzmacniane pod data.js + render.js + editor.js
 // ========================================
 
 'use strict';
@@ -9,129 +9,255 @@
 window.ETERNIVERSE = {
   meta: {
     system: 'ETERNIVERSE',
-    version: '2.1',
-    architect: 'Maciej Maciuszek',
-    kanon: true
+    version: '3.0',
+    architect: 'Maciej Maciuszek | Sosnowiec 2026',
+    kanon: true,
+    status: 'MEGA ACTIVE',
+    lastSync: new Date().toISOString()
   },
 
   worlds: {},
   bramas: [],
   connections: [],
+  sessions: [],
 
   activeWorld: null,
   activeBrama: null,
+  bellaContext: null,
 
   // =========================
-  // INIT
+  // 🔥 MEGA INIT z data.js
   // =========================
-  init(data) {
-    if (!data || !data.worlds || !data.bramas) {
-      console.error('ETERNIVERSE: błędne dane wejściowe');
-      return;
+  init(data = null) {
+    // Auto-load z data.js jeśli brak
+    if (!data) {
+      data = this.loadFromDataJS();
     }
 
-    this.worlds = data.worlds.list;
-    this.bramas = data.bramas;
-    this.connections = data.connections || [];
+    if (!data.worlds || !data.bramas) {
+      console.error('ETERNIVERSE: Brak danych - ładuję z data.js');
+      data = this.loadFromDataJS();
+    }
 
-    console.log('ETERNIVERSE CORE READY');
+    this.worlds = data.worlds.list || data.worlds;
+    this.bramas = data.bramas || [];
+    this.connections = data.connections || [];
+    this.sessions = window.eterniverseData?.sesje || [];
+
+    this.syncWithEditor();
+    this.startLiveSync();
+    
+    console.log('🚀 ETERNIVERSE CORE v3.0 MEGA READY');
+    console.table({ 
+      worlds: Object.keys(this.worlds).length, 
+      bramas: this.bramas.length,
+      activeBrama: this.activeBrama?.id 
+    });
+    
+    this.dispatchCoreReady();
+  },
+
+  loadFromDataJS() {
+    return {
+      worlds: window.eterniverseData?.kanon || {},
+      bramas: window.eterniverseData?.kanon.bramy || [],
+      connections: window.githubData || {}
+    };
   },
 
   // =========================
-  // WORLD / BRAMA SELECTION
+  // 🌌 ADVANCED WORLD/BRAMA
   // =========================
   selectWorld(worldId) {
-    const world = this.worlds[worldId];
-    if (!world) return;
+    const world = this.worlds[worldId] || this.getWorldById(worldId);
+    if (!world) return false;
 
     this.activeWorld = world;
-
-    document.dispatchEvent(
-      new CustomEvent('worldSelected', {
-        detail: { world }
-      })
-    );
+    this.bellaContext = this.generateAIContext(world);
+    
+    this.dispatchEvent('worldSelected', { world });
+    this.renderWorldPreview(world);
+    
+    return true;
   },
 
   selectBrama(bramaId) {
-    const brama = this.bramas.find(b => b.id === bramaId);
-    if (!brama) return;
+    const brama = this.getBramaById(bramaId) || 
+                 window.eterniverseData.kanon.bramas.find(b => b.id === bramaId);
+    
+    if (!brama) return false;
 
     this.activeBrama = brama;
-
-    const context = {
-      name: brama.fullName,
-      description: `
-PYTANIE:
-${brama.question}
-
-FUNKCJA:
-${brama.function}
-
-ŚWIAT 1:
-${brama.world1.title} — ${brama.world1.description}
-
-ŚWIAT 2:
-${brama.world2.title} — ${brama.world2.description}
-      `.trim()
-    };
-
-    document.dispatchEvent(
-      new CustomEvent('worldSelected', {
-        detail: { world: context }
-      })
-    );
+    this.bellaContext = this.generateBellaContext(brama);
+    
+    // Update editor + render
+    window.EterniverseEditor?.switchBramaTo(brama.id);
+    window.EterniverseRenderer?.renderKanonPreview();
+    
+    this.dispatchEvent('bramaSelected', { brama });
+    console.log('🎯 Brama aktywna:', brama.nazwa || brama.fullName);
+    
+    return true;
   },
 
   // =========================
-  // HELPERS
+  // 🧠 BELLA AI CONTEXT BRIDGE
+  // =========================
+  generateBellaContext(brama) {
+    const context = {
+      system: 'ETERNIVERSE Kanon',
+      brama: brama.id || brama.nazwa,
+      prompt: `
+BRAMA ${brama.id || 'N/A'}: ${brama.nazwa || brama.fullName}
+
+STATUS: ${brama.status}
+SCENY: ${brama.sceny || 0} | SŁOWA: ${brama.slowa || 0}
+
+KONTEXT:
+${brama.opis || brama.description || 'Brak opisu'}
+
+POSTACIE: ${brama.postacie?.join(', ') || 'N/A'}
+
+PYTANIE DLA BELLA:
+Kontynuuj narrację w stylu ${brama.kolor ? this.getMoodByColor(brama.kolor) : 'cyberpunk'}.
+Użyj napięcia z poprzedniej bramy. Skup się na ${brama.postacie?.[0] || 'głównej postaci'}.
+
+EMOCJE: napięcie=${this.getTensionLevel(brama.sceny)}, nadzieja=65, chaos=78
+      `.trim()
+    };
+
+    this.bellaContext = context;
+    window.EterniverseEditor?.injectBellaSuggestion(context.prompt);
+    
+    return context;
+  },
+
+  getMoodByColor(color) {
+    const moods = {
+      '#00ff88': 'nadzieja + technologia',
+      '#ffaa00': 'konflikt + chaos', 
+      '#00ffff': 'tajemnica + cyberpunk',
+      '#ff4444': 'destrukcja + furia',
+      '#aa88ff': 'introspekcja + kod'
+    };
+    return moods[color] || 'cyberpunk narracyjny';
+  },
+
+  getTensionLevel(scenes) {
+    if (scenes < 5) return 30;
+    if (scenes < 15) return 65;
+    return 90;
+  },
+
+  // =========================
+  // 🎨 RENDER INTEGRATION
+  // =========================
+  renderWorldPreview(world) {
+    if (window.EterniverseRenderer) {
+      window.EterniverseRenderer.renderKanonPreview();
+    }
+  },
+
+  syncWithEditor() {
+    if (window.EterniverseEditor) {
+      window.EterniverseEditor.wordGoal = window.eterniverseData?.cele.dzienne.slowa;
+    }
+  },
+
+  // =========================
+  // 🔄 LIVE SYNC + GITHUB
+  // =========================
+  startLiveSync() {
+    // Sync z data.js co 10s
+    setInterval(() => {
+      this.refreshFromDataJS();
+    }, 10000);
+    
+    // GitHub status
+    setInterval(() => {
+      this.checkGitHubStatus();
+    }, 60000);
+  },
+
+  refreshFromDataJS() {
+    if (window.eterniverseData) {
+      this.bramas = window.eterniverseData.kanon.bramy;
+      this.sessions = window.eterniverseData.sesje;
+      this.dispatchEvent('dataRefreshed');
+    }
+  },
+
+  checkGitHubStatus() {
+    // Mock - zastąp real API
+    this.meta.lastSync = new Date().toISOString();
+    console.log('🔄 GitHub sync:', window.githubData?.lastCommit);
+  },
+
+  // =========================
+  // 📡 EVENTS SYSTEM
+  // =========================
+  dispatchEvent(eventName, detail = {}) {
+    document.dispatchEvent(new CustomEvent(eventName, { detail }));
+  },
+
+  dispatchCoreReady() {
+    document.dispatchEvent(new CustomEvent('eterniverseReady', { 
+      detail: this.meta 
+    }));
+  },
+
+  // =========================
+  // 🔍 HELPERS + QUERIES
   // =========================
   getBramaById(id) {
-    return this.bramas.find(b => b.id === id);
+    return this.bramas.find(b => b.id == id || b.nazwa?.includes(id));
   },
 
   getWorldById(id) {
     return this.worlds[id];
+  },
+
+  getActiveSession() {
+    return window.EterniverseApp?.sessionActive;
+  },
+
+  // =========================
+  // 💾 SESSION BRIDGE
+  // =========================
+  saveSessionToCore(session) {
+    this.sessions.unshift(session);
+    window.eterniverseData.sesje = this.sessions;
   }
 };
 
 // =========================
-// AUTO INIT (JSON INLINE)
+// 🚀 AUTO MEGA INIT
 // =========================
 document.addEventListener('DOMContentLoaded', () => {
-  const DATA = {
-    "system": "ETERNIVERSE",
-    "version": "2.1",
-    "architect": "Maciej Maciuszek",
-    "layout": "10-bram-linear-plus-meta",
-    "worlds": {
-      "total": 2,
-      "list": {
-        "1": {
-          "id": 1,
-          "name": "ETERNIVERSE SYSTEM",
-          "type": "system-world",
-          "description": "Świat wewnętrzny. Psychika, wola, archetypy, integracja.",
-          "status": "kanon"
-        },
-        "2": {
-          "id": 2,
-          "name": "POLARIS",
-          "type": "fantasy-inner-earth",
-          "description": "Świat za Lodową Ścianą. Fantazja, mit, manifestacja bez granic.",
-          "status": "kanon"
-        }
+  // Czekaj na data.js
+  const initCore = () => {
+    if (window.eterniverseData || window.__ETERNIVERSE_BRAMAS__) {
+      ETERNIVERSE.init();
+      
+      // Auto-select ostatnią aktywną bramę
+      const lastBrama = localStorage.getItem('activeBrama');
+      if (lastBrama) {
+        ETERNIVERSE.selectBrama(parseInt(lastBrama));
+      } else {
+        ETERNIVERSE.selectBrama(1); // Brama Alfa domyślnie
       }
-    },
-    "bramas": window.__ETERNIVERSE_BRAMAS__ || [],
-    "connections": [],
-    "kanon": true
+    } else {
+      setTimeout(initCore, 100);
+    }
   };
-
-  // Bramy wstrzykiwane osobno (bez duplikacji)
-  ETERNIVERSE.init({
-    worlds: DATA.worlds,
-    bramas: window.__ETERNIVERSE_BRAMAS__ || [],
-    connections: DATA.connections
-  });
+  
+  initCore();
 });
+
+// =========================
+// 🌉 GLOBAL EXPORTS
+// =========================
+window.getBellaContext = () => ETERNIVERSE.bellaContext;
+window.selectETERNIVERSEBrama = (id) => ETERNIVERSE.selectBrama(id);
+
+console.log('🌌 ETERNIVERSE CORE v3.0 - Ładowanie...');
