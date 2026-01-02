@@ -1,169 +1,218 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — HYPERDRIVE v6.0 ⚡🌌</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETERNIVERSE — HYPERDRIVE v6.0 ⚡🌌</title>
+  
+  <style>
+    /* MOC 800% MASTER CSS — WSZYSTKO W BUDOWIE */
+    :root {
+      --moc: 5; --accent: #00ffdd; --glow: 0 0 40px #00ffdd;
+      --bg-hyper: radial-gradient(circle at 20% 20%, #0a001a 0%, #000011 50%, #050510 100%);
+      --text-main: #e0f8ff; --text-sec: rgba(224,248,255,0.8);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'SF Mono', 'Courier New', monospace;
+      background: var(--bg-hyper); color: var(--text-main);
+      overflow-x: hidden; min-height: 100vh;
+    }
+    
+    /* HEADER BEAST */
+    header {
+      text-align: center; padding: 60px 20px; 
+      background: rgba(5,5,25,0.95); backdrop-filter: blur(40px);
+      position: relative; border-bottom: 3px solid transparent;
+      box-shadow: inset 0 0 120px rgba(0,255,221,0.1);
+    }
+    
+    header::before {
+      content: ''; position: absolute; inset: 0;
+      background: conic-gradient(#00ffdd80, transparent 120deg, transparent 240deg);
+      animation: rotateGlow 30s linear infinite; opacity: 0.2;
+    }
+    
+    @keyframes rotateGlow { to { transform: rotate(360deg); } }
+    
+    h1 {
+      font-size: clamp(3rem, 8vw, 5rem); font-weight: 900; margin-bottom: 15px;
+      background: linear-gradient(45deg, #00ffdd, #ff44ff, #00ff88, #00ffdd);
+      background-size: 300% 300%; -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      animation: gradientShift 4s ease infinite, glowPulse 2s ease-in-out infinite alternate;
+      letter-spacing: 0.05em;
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes glowPulse {
+      to { filter: drop-shadow(0 0 50px var(--accent)); }
+    }
+    
+    header p { font-size: 1.3rem; opacity: 0.9; letter-spacing: 1px; }
+    
+    /* NAV GRID BEAST */
+    nav {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px; padding: 60px 25px; max-width: 1400px; margin: 0 auto;
+    }
+    
+    nav button {
+      padding: 30px 35px; font-size: clamp(1.2rem, 4vw, 1.7rem); font-weight: 900;
+      border: 3px solid transparent; border-radius: 30px;
+      background: linear-gradient(145deg, rgba(0,255,221,0.2), rgba(255,68,255,0.2));
+      color: var(--text-main); cursor: pointer; transition: all 0.4s;
+      position: relative; overflow: hidden; text-transform: uppercase;
+      letter-spacing: 2px; backdrop-filter: blur(25px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    
+    nav button:hover {
+      transform: translateY(-10px) scale(1.05); border-color: var(--accent);
+      background: linear-gradient(145deg, rgba(0,255,221,0.5), rgba(255,68,255,0.5));
+      box-shadow: var(--glow), 0 35px 70px rgba(0,255,221,0.4);
+    }
+    
+    nav button:active { transform: translateY(-5px) scale(1.02); }
+    
+    /* SECTION HYPER */
+    main { padding: 80px 30px; max-width: 1200px; margin: 0 auto; }
+    
+    section {
+      opacity: 0; transform: translateY(60px); margin-bottom: 100px;
+      animation: hyperSlide 1s forwards;
+    }
+    
+    @keyframes hyperSlide {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    h2 {
+      font-size: 2.5rem; margin-bottom: 35px; letter-spacing: 4px;
+      position: relative; font-weight: 900;
+    }
+    
+    h2::after {
+      content: ''; position: absolute; bottom: -10px; left: 0;
+      width: 100px; height: 5px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 3px; box-shadow: 0 0 25px var(--accent);
+    }
+    
+    ul { list-style: none; }
+    li {
+      padding: 25px; margin: 20px 0; border-left: 5px solid transparent;
+      border-radius: 0 20px 0 20px; transition: all 0.4s;
+      background: rgba(255,255,255,0.02); backdrop-filter: blur(10px);
+    }
+    
+    li:hover {
+      border-left-color: var(--accent); transform: translateX(15px);
+      box-shadow: 15px 0 40px rgba(0,255,221,0.15);
+    }
+    
+    li strong { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
+    
+    /* MASTER PANEL */
+    .scr-master-panel {
+      position: fixed; top: 25px; right: 25px; z-index: 99999;
+      background: rgba(0,0,20,0.97); backdrop-filter: blur(40px);
+      padding: 25px; border-radius: 25px; border: 3px solid var(--accent);
+      box-shadow: var(--glow); font-size: 14px; min-width: 280px;
+      font-family: 'SF Mono', monospace;
+    }
+    
+    .scr-moc-bar {
+      height: 8px; background: linear-gradient(90deg, #ff4444 0%, #ffaa00 50%, #44ff44 100%);
+      border-radius: 4px; margin: 12px 0; transition: width 0.6s ease;
+    }
+    
+    /* GOD MODE */
+    body.god-mode {
+      background: #000 !important; overflow: hidden;
+    }
+    
+    body.god-mode * { transition: opacity 0.5s; }
+    body.god-mode nav, body.god-mode button:not(.keep-visible) { opacity: 0.1; }
+    
+    /* MOBILE */
+    @media (max-width: 768px) {
+      nav { grid-template-columns: 1fr; gap: 20px; padding: 40px 15px; }
+      .scr-master-panel { inset: 15px 15px auto 15px; right: auto; left: 15px; }
+    }
+  </style>
+</head>
 
-<link rel="stylesheet" href="styles.css">
+<body>
+  
+  <!-- MASTER STATUS PANEL (SCR.js wypełni) -->
+  <div class="scr-master-panel" id="scr-master-panel">
+    <div>🌌 LOADING SCR v2.0...</div>
+  </div>
 
-<style>
-/* HYPERDRIVE MASTER STYLES — MOC 600% */
-:root {
-  --hyper-bg: radial-gradient(circle at 30% 20%, #0a001a 0%, #000011 50%, #050510 100%);
-  --hyper-accent: #00ffdd;
-  --hyper-glow: 0 0 40px #00ffdd, 0 0 80px #ff00aa, 0 0 120px #00ffdd80;
-  --text-hyper: #e0f8ff;
-  --moc-hue: 180;
-}
+  <header>
+    <h1>ETERNIVERSE</h1>
+    <p>HYPERDRIVE v6.0 · MOC 800% · Jeden plik = cały system</p>
+  </header>
 
-* { box-sizing: border-box; }
+  <nav>
+    <button onclick="EterAPI.godMode()">
+      🦾 GOD MODE<br><small>Ctrl+G</small>
+    </button>
+    
+    <button onclick="EterAPI.cycleBrama()">
+      🔄 BRAMA CYCLE<br><small>Ctrl+B</small>
+    </button>
+    
+    <button onclick="EterAPI.aiBurst()">
+      🤖 AI BURST<br><small>Ctrl+A</small>
+    </button>
+    
+    <button onclick="console.log(EterAPI.status())">
+      📊 STATUS<br><small>Master API</small>
+    </button>
+  </nav>
 
-body {
-  margin: 0; padding: 0;
-  background: var(--hyper-bg);
-  background-attachment: fixed;
-  color: var(--text-hyper);
-  font-family: 'SF Mono', system-ui, sans-serif;
-  overflow-x: hidden;
-  animation: hyperPulse 10s ease-in-out infinite alternate;
-}
+  <main>
+    <section>
+      <h2>🚀 STATUS SYSTEMU</h2>
+      <ul>
+        <li><strong>✅ SCR v2.0 AKTYWNY</strong> — jeden plik kontroluje wszystko</li>
+        <li><strong>✅ MOC MASTER LIVE</strong> — globalne śledzenie MOC</li>
+        <li><strong>✅ Global Hotkeys</strong> — Ctrl+G/B/A wszędzie działa</li>
+        <li><strong>✅ Auto-save 30s</strong> — nigdy nie zgubisz pracy</li>
+        <li><strong>✅ Mobile Beast</strong> — full responsive + touch</li>
+      </ul>
+    </section>
 
-@keyframes hyperPulse {
-  0% { background-position: 0% 50%; filter: hue-rotate(0deg) brightness(1); }
-  100% { background-position: 100% 50%; filter: hue-rotate(30deg) brightness(1.05); }
-}
+    <section>
+      <h2>⌨️ HOTKEYS (GLOBALNE)</h2>
+      <ul>
+        <li><strong>Ctrl+G</strong> = God Mode (fullscreen + MOC 10)</li>
+        <li><strong>Ctrl+B</strong> = Cycle Brama (INTER→ETER→OBFI→CHAOS)</li>
+        <li><strong>Ctrl+A</strong> = AI Burst (popup sugestia do wklejenia)</li>
+        <li><strong>Alt+1-4</strong> = Direct Brama (1=INTER, 2=ETER...)</li>
+      </ul>
+    </section>
 
-/* HYPER HEADER — BEAST MODE */
-header {
-  padding: 50px 20px; text-align: center;
-  background: rgba(5,5,25,0.95); backdrop-filter: blur(40px);
-  position: relative; overflow: hidden; border-bottom: 3px solid transparent;
-  box-shadow: inset 0 0 100px rgba(0,255,221,0.1);
-}
+    <section>
+      <h2>🐾 API DLA PRZYCISKÓW</h2>
+      <ul>
+        <li><code>EterAPI.godMode()</code> — włącz/wyłącz God Mode</li>
+        <li><code>EterAPI.cycleBrama()</code> — następna Brama</li>
+        <li><code>EterAPI.aiBurst()</code> — sugestia AI</li>
+        <li><code>EterAPI.status()</code> — pełny stan (console)</li>
+      </ul>
+    </section>
+  </main>
 
-header::before {
-  content: ''; position: absolute; inset: 0;
-  background: conic-gradient(from 0deg, transparent 0deg, var(--hyper-accent) 120deg, transparent 240deg);
-  animation: hyperRotate 25s linear infinite; opacity: 0.15;
-}
+  <!-- 🔥 SCR.JS — JEDEN PLIK = CAŁY SYSTEM! 🔥 -->
+  <script src="scr.js"></script>
 
-@keyframes hyperRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-h1 {
-  margin: 0 0 12px 0; font-size: clamp(2.5rem, 6vw, 4.5rem);
-  letter-spacing: 6px; font-weight: 900;
-  background: linear-gradient(45deg, #00ffdd, #ff44ff, #00ff88);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  text-shadow: var(--hyper-glow); position: relative;
-  animation: hyperGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes hyperGlow {
-  0% { filter: drop-shadow(0 0 10px var(--hyper-accent)); transform: scale(1); }
-  100% { filter: drop-shadow(0 0 40px var(--hyper-accent)); transform: scale(1.02); }
-}
-
-header div {
-  font-size: 1.2rem; color: var(--text-secondary); letter-spacing: 2px;
-  opacity: 0; animation: hyperFade 1.5s ease 0.6s forwards;
-}
-
-@keyframes hyperFade { to { opacity: 1; transform: translateY(0) scale(1); } }
-
-/* BEAST NAV — HYPER BUTTONS */
-nav {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px; padding: 50px 20px; max-width: 1200px; margin: 0 auto;
-}
-
-nav button {
-  padding: 28px 32px; font-size: clamp(1.2rem, 3.5vw, 1.6rem); font-weight: 900;
-  border-radius: 28px; border: 3px solid transparent;
-  background: linear-gradient(145deg, rgba(0,255,221,0.2), rgba(255,68,255,0.2));
-  color: var(--text-hyper); cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative; overflow: hidden; text-transform: uppercase; letter-spacing: 2px;
-  backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}
-
-nav button::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
-  transform: translateX(-100%); transition: transform 0.6s;
-}
-
-nav button:hover {
-  transform: translateY(-8px) scale(1.05); border-color: var(--hyper-accent);
-  box-shadow: var(--hyper-glow), 0 30px 60px rgba(0,255,221,0.4);
-  background: linear-gradient(145deg, rgba(0,255,221,0.4), rgba(255,68,255,0.4));
-}
-
-nav button:hover::before { transform: translateX(100%); }
-
-nav button:active { transform: translateY(-4px) scale(1.03); }
-
-section {
-  padding: 80px 24px; max-width: 1100px; margin: 0 auto;
-  line-height: 1.8; opacity: 0; transform: translateY(50px);
-  animation: hyperReveal 1.2s ease forwards; scroll-margin-top: 100px;
-}
-
-@keyframes hyperReveal {
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-section h2 {
-  font-size: 2.2rem; margin-bottom: 30px; letter-spacing: 3px; font-weight: 900;
-  position: relative; background: linear-gradient(90deg, var(--hyper-accent), #ff44ff);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-
-section h2::after {
-  content: ''; position: absolute; bottom: -8px; left: 0; width: 80px;
-  height: 4px; background: linear-gradient(90deg, transparent, var(--hyper-accent), transparent);
-  border-radius: 2px; box-shadow: 0 0 20px var(--hyper-accent);
-}
-
-section p, section li { font-size: 1.15rem; color: rgba(224,248,255,0.95); }
-
-section ul { list-style: none; padding: 0; }
-section li {
-  padding: 24px 0; border-left: 4px solid transparent; padding-left: 32px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
-  border-radius: 0 12px 0 12px;
-}
-
-section li:hover {
-  border-left-color: var(--hyper-accent); transform: translateX(12px);
-  background: rgba(0,255,221,0.05); box-shadow: 10px 0 30px rgba(0,255,221,0.1);
-}
-
-section li b {
-  color: var(--hyper-accent); text-shadow: 0 0 12px var(--hyper-accent);
-  background: rgba(0,255,221,0.2); padding: 2px 8px; border-radius: 4px;
-}
-
-/* HYPER STATUS BAR */
-.status-hyper {
-  position: fixed; top: 20px; right: 20px; z-index: 999;
-  background: rgba(5,5,25,0.95); backdrop-filter: blur(30px);
-  padding: 16px 24px; border-radius: 20px; border: 2px solid var(--hyper-accent);
-  box-shadow: var(--hyper-glow); font-family: 'SF Mono', monospace;
-  font-size: 13px; opacity: 0; animation: statusSlide 0.8s 1s forwards;
-}
-
-@keyframes statusSlide {
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* MOBILE BEAST MODE */
-@media (max-width: 768px) {
-  nav { grid-template-columns: 1fr; gap: 20px; padding: 40px 16px; }
-  nav button { padding: 24px 28px; font-size: 1.3rem; }
-  section { padding: 60px 16px; }
-  .status-hyper { position: fixed; top: 10px; right: 10px; left: 10px; font-size: 12px; }
-}
-
-/* PERFORMANCE PERFECTION */
-section { scroll-snap-align: start; scroll-margin-top: 120px; }
-html { scroll-behavior: smooth; }
+</body>
+</html>
