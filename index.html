@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA PRO — SCENY</title>
+<title>BELLA PRO — ARCHETYPY</title>
 
 <style>
 body{
@@ -42,7 +42,7 @@ button,select{
 
 <body>
 
-<header>BELLA PRO — ROZWIJANIE SCEN</header>
+<header>BELLA PRO — GŁOS ARCHETYPU</header>
 
 <textarea id="book">
 ROZDZIAŁ 1
@@ -51,87 +51,51 @@ Początek jeszcze nie wiedział, że jest początkiem.
 </textarea>
 
 <select id="gate">
-  <option value="inter">INTERSEEKER — cień / konfrontacja</option>
-  <option value="eter">ETERSEEKER — decyzja / wola</option>
-  <option value="obfi">OBFITOSEEKER — manifestacja</option>
+  <option value="inter">INTERSEEKER — cień</option>
+  <option value="eter">ETERSEEKER — wola</option>
+  <option value="obfi">OBFITOSEEKER — obfitość</option>
 </select>
 
-<select id="scene">
-  <option value="enter">Wejście w scenę</option>
-  <option value="tension">Narastające napięcie</option>
-  <option value="choice">Decyzja</option>
-  <option value="result">Konsekwencja</option>
+<select id="arch">
+  <option value="ojciec">ARCHETYP: OJCIEC</option>
+  <option value="cien">ARCHETYP: CIEŃ</option>
+  <option value="tworca">ARCHETYP: TWÓRCA</option>
+  <option value="obser">ARCHETYP: OBSERWATOR</option>
 </select>
 
-<button onclick="bellaScene()">BELLA — ROZWIŃ SCENĘ</button>
+<button onclick="bellaArch()">BELLA — PISZ JAKO ARCHETYP</button>
 
 <script>
-const SCENES = {
-  inter: {
-    enter: [
-      "Atmosfera zgęstniała, zanim ktokolwiek zrozumiał dlaczego.",
-      "Cień był obecny, choć nikt nie potrafił go wskazać."
-    ],
-    tension: [
-      "Im dłużej to trwało, tym trudniej było udawać spokój.",
-      "Myśli zaczęły krążyć wokół tego, co miało pozostać niewypowiedziane."
-    ],
-    choice: [
-      "Nie było dobrego wyboru. Był tylko prawdziwy.",
-      "Unikanie decyzji stało się decyzją samą w sobie."
-    ],
-    result: [
-      "Skutek pojawił się szybciej, niż ktokolwiek się spodziewał.",
-      "Od tej chwili nie dało się już wrócić do poprzedniego stanu."
-    ]
-  },
-  eter: {
-    enter: [
-      "Przestrzeń zareagowała, jakby rozpoznała intencję.",
-      "Coś się przesunęło, zanim padło jakiekolwiek słowo."
-    ],
-    tension: [
-      "Każda sekunda zwiększała ciężar wyboru.",
-      "Wola zaczęła dominować nad wątpliwościami."
-    ],
-    choice: [
-      "Decyzja zapadła bez świadków.",
-      "To nie była odwaga. To była konieczność."
-    ],
-    result: [
-      "Świat przyjął wybór bez sprzeciwu.",
-      "Nowa linia zdarzeń została aktywowana."
-    ]
-  },
-  obfi: {
-    enter: [
-      "Zmiana zaczęła się od ledwie zauważalnego przesunięcia.",
-      "Obfitość pojawiła się jako potencjał, nie fakt."
-    ],
-    tension: [
-      "Im bliżej było rozwiązania, tym wyraźniejszy stawał się koszt.",
-      "Nadmiar i brak przestały być przeciwieństwami."
-    ],
-    choice: [
-      "Akceptacja przyszła wcześniej niż zrozumienie.",
-      "To, co wybrane, natychmiast zaczęło się materializować."
-    ],
-    result: [
-      "Efekt był trwały i nieodwracalny.",
-      "Równowaga została przedefiniowana."
-    ]
-  }
+const ARCH = {
+  ojciec: [
+    "Nie chodziło o to, czego się chciało, lecz co należało zrobić.",
+    "Odpowiedzialność pojawiła się wcześniej niż zgoda na nią.",
+    "Każda decyzja niosła ciężar, którego nie dało się zrzucić."
+  ],
+  cien: [
+    "To, co ukryte, właśnie teraz domagało się uwagi.",
+    "Lęk nie był przeszkodą. Był informacją.",
+    "Najciemniejsze miejsce okazało się najbardziej prawdziwe."
+  ],
+  tworca: [
+    "Sens nie istniał wcześniej. Został właśnie stworzony.",
+    "To nie było odkrycie, lecz akt kreacji.",
+    "Nowy porządek wyłonił się z jednego gestu."
+  ],
+  obser: [
+    "Z dystansu wszystko układało się w logiczny wzór.",
+    "Emocje traciły ostrość, gdy pojawiała się świadomość.",
+    "To, co się działo, było tylko jedną z wielu wersji."
+  ]
 };
 
-function bellaScene(){
+function bellaArch(){
   const t=document.getElementById('book');
-  const gate=document.getElementById('gate').value;
-  const scene=document.getElementById('scene').value;
+  const a=document.getElementById('arch').value;
 
-  const lines=SCENES[gate][scene];
   const text=
-`\n${pick(lines)}
-${pick(lines)}\n`;
+`\n${pick(ARCH[a])}
+${pick(ARCH[a])}\n`;
 
   t.value+=text;
 }
