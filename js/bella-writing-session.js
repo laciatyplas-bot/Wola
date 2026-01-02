@@ -1,156 +1,356 @@
-// session.js — zarządzanie stanem pisania ETERNIVERSE
-// Kompatybilne z Bella Pro, zapisuje sesje, bramy, rozdziały
+// ========================================
+// ETER HYPER SESSION v2.0 ⚡🌌 — MOC 500%
+// FULL HYPERDRIVE + ALL MODULES INTEGRATION
+// Global Beast Session Manager | 2026
+// ========================================
 
-class EterSession {
+class EterHyperSession {
   constructor() {
-    this.storageKey = 'eterniverse_bella';
-    this.init();
-  }
-
-  init() {
-    this.state = this.load() || {
+    this.version = '2.0-HYPER';
+    this.globalKey = 'ETERNIVERSE_HYPER_SESSION';
+    this.mocSyncActive = true;
+    
+    // FULL HYPER STATE
+    this.hyperState = {
       chapter: 1,
       gate: 'inter',
       scene: 'enter',
+      mocLevel: 0,
       blocksUsed: [],
+      autosaves: [],
+      hyperStats: { words: 0, wpm: 0, peakWPM: 0, aiBursts: 0 },
       timestamp: Date.now(),
-      autosaves: []
+      godSessions: 0,
+      crossModuleSync: true
     };
-    this.syncUI();
-    this.autoSaveInterval = setInterval(() => this.autoSave(), 30000); // 30s
+    
+    this.initHyperBeast();
   }
 
-  load() {
+  // 🚀 BEAST INIT — GLOBAL DOMINATION
+  initHyperBeast() {
+    console.log('🌌⚡ ETER HYPER SESSION v2.0 — MOC 500% GLOBAL BEAST');
+    
+    this.loadHyperState();
+    this.globalHyperSync();
+    this.startHyperIntervals();
+    this.injectHyperControls();
+    this.overrideCoreFunctions();
+    
+    // FULL MODULE AUTO-DETECT
+    this.detectAllModules();
+    
+    console.log('✅ HYPER SESSION FULLY ARMED — ALL MODULES SYNCHRONIZED');
+  }
+
+  // ====================
+  // GLOBAL STATE OPS
+  // ====================
+  loadHyperState() {
     try {
-      return JSON.parse(localStorage.getItem(this.storageKey));
-    } catch {
-      return null;
+      const saved = localStorage.getItem(this.globalKey);
+      if (saved) {
+        const state = JSON.parse(saved);
+        Object.assign(this.hyperState, state);
+      }
+    } catch (e) {
+      console.warn('HyperState load failed, fresh start');
     }
   }
 
-  save() {
-    localStorage.setItem(this.storageKey, JSON.stringify(this.state));
+  saveHyperState() {
+    localStorage.setItem(this.globalKey, JSON.stringify(this.hyperState));
   }
 
-  autoSave() {
-    const bookContent = document.getElementById('book')?.value || '';
-    this.state.autosaves.unshift({
-      content: bookContent,
-      gate: this.state.gate,
-      scene: this.state.scene,
+  // ====================
+  // HYPER SYNC ENGINE
+  // ====================
+  globalHyperSync() {
+    // MOC MASTER SYNC
+    const sources = [
+      window.EterniverseHyperApp?.mocLevel,
+      window.BellaHyperSession?.mocLevel,
+      window.EterniverseHyperEditor?.mocLevel,
+      window.EterniverseHyperRenderer?.mocVisuals
+    ].filter(Boolean);
+    
+    if (sources.length) {
+      this.hyperState.mocLevel = Math.max(...sources);
+    }
+    
+    // STATS AGGREGATION
+    this.hyperState.hyperStats.words = 
+      window.EterSession?.stats?.words || 
+      window.EterniverseHyperEditor?.hyperStats?.words || 0;
+    
+    // UI MASTER SYNC
+    this.syncAllUI();
+    
+    this.saveHyperState();
+  }
+
+  syncAllUI() {
+    // ETERNIVERSE BELLA
+    const book = document.getElementById('book');
+    const gateSel = document.getElementById('gate');
+    const sceneSel = document.getElementById('scene');
+    
+    if (book && this.hyperState.currentContent) {
+      book.value = this.hyperState.currentContent;
+    }
+    if (gateSel) gateSel.value = this.hyperState.gate;
+    if (sceneSel) sceneSel.value = this.hyperState.scene;
+    
+    // HYPER MOC DISPLAY
+    document.querySelectorAll('[data-moc-display]').forEach(el => {
+      el.textContent = `MOC ${this.hyperState.mocLevel}/10`;
+    });
+    
+    // CONTEXT BARS
+    document.querySelectorAll('.hyper-context-bar')?.forEach(bar => {
+      bar.textContent = `${this.hyperState.gate.toUpperCase()} | MOC ${this.hyperState.mocLevel}`;
+    });
+  }
+
+  // ====================
+  // BEAST INTERVALS
+  // ====================
+  startHyperIntervals() {
+    // MASTER SYNC 2s
+    this.masterSync = setInterval(() => this.globalHyperSync(), 2000);
+    
+    // AUTO-SAVE BEAST 15s
+    this.autoBeast = setInterval(() => this.hyperAutoSave(), 15000);
+    
+    // MOC HARMONIZER 5s
+    this.mocHarmonizer = setInterval(() => {
+      document.dispatchEvent(new CustomEvent('mocUpdate', {
+        detail: { moc: this.hyperState.mocLevel, source: 'masterSession' }
+      }));
+    }, 5000);
+  }
+
+  hyperAutoSave() {
+    const content = document.getElementById('book')?.value || 
+                   document.querySelector('[contenteditable]')?.innerText || '';
+    
+    this.hyperState.autosaves.unshift({
+      content,
+      gate: this.hyperState.gate,
+      scene: this.hyperState.scene,
+      moc: this.hyperState.mocLevel,
+      stats: { ...this.hyperState.hyperStats },
       time: new Date().toLocaleString('pl-PL')
     });
-    this.state.autosaves = this.state.autosaves.slice(0, 5); // max 5
-    this.save();
+    
+    this.hyperState.autosaves = this.hyperState.autosaves.slice(0, 10); // TOP 10
+    this.saveHyperState();
+    
+    this.visualAutoSave();
   }
 
-  updateFromUI() {
-    const book = document.getElementById('book');
-    const gateSelect = document.getElementById('gate');
-    const sceneSelect = document.getElementById('scene');
-
-    if (book) this.state.currentContent = book.value;
-    if (gateSelect) this.state.gate = gateSelect.value;
-    if (sceneSelect) this.state.scene = sceneSelect.value;
-
-    this.save();
+  // ====================
+  // HYPER UI INJECTION
+  // ====================
+  injectHyperControls() {
+    if (document.getElementById('hyper-session-master')) return;
+    
+    const masterPanel = document.createElement('div');
+    masterPanel.id = 'hyper-session-master';
+    masterPanel.className = 'hyper-master-panel';
+    masterPanel.innerHTML = `
+      <div class="master-header">
+        <span>⚡ HYPER SESSION v2.0</span>
+        <span id="master-moc">MOC ${this.hyperState.mocLevel}</span>
+      </div>
+      <div class="master-stats">
+        <span>📖 Ch. ${this.hyperState.chapter}</span>
+        <span>🧠 ${this.hyperState.gate.toUpperCase()}</span>
+        <span>✍️ ${this.hyperState.hyperStats.words} słów</span>
+      </div>
+      <div class="master-controls">
+        <button onclick="window.EterHyperAPI.godReset()">🦾 GOD RESET</button>
+        <button onclick="window.EterHyperAPI.exportBeast()">📤 EXPORT BEAST</button>
+        <button onclick="window.EterHyperAPI.loadTopSave()">⚡ TOP SAVE</button>
+      </div>
+    `;
+    
+    document.body.appendChild(masterPanel);
   }
 
-  syncUI() {
-    const book = document.getElementById('book');
-    const gateSelect = document.getElementById('gate');
-    const sceneSelect = document.getElementById('scene');
-
-    if (book && this.state.currentContent) {
-      book.value = this.state.currentContent;
-    }
-    if (gateSelect) {
-      gateSelect.value = this.state.gate;
-    }
-    if (sceneSelect) {
-      sceneSelect.value = this.state.scene;
-    }
+  // ====================
+  // CORE FUNCTION OVERRIDE
+  // ====================
+  overrideCoreFunctions() {
+    // MASTER EXPAND SCENE
+    const origExpand = window.expandScene;
+    window.expandScene = () => {
+      // FULL TRACKING
+      const gate = document.getElementById('gate')?.value || this.hyperState.gate;
+      const scene = document.getElementById('scene')?.value || this.hyperState.scene;
+      
+      this.trackHyperBlock(gate, scene);
+      
+      origExpand();
+      
+      // POST-EXPAND BOOST
+      this.hyperState.hyperStats.aiBursts++;
+      this.globalHyperSync();
+    };
+    
+    // GLOBAL SAVE HOOK
+    window.addEventListener('beforeunload', () => this.flushHyperState());
   }
 
-  newChapter(chapterNum) {
-    this.state.chapter = chapterNum;
-    this.state.currentContent = `ROZDZIAŁ ${chapterNum}
-
-Początek jeszcze nie wiedział, że jest początkiem.`;
-    this.syncUI();
-    this.save();
-  }
-
-  trackBlock(gate, scene, blockIndex) {
-    this.state.blocksUsed.push({
-      gate, scene, blockIndex,
+  trackHyperBlock(gate, scene) {
+    this.hyperState.blocksUsed.push({
+      gate, scene,
+      blockIndex: Math.floor(Math.random() * 10),
+      moc: this.hyperState.mocLevel,
       usedAt: Date.now()
     });
-    this.state.blocksUsed = this.state.blocksUsed.slice(-20); // ostatnie 20
-    this.save();
+    
+    this.hyperState.blocksUsed = this.hyperState.blocksUsed.slice(-50);
   }
 
-  loadAutosave(index = 0) {
-    if (this.state.autosaves[index]) {
-      document.getElementById('book').value = this.state.autosaves[index].content;
-      this.state.gate = this.state.autosaves[index].gate;
-      this.state.scene = this.state.autosaves[index].scene;
-      this.syncUI();
-      this.save();
+  // ====================
+  // BEAST API
+  // ====================
+  detectAllModules() {
+    const modules = {
+      eterniverseApp: !!window.EterniverseHyperApp,
+      hyperEditor: !!window.EterniverseHyperEditor,
+      hyperRenderer: !!window.EterniverseHyperRenderer,
+      bellaHyper: !!window.BellaHyperSession,
+      hyperMemory: !!window.BellaHyperMemory
+    };
+    
+    this.hyperState.modules = modules;
+    console.table(modules);
+  }
+
+  godReset() {
+    if (confirm('🦾 GOD RESET — wszystkie sesje wyczyszczone?')) {
+      localStorage.clear();
+      location.reload();
     }
   }
 
-  clearSession() {
-    localStorage.removeItem(this.storageKey);
-    location.reload();
-  }
-
-  exportSession() {
-    const dataStr = JSON.stringify(this.state, null, 2);
-    const dataBlob = new Blob([dataStr], {type: 'application/json'});
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `eterniverse_session_${new Date().toISOString().slice(0,10)}.json`;
-    link.click();
-  }
-
-  stats() {
-    return {
-      totalBlocks: this.state.blocksUsed.length,
-      sessions: this.state.autosaves.length,
-      lastSave: new Date(this.state.timestamp).toLocaleString('pl-PL'),
-      chapter: this.state.chapter
+  exportBeast() {
+    const beastData = {
+      version: this.version,
+      state: this.hyperState,
+      timestamp: new Date().toISOString(),
+      modules: window.EterHyperAPI.modules()
     };
+    
+    const blob = new Blob([JSON.stringify(beastData, null, 2)], 
+                         { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `eterniverse_hyper_beast_${Date.now()}.json`;
+    a.click();
+  }
+
+  loadTopSave() {
+    if (this.hyperState.autosaves[0]) {
+      const topSave = this.hyperState.autosaves[0];
+      document.getElementById('book').value = topSave.content;
+      
+      if (document.getElementById('gate')) {
+        document.getElementById('gate').value = topSave.gate;
+      }
+      
+      this.globalHyperSync();
+      console.log('⚡ TOP SAVE LOADED');
+    }
+  }
+
+  // ====================
+  // VISUAL BEAST EFFECTS
+  // ====================
+  visualAutoSave() {
+    const master = document.getElementById('hyper-session-master');
+    if (master) {
+      master.style.boxShadow = '0 0 50px #00ff88';
+      setTimeout(() => {
+        master.style.boxShadow = '';
+      }, 500);
+    }
+  }
+
+  flushHyperState() {
+    this.saveHyperState();
+  }
+
+  modules() {
+    return this.hyperState.modules;
   }
 }
 
-// Inicjalizacja globalna
-const session = new EterSession();
-
-// Rozszerzenie funkcji expandScene o session tracking
-const originalExpandScene = window.expandScene;
-window.expandScene = function() {
-  session.updateFromUI();
+// 🔥 BEAST CSS INJECTION
+const injectBeastStyles = () => {
+  if (document.getElementById('hyper-session-styles')) return;
   
-  const g = document.getElementById('gate').value;
-  const s = document.getElementById('scene').value;
-  const blocks = EXPAND[g][s];
-  const blockIndex = Math.floor(Math.random() * blocks.length);
-  
-  session.trackBlock(g, s, blockIndex);
-  
-  originalExpandScene();
-  
-  session.updateFromUI();
-  session.autoSave();
+  const style = document.createElement('style');
+  style.id = 'hyper-session-styles';
+  style.textContent = `
+    .hyper-master-panel {
+      position: fixed; top: 20px; left: 20px; z-index: 999999;
+      background: linear-gradient(145deg, rgba(5,5,25,0.98), rgba(15,5,45,0.95));
+      backdrop-filter: blur(30px); border-radius: 20px; padding: 20px;
+      border: 2px solid #00ffdd40; min-width: 300px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(0,255,221,0.3);
+      font-family: 'Orbitron', monospace; color: #e0f0ff;
+    }
+    
+    .master-header {
+      display: flex; justify-content: space-between; 
+      font-size: 14px; font-weight: 900; margin-bottom: 15px;
+      border-bottom: 1px solid #00ffdd30; padding-bottom: 10px;
+    }
+    
+    #master-moc {
+      color: hsl(var(--moc-hue, 120), 100%, 60%);
+      text-shadow: 0 0 15px currentColor;
+    }
+    
+    .master-stats {
+      display: flex; gap: 20px; font-size: 12px; opacity: 0.9;
+      margin-bottom: 15px;
+    }
+    
+    .master-controls {
+      display: flex; gap: 10px;
+    }
+    
+    .master-controls button {
+      flex: 1; padding: 10px; background: rgba(0,255,221,0.2);
+      border: 1px solid #00ffdd40; border-radius: 8px;
+      color: #e0f0ff; font-family: inherit; cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .master-controls button:hover {
+      background: #00ffdd; color: #000;
+      box-shadow: 0 10px 30px rgba(0,255,221,0.6);
+    }
+  `;
+  document.head.appendChild(style);
 };
 
-// API dla przycisków UI (możesz dodać do HTML)
-window.EterAPI = {
-  newChapter: (num) => session.newChapter(num),
-  loadAutosave: (index) => session.loadAutosave(index),
-  clear: () => session.clearSession(),
-  export: () => session.exportSession(),
-  stats: () => session.stats()
-};
+// 🐾 GLOBAL BEAST LAUNCH
+document.addEventListener('DOMContentLoaded', () => {
+  injectBeastStyles();
+  window.EterHyperSession = new EterHyperSession();
+  
+  // BEAST API EXPOSE
+  window.EterHyperAPI = {
+    godReset: () => window.EterHyperSession.godReset(),
+    exportBeast: () => window.EterHyperSession.exportBeast(),
+    loadTopSave: () => window.EterHyperSession.loadTopSave(),
+    stats: () => window.EterHyperSession.hyperState,
+    modules: () => window.EterHyperSession.modules()
+  };
+});
