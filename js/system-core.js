@@ -1,19 +1,11 @@
-/* =========================================================
-   ETERNIVERSE SYSTEM CORE — PANCERNY
-   TEN PLIK PO PROSTU DZIAŁA
-   ========================================================= */
-
 (function () {
   'use strict';
 
-  if (window.ETERNIVERSE_CORE) return;
-  window.ETERNIVERSE_CORE = true;
+  if (window.__ETERNIVERSE_BOOT__) return;
+  window.__ETERNIVERSE_BOOT__ = true;
 
-  /* =========================
-     STAN GLOBALNY
-  ========================= */
   const STATE = {
-    activeGate: null,
+    gate: null,
     gates: [
       { id: 1, name: 'CIENIA' },
       { id: 2, name: 'GENEZY' },
@@ -28,34 +20,28 @@
     ]
   };
 
-  /* =========================
-     HELPERY
-  ========================= */
   function $(id) {
     return document.getElementById(id);
   }
 
+  function editor() {
+    return $('editor') || $('mainEditor') || document.querySelector('[contenteditable="true"]');
+  }
+
   function save() {
-    if (!STATE.activeGate) return;
-    const editor = $('editor');
-    if (!editor) return;
+    if (!STATE.gate || !editor()) return;
     localStorage.setItem(
-      'ETERNIVERSE_GATE_' + STATE.activeGate.id,
-      editor.innerText
+      'ETERNIVERSE_GATE_' + STATE.gate.id,
+      editor().innerText
     );
   }
 
   function load() {
-    if (!STATE.activeGate) return;
-    const editor = $('editor');
-    if (!editor) return;
-    editor.innerText =
-      localStorage.getItem('ETERNIVERSE_GATE_' + STATE.activeGate.id) || '';
+    if (!STATE.gate || !editor()) return;
+    editor().innerText =
+      localStorage.getItem('ETERNIVERSE_GATE_' + STATE.gate.id) || '';
   }
 
-  /* =========================
-     BRAMY
-  ========================= */
   function renderGates() {
     const list = $('gateList');
     if (!list) return;
@@ -64,42 +50,31 @@
     STATE.gates.forEach(g => {
       const b = document.createElement('button');
       b.textContent = 'BRAMA ' + g.id + ' — ' + g.name;
-      b.onclick = () => selectGate(g);
+      b.onclick = () => {
+        STATE.gate = g;
+        load();
+      };
       list.appendChild(b);
     });
   }
 
-  function selectGate(gate) {
-    STATE.activeGate = gate;
-    load();
-  }
-
-  /* =========================
-     BELLA (OFFLINE)
-  ========================= */
-  window.BellaGenerate = function (prompt) {
-    if (!STATE.activeGate) return 'Wybierz Bramę.';
+  // BELLA – prosta reakcja (żebyś WIDZIAŁ, że działa)
+  window.BellaGenerate = function (text) {
+    if (!STATE.gate) return 'Wybierz Bramę.';
     return (
-      'BRAMA ' +
-      STATE.activeGate.id +
-      ' — ' +
-      STATE.activeGate.name +
-      '\n\n' +
-      prompt +
-      '\n\nNie jesteś myślą. Jesteś polem.'
+      'BRAMA ' + STATE.gate.id + ' — ' + STATE.gate.name +
+      '\n\n' + text +
+      '\n\n[ Bella aktywna ]'
     );
   };
 
-  /* =========================
-     AUTO SAVE
-  ========================= */
+  // AUTO SAVE
   setInterval(save, 2000);
 
-  /* =========================
-     START
-  ========================= */
+  // START
   document.addEventListener('DOMContentLoaded', () => {
     renderGates();
-    console.log('ETERNIVERSE CORE READY');
+    console.log('ETERNIVERSE BOOTSTRAP READY');
   });
+
 })();
