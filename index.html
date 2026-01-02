@@ -3,46 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA PRO — ARCHETYPY</title>
+<title>BELLA PRO — KANON</title>
 
 <style>
-body{
-  margin:0;
-  background:#000;
-  color:#0ff;
-  font-family:system-ui,sans-serif;
-}
-header{
-  padding:14px;
-  text-align:center;
-  font-weight:900;
-  border-bottom:2px solid #0ff;
-}
-textarea{
-  width:100%;
-  min-height:55vh;
-  background:#111;
-  color:#0ff;
-  font-size:16px;
-  padding:12px;
-  border:none;
-}
-button,select{
-  width:100%;
-  padding:14px;
-  margin-top:10px;
-  font-size:16px;
-  font-weight:900;
-  background:#0ff;
-  color:#000;
-  border:none;
-}
+body{margin:0;background:#000;color:#0ff;font-family:system-ui,sans-serif}
+header{padding:14px;text-align:center;font-weight:900;border-bottom:2px solid #0ff}
+textarea{width:100%;min-height:55vh;background:#111;color:#0ff;font-size:16px;padding:12px;border:none}
+button,select{width:100%;padding:14px;margin-top:10px;font-size:16px;font-weight:900;background:#0ff;color:#000;border:none}
+.alert{background:#200;color:#ff6b6b;padding:10px;margin-top:10px;font-weight:800}
+.ok{background:#020;color:#7CFF7C;padding:10px;margin-top:10px;font-weight:800}
 </style>
 </head>
 
 <body>
 
-<header>BELLA PRO — GŁOS ARCHETYPU</header>
+<header>BELLA PRO — STRAŻNIK KANONU</header>
 
 <textarea id="book">
 ROZDZIAŁ 1
@@ -51,58 +26,64 @@ Początek jeszcze nie wiedział, że jest początkiem.
 </textarea>
 
 <select id="gate">
-  <option value="inter">INTERSEEKER — cień</option>
-  <option value="eter">ETERSEEKER — wola</option>
-  <option value="obfi">OBFITOSEEKER — obfitość</option>
+  <option value="inter">BRAMA I — INTERSEEKER (cień, konfrontacja)</option>
+  <option value="eter">BRAMA III — ETERSEEKER (wola, decyzja)</option>
+  <option value="obfi">BRAMA V — OBFITOSEEKER (manifestacja)</option>
 </select>
 
-<select id="arch">
-  <option value="ojciec">ARCHETYP: OJCIEC</option>
-  <option value="cien">ARCHETYP: CIEŃ</option>
-  <option value="tworca">ARCHETYP: TWÓRCA</option>
-  <option value="obser">ARCHETYP: OBSERWATOR</option>
-</select>
+<button onclick="canon()">KANON — SPRAWDŹ I PISZ</button>
 
-<button onclick="bellaArch()">BELLA — PISZ JAKO ARCHETYP</button>
+<div id="msg"></div>
 
 <script>
-const ARCH = {
-  ojciec: [
-    "Nie chodziło o to, czego się chciało, lecz co należało zrobić.",
-    "Odpowiedzialność pojawiła się wcześniej niż zgoda na nią.",
-    "Każda decyzja niosła ciężar, którego nie dało się zrzucić."
-  ],
-  cien: [
-    "To, co ukryte, właśnie teraz domagało się uwagi.",
-    "Lęk nie był przeszkodą. Był informacją.",
-    "Najciemniejsze miejsce okazało się najbardziej prawdziwe."
-  ],
-  tworca: [
-    "Sens nie istniał wcześniej. Został właśnie stworzony.",
-    "To nie było odkrycie, lecz akt kreacji.",
-    "Nowy porządek wyłonił się z jednego gestu."
-  ],
-  obser: [
-    "Z dystansu wszystko układało się w logiczny wzór.",
-    "Emocje traciły ostrość, gdy pojawiała się świadomość.",
-    "To, co się działo, było tylko jedną z wielu wersji."
-  ]
+const RULES={
+  inter:{
+    must:['cień','prawda','lęk','konfrontacja'],
+    write:[
+      "To, co zostało wyparte, właśnie teraz wróciło z całą siłą.",
+      "Konfrontacja nie była wyborem. Była koniecznością."
+    ]
+  },
+  eter:{
+    must:['decyzja','wola','wybór','odpowiedzialność'],
+    write:[
+      "Decyzja zapadła, a świat przyjął ją bez sprzeciwu.",
+      "Wola nadała kształt temu, co wcześniej było chaosem."
+    ]
+  },
+  obfi:{
+    must:['obfitość','przepływ','manifestacja','równowaga'],
+    write:[
+      "Manifestacja była skutkiem spójności, nie życzenia.",
+      "Przepływ ustabilizował się dokładnie w tym miejscu."
+    ]
+  }
 };
 
-function bellaArch(){
+function canon(){
   const t=document.getElementById('book');
-  const a=document.getElementById('arch').value;
+  const g=document.getElementById('gate').value;
+  const m=document.getElementById('msg');
+  const txt=t.value.toLowerCase();
 
-  const text=
-`\n${pick(ARCH[a])}
-${pick(ARCH[a])}\n`;
+  const missing=RULES[g].must.filter(w=>!txt.includes(w));
 
-  t.value+=text;
+  if(missing.length){
+    m.className='alert';
+    m.textContent='KANON ALERT: brakuje motywów → '+missing.join(', ');
+    return;
+  }
+
+  const add=
+`\n${pick(RULES[g].write)}
+${pick(RULES[g].write)}\n`;
+
+  t.value+=add;
+  m.className='ok';
+  m.textContent='KANON OK — treść zgodna z Bramą';
 }
 
-function pick(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
-}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
 </script>
 
 </body>
