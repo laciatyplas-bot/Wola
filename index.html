@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA PRO — TEST STABILNY</title>
+<title>BELLA PRO — KONTYNUACJA</title>
 
 <style>
 body{
@@ -20,18 +20,18 @@ header{
 }
 textarea{
   width:100%;
-  min-height:45vh;
+  min-height:55vh;
   background:#111;
   color:#0ff;
   font-size:16px;
   padding:12px;
   border:none;
 }
-button{
+button,select{
   width:100%;
-  padding:16px;
+  padding:14px;
   margin-top:10px;
-  font-size:18px;
+  font-size:16px;
   font-weight:900;
   background:#0ff;
   color:#000;
@@ -42,33 +42,81 @@ button{
 
 <body>
 
-<header>BELLA PRO — GENERATOR ROZDZIAŁU</header>
+<header>BELLA PRO — NOWY ROZDZIAŁ / KONTYNUACJA</header>
 
 <textarea id="book">
 ROZDZIAŁ 1
 
-To jest pierwszy rozdział książki.
+Początek jeszcze nie wiedział, że jest początkiem.
 </textarea>
 
-<button onclick="bella()">BELLA PRO — NAPISZ KOLEJNY ROZDZIAŁ</button>
+<select id="gate">
+  <option value="inter">INTERSEEKER — cień</option>
+  <option value="eter">ETERSEEKER — wola</option>
+  <option value="obfi">OBFITOSEEKER — obfitość</option>
+</select>
+
+<button onclick="newChapter()">BELLA — NAPISZ NOWY ROZDZIAŁ</button>
+<button onclick="continueChapter()">BELLA — KONTYNUUJ TEN ROZDZIAŁ</button>
 
 <script>
-function bella(){
+const OPENERS = {
+  inter: [
+    "Cień nie zniknął. Zmienił tylko pozycję.",
+    "To, co wyparte, wraca zawsze w najmniej wygodnym momencie.",
+    "Nie dało się już udawać, że tego nie ma."
+  ],
+  eter: [
+    "Decyzja zapadła szybciej niż jakakolwiek myśl.",
+    "Wola nie potrzebuje świadków.",
+    "Świat zareagował, zanim ktokolwiek zdążył to zauważyć."
+  ],
+  obfi: [
+    "Obfitość nie przyszła jako nagroda.",
+    "To, co nazwano nadmiarem, było konsekwencją wyboru.",
+    "Równowaga przesunęła się bez ostrzeżenia."
+  ]
+};
+
+const CONTINUES = [
+  "Następny krok nie był oczywisty, ale był konieczny.",
+  "To właśnie w tej chwili wszystko zaczęło nabierać sensu.",
+  "Nie było już odwrotu — tylko dalsza droga.",
+  "Każda sekunda po tym zdarzeniu zmieniała znaczenie poprzedniej.",
+  "To, co miało być końcem, stało się początkiem kolejnej warstwy."
+];
+
+function newChapter(){
   const t=document.getElementById('book');
-  const text=t.value.trim();
+  const gate=document.getElementById('gate').value;
+  const n=(t.value.match(/ROZDZIAŁ/g)||[]).length+1;
 
-  const count=(text.match(/ROZDZIAŁ/g)||[]).length+1;
+  const text=
+`\n\nROZDZIAŁ ${n}
 
-  const next=
-`\n\nROZDZIAŁ ${count}
+${pick(OPENERS[gate])}
 
-To nie jest kontynuacja przypadkowa.
-To jest odpowiedź na to, co już zostało zapisane.
-Decyzja zapadła wcześniej, zanim padło to zdanie.
+${pick(CONTINUES)}
 
-[BELLA PRO — GENERACJA]\n`;
+`;
 
-  t.value+=next;
+  t.value+=text;
+}
+
+function continueChapter(){
+  const t=document.getElementById('book');
+  const last=t.value.trim();
+
+  const text=
+`\n${pick(CONTINUES)}
+${pick(CONTINUES)}
+`;
+
+  t.value+=text;
+}
+
+function pick(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
 }
 </script>
 
