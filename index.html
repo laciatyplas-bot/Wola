@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA — ANALIZA TEKSTU</title>
+<title>BELLA — PODZIAŁ KSIĄŻKI</title>
 
 <style>
 body{
@@ -22,7 +22,7 @@ header{
 main{padding:12px}
 textarea{
   width:100%;
-  min-height:40vh;
+  min-height:35vh;
   background:#0a0a25;
   color:#e0ffff;
   border:none;
@@ -40,53 +40,63 @@ button{
   color:#000;
   border:none;
 }
-pre{
+.section{
   background:#000;
   padding:12px;
   margin-top:12px;
+  border-radius:8px;
+}
+.section h3{
+  margin:0 0 6px 0;
+  color:#00ffff;
+}
+.section pre{
   white-space:pre-wrap;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<header>BELLA · ANALIZA</header>
+<header>BELLA · PODZIAŁ NA ROZDZIAŁY</header>
 
 <main>
+
 <textarea id="input">
 Wklej TU całą książkę.
 </textarea>
 
-<button onclick="analyze()">ANALIZUJ</button>
+<button onclick="splitBook()">PODZIEL NA ROZDZIAŁY</button>
 
-<pre id="output"></pre>
+<div id="output"></div>
+
 </main>
 
 <script>
-function analyze(){
+function splitBook(){
   const text=document.getElementById('input').value.trim();
   const out=document.getElementById('output');
+  out.innerHTML='';
 
   if(!text){
     out.textContent='Brak tekstu.';
     return;
   }
 
-  const words=text.split(/\s+/).filter(Boolean).length;
-  const chars=text.length;
-  const chapters=(text.match(/rozdział|chapter|kapitel/gi)||[]).length || 'nie wykryto';
+  const parts=text.split(/(?=ROZDZIAŁ|Rozdział|CHAPTER|Chapter|KAPITEL|Kapitel)/g);
 
-  out.textContent=
-`✔ ANALIZA ZAKOŃCZONA
+  parts.forEach((p,i)=>{
+    if(p.trim().length<50) return;
 
-Słowa: ${words}
-Znaki: ${chars}
-Rozdziały: ${chapters}
-
-STATUS:
-Tekst został poprawnie wczytany.
-Bella działa.`;
+    const box=document.createElement('div');
+    box.className='section';
+    box.innerHTML=`
+      <h3>ROZDZIAŁ ${i+1}</h3>
+      <pre>${p.trim()}</pre>
+    `;
+    out.appendChild(box);
+  });
 }
 </script>
 
