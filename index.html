@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — BOOK MASTER + EXPORT</title>
+<title>ETERNIVERSE — BOOK MASTER (BRAMY)</title>
 
 <style>
 body{
@@ -15,24 +15,25 @@ body{
 header{
   padding:12px;
   text-align:center;
-  font-weight:700;
+  font-weight:800;
   border-bottom:2px solid #0ff;
 }
-textarea, .editor{
+textarea,.editor,select{
   width:100%;
-  min-height:30vh;
   background:#111;
   color:#0ff;
   font-size:16px;
   padding:10px;
   border:none;
 }
+textarea{min-height:25vh}
+.editor{min-height:30vh}
 button{
   width:100%;
   padding:14px;
   margin-top:8px;
   font-size:16px;
-  font-weight:700;
+  font-weight:800;
   background:#0ff;
   color:#000;
   border:none;
@@ -41,13 +42,17 @@ button{
   background:#111;
   color:#0ff;
 }
+.badge{
+  font-size:12px;
+  opacity:.7;
+}
 .hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<header>ETERNIVERSE · BOOK MASTER</header>
+<header>ETERNIVERSE · BOOK MASTER — BRAMY</header>
 
 <textarea id="input">Wklej TU całą książkę.</textarea>
 <button onclick="split()">PODZIEL NA ROZDZIAŁY</button>
@@ -55,95 +60,110 @@ button{
 <div class="list" id="chapters"></div>
 
 <div id="work" class="hidden">
+
   <div class="editor" id="editor" contenteditable="true"></div>
 
+  <select id="gate">
+    <option value="0">BRAMA I — CIENIA</option>
+    <option value="1">BRAMA II — GENEZY</option>
+    <option value="2">BRAMA III — WOLI</option>
+    <option value="3">BRAMA IV — ARCHETYPÓW</option>
+    <option value="4">BRAMA V — OBFITOŚCI</option>
+    <option value="5">BRAMA VI — CIAŁA</option>
+    <option value="6">BRAMA VII — SPLĄTANIA</option>
+    <option value="7">BRAMA VIII — CZASU</option>
+    <option value="8">BRAMA IX — KOLEKTYWU</option>
+    <option value="9">BRAMA X — INTEGRACJI</option>
+  </select>
+
+  <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
   <button onclick="shorten()">STREŚĆ</button>
   <button onclick="expand()">ROZWIŃ</button>
   <button onclick="rewrite()">PRZEPISZ</button>
-  <button onclick="save()">ZAPISZ ROZDZIAŁ</button>
 
-  <button onclick="exportOne()">EKSPORT TEGO ROZDZIAŁU (TXT)</button>
-  <button onclick="exportAll()">EKSPORT CAŁEJ KSIĄŻKI (TXT)</button>
+  <button onclick="exportGate()">EKSPORT TEJ BRAMY</button>
 </div>
 
 <script>
+const GATES=[
+  'CIENIA','GENEZY','WOLI','ARCHETYPÓW','OBFITOŚCI',
+  'CIAŁA','SPLĄTANIA','CZASU','KOLEKTYWU','INTEGRACJI'
+];
+
 let chapters=[];
 let active=null;
 
 function split(){
-  const t=document.getElementById('input').value.trim();
+  const t=input.value.trim();
   if(!t) return;
   chapters=t.split(/(?=ROZDZIAŁ|Rozdział|CHAPTER|Chapter)/g)
     .filter(x=>x.trim().length>40)
-    .map(x=>x.trim());
-  localStorage.setItem('CHAPTERS',JSON.stringify(chapters));
+    .map(x=>({text:x.trim(),gate:0}));
+  saveAll();
   render();
 }
 
 function render(){
-  const l=document.getElementById('chapters');
-  l.innerHTML='';
+  chaptersDiv.innerHTML='';
   chapters.forEach((c,i)=>{
     const b=document.createElement('button');
-    b.textContent='ROZDZIAŁ '+(i+1);
+    b.innerHTML=`ROZDZIAŁ ${i+1}<br><span class="badge">BRAMA ${c.gate+1} — ${GATES[c.gate]}</span>`;
     b.onclick=()=>openChapter(i);
-    l.appendChild(b);
+    chaptersDiv.appendChild(b);
   });
 }
 
 function openChapter(i){
   active=i;
-  document.getElementById('editor').innerText=chapters[i];
-  document.getElementById('work').classList.remove('hidden');
+  editor.innerText=chapters[i].text;
+  gate.value=chapters[i].gate;
+  work.classList.remove('hidden');
 }
 
 function save(){
   if(active===null) return;
-  chapters[active]=document.getElementById('editor').innerText;
-  localStorage.setItem('CHAPTERS',JSON.stringify(chapters));
+  chapters[active].text=editor.innerText;
+  chapters[active].gate=parseInt(gate.value,10);
+  saveAll();
+  render();
 }
 
 function shorten(){
-  const e=document.getElementById('editor');
-  const w=e.innerText.split(/\s+/);
-  e.innerText=w.slice(0,Math.min(80,w.length)).join(' ')+"\n\n[STRESZCZONE]";
+  const w=editor.innerText.split(/\s+/);
+  editor.innerText=w.slice(0,80).join(' ')+"\n\n[STRESZCZONE]";
 }
-
 function expand(){
-  const e=document.getElementById('editor');
-  e.innerText=e.innerText+"\n\n"+e.innerText+"\n\n[ROZWINIĘTE]";
+  editor.innerText=editor.innerText+"\n\n"+editor.innerText+"\n\n[ROZWINIĘTE]";
 }
-
 function rewrite(){
-  const e=document.getElementById('editor');
-  e.innerText=e.innerText.split(/\n+/).map(l=>"— "+l).join("\n\n")+"\n\n[PRZEPISANE]";
+  editor.innerText=editor.innerText.split(/\n+/).map(l=>"— "+l).join("\n\n")+"\n\n[PRZEPISANE]";
 }
 
-function exportOne(){
+function exportGate(){
   if(active===null) return;
-  download(chapters[active],'rozdzial_'+(active+1)+'.txt');
+  const g=parseInt(gate.value,10);
+  const txt=chapters
+    .filter(c=>c.gate===g)
+    .map((c,i)=>`ROZDZIAŁ ${i+1}\n\n${c.text}`)
+    .join('\n\n\n');
+  download(txt,'brama_'+(g+1)+'_'+GATES[g]+'.txt');
 }
 
-function exportAll(){
-  if(!chapters.length) return;
-  const full=chapters.map((c,i)=>'ROZDZIAŁ '+(i+1)+'\n\n'+c).join('\n\n\n');
-  download(full,'ksiazka.txt');
-}
-
-function download(text,name){
-  const blob=new Blob([text],{type:'text/plain'});
+function download(t,n){
+  const b=new Blob([t],{type:'text/plain'});
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=name;
+  a.href=URL.createObjectURL(b);
+  a.download=n;
   a.click();
 }
 
+function saveAll(){
+  localStorage.setItem('ETERNIVERSE_FULL',JSON.stringify(chapters));
+}
+
 (function load(){
-  const s=localStorage.getItem('CHAPTERS');
-  if(s){
-    chapters=JSON.parse(s);
-    render();
-  }
+  const s=localStorage.getItem('ETERNIVERSE_FULL');
+  if(s){chapters=JSON.parse(s);render();}
 })();
 </script>
 
