@@ -1,286 +1,319 @@
-// js/app.js — ETERNIVERSE BOOK MASTER v2.3
-// CORE APPLICATION CONTROLLER
-// 8 Światów × 10 Bram × Rozdziały
-// Master Edition 2026 | Maciej Maciuszek
+// ========================================
+// ETERNIVERSE BOOK MASTER v4.0 — APP CORE
+// Silnik świata, bram, rozdziałów, AI, uploadów
+// Architekt: Maciej Maciuszek | 2026
+// ========================================
 
 'use strict';
 
-class EterNiverseApp {
+class EterniverseApp {
   constructor() {
-    this.state = {
-      world: 1,
-      gate: 1,
-      chapter: 1
+    // ====== STAN ======
+    this.worlds = {
+      1: { id: 1, key: 'core', name: 'Rdzeń' },
+      2: { id: 2, key: 'polaris', name: 'Polaris' }
     };
 
-    this.elements = {};
-    this.saveTimer = null;
+    this.currentWorld = 1;
+    this.currentGate = 1;
+    this.currentChapter = 1;
+
+    this.STORAGE_KEY = 'ETERNIVERSE_BOOK_MASTER_V4';
+
+    this.data = this.loadData();
+
+    this.editor = document.getElementById('mainEditor');
+    this.preview = document.getElementById('bookPreview');
+    this.status = document.getElementById('status');
 
     this.init();
   }
 
-  /* ===============================
-     INICJALIZACJA
-  =============================== */
+  // ========================================
+  // INIT
+  // ========================================
   init() {
-    this.cacheDOM();
-    this.bindUIEvents();
-    this.syncInitialState();
+    this.bindTabs();
+    this.bindWorlds();
+    this.renderGates();
+    this.bindGates();
+    this.bindChapters();
+    this.bindEditor();
+    this.bindUploads();
+    this.bindExport();
     this.loadContent();
+    this.startAutosave();
 
-    this.updateTitle();
-    this.updateStatus('Splątanie aktywne · Gotowy');
-
-    console.log('🚀 EterNiverseApp v2.3 uruchomiony', this.state);
+    console.log('🚀 ETERNIVERSE APP v4.0 READY');
   }
 
-  /* ===============================
-     CACHE DOM
-  =============================== */
-  cacheDOM() {
-    this.elements = {
-      editor: document.getElementById('mainEditor'),
-      status: document.getElementById('status'),
-      bookTitle: document.getElementById('bookTitle'),
-      worldBtns: document.querySelectorAll('.world-btn'),
-      gateItems: document.querySelectorAll('.world-item'),
-      tabBtns: document.querySelectorAll('.tab-btn'),
-      aiInput: document.getElementById('aiCommand')
-    };
-  }
-
-  /* ===============================
-     WIĄZANIE ZDARZEŃ
-  =============================== */
-  bindUIEvents() {
-    // Światy
-    this.elements.worldBtns.forEach(btn => {
+  // ========================================
+  // WORLD
+  // ========================================
+  bindWorlds() {
+    document.querySelectorAll('.world-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const world = Number(btn.dataset.world);
-        this.setWorld(world);
+        const key = btn.dataset.world;
+        const world = Object.values(this.worlds).find(w => w.key === key);
+        if (!world) return;
+
+        this.currentWorld = world.id;
+        this.currentGate = 1;
+        this.currentChapter = 1;
+
+        document.querySelectorAll('.world-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        this.renderGates();
+        this.bindGates();
+        this.loadContent();
+        this.updateTitle();
+
+        document.dispatchEvent(new CustomEvent('worldSelected', { detail: world }));
       });
     });
+  }
 
-    // Bramy
-    this.elements.gateItems.forEach(item => {
+  // ========================================
+  // GATES
+  // ========================================
+  renderGates() {
+    const gateList = document.getElementById('gateList');
+    gateList.innerHTML = '';
+
+    for (let i = 1; i <= 10; i++) {
+      const div = document.createElement('div');
+      div.className = 'world-item' + (i === this.currentGate ? ' active' : '');
+      div.dataset.brama = i;
+      div.textContent = `Brama ${i}`;
+      gateList.appendChild(div);
+    }
+  }
+
+  bindGates() {
+    document.querySelectorAll('.world-item').forEach(item => {
       item.addEventListener('click', () => {
-        const gate = Number(item.dataset.brama);
-        this.setGate(gate);
+        this.currentGate = Number(item.dataset.brama);
+        this.currentChapter = 1;
+
+        document.querySelectorAll('.world-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        this.renderChapters();
+        this.loadContent();
+        this.updateTitle();
+
+        document.dispatchEvent(new CustomEvent('bramaChanged', {
+          detail: { world: this.currentWorld, gate: this.currentGate }
+        }));
       });
     });
+  }
 
-    // Tabs
-    this.elements.tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.switchTab(btn.dataset.tab);
-      });
-    });
-
-    // Edytor – autosave
-    if (this.elements.editor) {
-      this.elements.editor.addEventListener('input', () => this.scheduleSave());
+  // ========================================
+  // CHAPTERS
+  // ========================================
+  bindChapters() {
+    const addBtn = document.getElementById('addChapterBtn');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => this.addChapter());
     }
+    this.renderChapters();
+  }
 
-    // AI command
-    if (this.elements.aiInput) {
-      this.elements.aiInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          const command = this.elements.aiInput.value.trim();
-          if (command) {
-            this.handleAICommand(command);
-            this.elements.aiInput.value = '';
-          }
-        }
+  renderChapters() {
+    const list = document.getElementById('chaptersList');
+    list.innerHTML = '';
+
+    const chapters = this.getGateData().chapters;
+
+    Object.keys(chapters).forEach(id => {
+      const div = document.createElement('div');
+      div.className = 'chapter-item' + (Number(id) === this.currentChapter ? ' active' : '');
+      div.textContent = chapters[id].title;
+      div.dataset.chapter = id;
+
+      div.addEventListener('click', () => {
+        this.currentChapter = Number(id);
+        this.loadContent();
+        this.renderChapters();
       });
-    }
 
-    // Globalne hotkeys
-    document.addEventListener('keydown', e => this.handleHotkeys(e));
-  }
-
-  /* ===============================
-     ZMIANA STANU
-  =============================== */
-  setWorld(world) {
-    if (this.state.world === world) return;
-
-    this.state.world = world;
-    this.state.gate = 1;
-    this.state.chapter = 1;
-
-    this.updateActive('.world-btn', 'data-world', world);
-    this.updateActive('.world-item', 'data-brama', 1);
-
-    this.updateTitle();
-    this.loadContent();
-
-    this.emit('worldChanged', { world });
-  }
-
-  setGate(gate) {
-    if (this.state.gate === gate) return;
-
-    this.state.gate = gate;
-    this.state.chapter = 1;
-
-    this.updateActive('.world-item', 'data-brama', gate);
-
-    this.updateTitle();
-    this.loadContent();
-
-    this.emit('gateChanged', { gate });
-  }
-
-  setChapter(chapter) {
-    this.state.chapter = chapter;
-    this.loadContent();
-    this.emit('chapterChanged', { chapter });
-  }
-
-  /* ===============================
-     AKTUALIZACJA UI
-  =============================== */
-  updateActive(selector, attr, value) {
-    document.querySelectorAll(selector).forEach(el => {
-      el.classList.toggle('active', Number(el.dataset[attr.replace('data-', '')]) === value);
+      list.appendChild(div);
     });
   }
 
-  switchTab(tabId) {
-    this.elements.tabBtns.forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  addChapter() {
+    const gate = this.getGateData();
+    const id = Object.keys(gate.chapters).length + 1;
 
-    const btn = document.querySelector(`[data-tab="${tabId}"]`);
-    const tab = document.getElementById(`${tabId}Tab`);
+    gate.chapters[id] = {
+      title: `Rozdział ${id}`,
+      content: ''
+    };
 
-    if (btn) btn.classList.add('active');
-    if (tab) tab.classList.add('active');
+    this.currentChapter = id;
+    this.saveData();
+    this.renderChapters();
+    this.loadContent();
   }
 
-  updateTitle() {
-    if (!this.elements.bookTitle) return;
-
-    const worldName = window.eterData?.worldPresets[this.state.world]?.name || `Świat ${this.state.world}`;
-    const gateName = window.eterData?.gateTemplates[this.state.gate - 1]?.name || `Brama ${this.state.gate}`;
-
-    this.elements.bookTitle.textContent = `${worldName} · ${gateName}`;
-  }
-
-  updateStatus(msg) {
-    if (this.elements.status) {
-      this.elements.status.textContent = msg;
-    }
-  }
-
-  /* ===============================
-     ZAPIS / ODCZYT TREŚCI
-  =============================== */
-  storageKey() {
-    return window.eterDataAPI?.contentKey(this.state.world, this.state.gate, this.state.chapter) || 
-           `eter_w\( {this.state.world}_g \){this.state.gate}_ch${this.state.chapter}`;
+  // ========================================
+  // EDITOR
+  // ========================================
+  bindEditor() {
+    if (!this.editor) return;
+    this.editor.addEventListener('input', () => {
+      this.updatePreview();
+    });
   }
 
   loadContent() {
-    if (!this.elements.editor) return;
+    const ch = this.getChapterData();
+    if (this.editor) this.editor.innerText = ch.content || '';
+    this.updatePreview();
+  }
 
-    const key = this.storageKey();
-    const saved = localStorage.getItem(key);
-
-    if (saved) {
-      this.elements.editor.innerHTML = saved.replace(/\n/g, '<br>');
-    } else {
-      const defaultContent = window.eterData?.getDefaultContent(this.state.world, this.state.gate) || '';
-      this.elements.editor.innerHTML = defaultContent.replace(/\n/g, '<br>');
+  updatePreview() {
+    if (this.preview && this.editor) {
+      this.preview.innerText = this.editor.innerText;
     }
   }
 
-  saveContent() {
-    if (!this.elements.editor) return;
+  // ========================================
+  // UPLOADS
+  // ========================================
+  bindUploads() {
+    const coverInput = document.getElementById('coverUpload');
+    const coverPreview = document.getElementById('coverPreview');
+    const coverInfo = document.getElementById('coverInfo');
 
-    const key = this.storageKey();
-    const content = this.elements.editor.innerHTML.replace(/<br>/g, '\n').replace(/<div>/g, '\n').replace(/<\/div>/g, '');
+    if (coverInput) {
+      coverInput.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    localStorage.setItem(key, content);
+        const url = URL.createObjectURL(file);
+        coverPreview.src = url;
+        coverPreview.style.display = 'block';
+        coverInfo.textContent = `Załadowano: ${file.name}`;
 
-    this.updateStatus(`Zapisano ${new Date().toLocaleTimeString()}`);
-    this.emit('contentSaved', { key, content });
-  }
+        this.data.covers = this.data.covers || {};
+        this.data.covers[this.currentWorld] = file.name;
+        this.saveData();
+      });
+    }
 
-  scheduleSave() {
-    clearTimeout(this.saveTimer);
-    this.saveTimer = setTimeout(() => this.saveContent(), 800);
-    this.updateStatus('Zapisywanie...');
-  }
+    const audioInput = document.getElementById('audioUpload');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audioInfo = document.getElementById('audioInfo');
 
-  /* ===============================
-     AI COMMAND
-  =============================== */
-  handleAICommand(command) {
-    const output = document.getElementById('aiOutput');
-    if (output) {
-      output.innerHTML += `<p><strong>> ${command}</strong></p>`;
-      output.innerHTML += `<p>AI przetwarza żądanie... (integracja w budowie)</p>`;
-      output.scrollTop = output.scrollHeight;
+    if (audioInput) {
+      audioInput.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const url = URL.createObjectURL(file);
+        audioPlayer.src = url;
+        audioInfo.textContent = `MP3: ${file.name}`;
+
+        this.data.audio = this.data.audio || {};
+        this.data.audio[this.currentWorld] = file.name;
+        this.saveData();
+      });
     }
   }
 
-  /* ===============================
-     HOTKEYS
-  =============================== */
-  handleHotkeys(e) {
-    if (!e.ctrlKey && !e.metaKey) return;
+  // ========================================
+  // EXPORT (HOOKI)
+  // ========================================
+  bindExport() {
+    const pdf = document.getElementById('exportPDF');
+    const docx = document.getElementById('exportDOCX');
+    const epub = document.getElementById('exportEPUB');
 
-    switch (e.key.toLowerCase()) {
-      case 's':
-        e.preventDefault();
-        this.saveContent();
-        break;
-      case '1':
-        e.preventDefault();
-        this.switchTab('book');
-        break;
-      case '2':
-        e.preventDefault();
-        this.switchTab('cover');
-        break;
-      case '3':
-        e.preventDefault();
-        this.switchTab('audio');
-        break;
-      case '4':
-        e.preventDefault();
-        this.switchTab('bella');
-        break;
+    if (pdf) pdf.onclick = () => alert('PDF — podpiąć generator');
+    if (docx) docx.onclick = () => alert('DOCX — podpiąć generator');
+    if (epub) epub.onclick = () => alert('EPUB — podpiąć generator');
+  }
+
+  // ========================================
+  // TABS
+  // ========================================
+  bindTabs() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab + 'Tab').classList.add('active');
+      });
+    });
+  }
+
+  // ========================================
+  // AUTOSAVE
+  // ========================================
+  startAutosave() {
+    setInterval(() => {
+      this.saveEditorContent();
+      if (this.status) {
+        this.status.textContent = 'Zapisano ' + new Date().toLocaleTimeString();
+      }
+    }, 2500);
+  }
+
+  saveEditorContent() {
+    const ch = this.getChapterData();
+    if (this.editor) ch.content = this.editor.innerText;
+    this.saveData();
+  }
+
+  // ========================================
+  // DATA
+  // ========================================
+  loadData() {
+    const raw = localStorage.getItem(this.STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+
+    const data = {};
+    Object.values(this.worlds).forEach(w => {
+      data[w.id] = {};
+      for (let g = 1; g <= 10; g++) {
+        data[w.id][g] = {
+          chapters: {
+            1: { title: 'Rozdział 1', content: '' }
+          }
+        };
+      }
+    });
+    return data;
+  }
+
+  saveData() {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data));
+  }
+
+  getGateData() {
+    return this.data[this.currentWorld][this.currentGate];
+  }
+
+  getChapterData() {
+    return this.getGateData().chapters[this.currentChapter];
+  }
+
+  updateTitle() {
+    const title = document.getElementById('bookTitle');
+    if (title) {
+      title.textContent = `Świat ${this.currentWorld} · Brama ${this.currentGate}`;
     }
-  }
-
-  /* ===============================
-     EVENT EMITTER
-  =============================== */
-  emit(name, detail = {}) {
-    document.dispatchEvent(new CustomEvent(name, { detail }));
-  }
-
-  /* ===============================
-     INICJALNA SYNCHRONIZACJA
-  =============================== */
-  syncInitialState() {
-    this.updateActive('.world-btn', 'data-world', this.state.world);
-    this.updateActive('.world-item', 'data-brama', this.state.gate);
   }
 }
 
-/* ===============================
-   BOOTSTRAP
-=============================== */
+// ========================================
+// START
+// ========================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Czekamy na EterData
-  if (window.eterData) {
-    window.eterApp = new EterNiverseApp();
-  } else {
-    document.addEventListener('datastore:ready', () => {
-      window.eterApp = new EterNiverseApp();
-    });
-  }
+  window.ETERNIVERSE_APP = new EterniverseApp();
 });
