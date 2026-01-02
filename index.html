@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — KANON PER SCENA</title>
+<title>ETERNIVERSE — KANON ROZWIJANIA</title>
 
 <style>
 body{
@@ -37,17 +37,13 @@ button,select{
   color:#000;
   border:none;
 }
-.small{
-  font-size:12px;
-  opacity:.7;
-  margin-top:6px;
-}
+.small{font-size:12px;opacity:.7;margin-top:6px}
 </style>
 </head>
 
 <body>
 
-<header>ETERNIVERSE · BELLA PRO — KANON PER SCENA</header>
+<header>ETERNIVERSE · BELLA PRO — ROZWIJANIE SCEN</header>
 
 <textarea id="book">
 ROZDZIAŁ 1
@@ -63,92 +59,127 @@ Początek jeszcze nie wiedział, że jest początkiem.
 
 <select id="scene">
   <option value="enter">SCENA: Wejście</option>
-  <option value="tension">SCENA: Napięcie</option>
+  <option value="tension">SCENA: Narastanie</option>
   <option value="choice">SCENA: Decyzja</option>
   <option value="result">SCENA: Konsekwencja</option>
 </select>
 
-<button onclick="canonScene()">KANON — DOPISZ SCENĘ</button>
+<button onclick="expandScene()">KANON — ROZWIŃ SCENĘ</button>
 
 <div class="small">
-Kanon działa **lokalnie**: jedna scena, jedna decyzja, jeden efekt.
+Rozwijanie = 2–3 akapity logicznej kontynuacji, nie streszczenie.
 </div>
 
 <script>
-const CANON_SCENES = {
+const EXPAND = {
   inter: {
     enter: [
-      "Cień był obecny od początku, choć nikt nie potrafił go nazwać.",
-      "Coś niewypowiedzianego wisiało w powietrzu."
+      [
+        "Cień był obecny od pierwszej chwili, choć nikt nie potrafił wskazać jego źródła.",
+        "To napięcie nie miało kształtu strachu — było raczej przeczuciem, że coś zostało pominięte.",
+        "Im dłużej trwała cisza, tym wyraźniej stawało się, że nie jest ona neutralna."
+      ],
+      [
+        "Prawda nie pojawiła się nagle. Najpierw przyszło uczucie dyskomfortu.",
+        "To, co wyparte, zaczęło delikatnie naciskać od środka.",
+        "Nie było jeszcze konfrontacji, ale nie było już spokoju."
+      ]
     ],
     tension: [
-      "Im dłużej to trwało, tym trudniej było ignorować wewnętrzny opór.",
-      "Myśli krążyły wokół tego, co miało pozostać ukryte."
+      [
+        "Myśli krążyły wokół jednego punktu, którego nie dało się nazwać wprost.",
+        "Każda próba odsunięcia go na bok tylko wzmacniała jego obecność.",
+        "Cień rósł nie dlatego, że był potężny, ale dlatego, że był ignorowany."
+      ]
     ],
     choice: [
-      "Unikanie prawdy przestało być możliwe.",
-      "Konfrontacja stała się jedyną uczciwą drogą."
+      [
+        "Moment decyzji nie przyszedł z ulgą.",
+        "Był raczej zgodą na to, że dalsze unikanie nie ma sensu.",
+        "Konfrontacja stała się jedyną formą uczciwości wobec samego siebie."
+      ]
     ],
     result: [
-      "Ujawnienie zmieniło więcej, niż się spodziewano.",
-      "Cień stracił władzę w chwili, gdy został nazwany."
+      [
+        "Nazwanie tego, co dotąd było ukryte, zmieniło strukturę całej sytuacji.",
+        "Cień nie zniknął, ale przestał rządzić z ukrycia.",
+        "Od tej chwili relacja z nim była świadoma."
+      ]
     ]
   },
 
   eter: {
     enter: [
-      "Przestrzeń zareagowała, jakby rozpoznała intencję.",
-      "Coś się przesunęło, zanim zapadła świadoma decyzja."
+      [
+        "Przestrzeń zareagowała subtelnie, niemal niezauważalnie.",
+        "To nie był impuls, lecz zmiana napięcia w tle.",
+        "Wola zaczęła się formować, zanim została rozpoznana jako decyzja."
+      ]
     ],
     tension: [
-      "Każda sekunda zwiększała ciężar wyboru.",
-      "Wola zaczęła dominować nad wątpliwościami."
+      [
+        "Każda kolejna chwila wzmacniała potrzebę działania.",
+        "Wątpliwości nie znikały, ale traciły swoją dominującą pozycję.",
+        "Ciężar wyboru stawał się coraz bardziej konkretny."
+      ]
     ],
     choice: [
-      "Decyzja zapadła bez świadków.",
-      "Nie było już alternatyw, tylko działanie."
+      [
+        "Decyzja zapadła bez ceremonii.",
+        "Nie towarzyszyło jej poczucie zwycięstwa, tylko spójności.",
+        "Wola objawiła się jako gotowość do poniesienia konsekwencji."
+      ]
     ],
     result: [
-      "Świat przyjął wybór bez oporu.",
-      "Nowa trajektoria została aktywowana."
+      [
+        "Świat nie zaprotestował.",
+        "Nowa trajektoria zdarzeń zaczęła się stabilizować.",
+        "To, co zostało wybrane, domagało się teraz realizacji."
+      ]
     ]
   },
 
   obfi: {
     enter: [
-      "Zmiana zaczęła się od ledwie zauważalnego przesunięcia.",
-      "Potencjał pojawił się wcześniej niż rezultat."
+      [
+        "Zmiana zaczęła się od przesunięcia akcentów, nie faktów.",
+        "To, co wcześniej wydawało się brakiem, zaczęło wyglądać jak potencjał.",
+        "Obfitość nie była jeszcze widoczna, ale była już obecna."
+      ]
     ],
     tension: [
-      "Im bliżej było rozwiązania, tym wyraźniejszy stawał się koszt.",
-      "Równowaga chwiała się między nadmiarem a brakiem."
+      [
+        "Im bliżej było materializacji, tym wyraźniej pojawiał się koszt.",
+        "Nadmiar i niedobór przestały być przeciwieństwami.",
+        "Równowaga wymagała nowej definicji."
+      ]
     ],
     choice: [
-      "Akceptacja przyszła wcześniej niż zrozumienie.",
-      "To, co wybrane, zaczęło się materializować."
+      [
+        "Akceptacja przyszła wcześniej niż pełne zrozumienie.",
+        "Wybór nie dotyczył posiadania, lecz relacji do przepływu.",
+        "To, co zostało przyjęte, zaczęło się porządkować."
+      ]
     ],
     result: [
-      "Przepływ ustabilizował się w nowej formie.",
-      "Obfitość okazała się konsekwencją spójności."
+      [
+        "Przepływ ustabilizował się w nowej formie.",
+        "Obfitość okazała się konsekwencją spójności, nie wysiłku.",
+        "Zmiana miała charakter trwały."
+      ]
     ]
   }
 };
 
-function canonScene(){
+function expandScene(){
   const t = document.getElementById('book');
   const g = document.getElementById('gate').value;
   const s = document.getElementById('scene').value;
 
-  const lines = CANON_SCENES[g][s];
-  const add =
-`\n${pick(lines)}
-${pick(lines)}\n`;
+  const blocks = EXPAND[g][s];
+  const block = blocks[Math.floor(Math.random()*blocks.length)];
 
-  t.value += add;
-}
-
-function pick(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
+  t.value += '\n\n' + block.join('\n\n');
 }
 </script>
 
