@@ -1,0 +1,1 @@
+const C='wola-v3';self.addEventListener('install',e=>caches.open(C));self.addEventListener('fetch',e=>caches.match(e.request)||fetch(e.request));
