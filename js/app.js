@@ -1,236 +1,286 @@
-// ========================================
-// ETERNIVERSE BOOK MASTER v2.2 — APP CORE
-// AI-READY • BELLA-INTEGRATED • STABLE
-// 8 Światów × 10 Bram
-// ========================================
+// js/app.js — ETERNIVERSE BOOK MASTER v2.3
+// CORE APPLICATION CONTROLLER
+// 8 Światów × 10 Bram × Rozdziały
+// Master Edition 2026 | Maciej Maciuszek
 
 'use strict';
 
-class EterNiverse {
+class EterNiverseApp {
   constructor() {
-    this.currentWorld = 1;
-    this.currentBrama = 1;
-    this.currentChapter = 1;
+    this.state = {
+      world: 1,
+      gate: 1,
+      chapter: 1
+    };
 
-    this.STORAGE_KEY = 'ETERNIVERSE_BOOK_DATA_V2';
-    this.data = this.loadData();
-
-    this.saveTimeout = null;
+    this.elements = {};
+    this.saveTimer = null;
 
     this.init();
   }
 
-  // ===============================
-  // INIT
-  // ===============================
+  /* ===============================
+     INICJALIZACJA
+  =============================== */
   init() {
-    this.bindUI();
-    this.updateUI();
-    this.loadEditor();
-    this.emitWorldContext();
+    this.cacheDOM();
+    this.bindUIEvents();
+    this.syncInitialState();
+    this.loadContent();
 
-    console.log('🚀 ETERNIVERSE APP v2.2 READY');
+    this.updateTitle();
+    this.updateStatus('Splątanie aktywne · Gotowy');
+
+    console.log('🚀 EterNiverseApp v2.3 uruchomiony', this.state);
   }
 
-  // ===============================
-  // UI BINDINGS
-  // ===============================
-  bindUI() {
-    // ŚWIATY
-    document.querySelectorAll('.world-btn').forEach(btn => {
+  /* ===============================
+     CACHE DOM
+  =============================== */
+  cacheDOM() {
+    this.elements = {
+      editor: document.getElementById('mainEditor'),
+      status: document.getElementById('status'),
+      bookTitle: document.getElementById('bookTitle'),
+      worldBtns: document.querySelectorAll('.world-btn'),
+      gateItems: document.querySelectorAll('.world-item'),
+      tabBtns: document.querySelectorAll('.tab-btn'),
+      aiInput: document.getElementById('aiCommand')
+    };
+  }
+
+  /* ===============================
+     WIĄZANIE ZDARZEŃ
+  =============================== */
+  bindUIEvents() {
+    // Światy
+    this.elements.worldBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        this.switchWorld(Number(btn.dataset.world));
+        const world = Number(btn.dataset.world);
+        this.setWorld(world);
       });
     });
 
-    // BRAMY
-    document.querySelectorAll('.world-item').forEach(item => {
+    // Bramy
+    this.elements.gateItems.forEach(item => {
       item.addEventListener('click', () => {
-        this.switchBrama(Number(item.dataset.brama));
+        const gate = Number(item.dataset.brama);
+        this.setGate(gate);
       });
     });
 
-    // TABS
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
+    // Tabs
+    this.elements.tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.switchTab(btn.dataset.tab);
+      });
     });
 
-    // EDITOR
-    const editor = document.getElementById('mainEditor');
-    if (editor) {
-      editor.addEventListener('input', () => this.debounceSave());
+    // Edytor – autosave
+    if (this.elements.editor) {
+      this.elements.editor.addEventListener('input', () => this.scheduleSave());
     }
 
-    // AI → SAVE
-    document.addEventListener('editorContentChanged', () => {
-      this.saveNow();
-      document.dispatchEvent(new Event('statsUpdated'));
-      console.log('🤖 AI → zapis wykonany');
-    });
+    // AI command
+    if (this.elements.aiInput) {
+      this.elements.aiInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          const command = this.elements.aiInput.value.trim();
+          if (command) {
+            this.handleAICommand(command);
+            this.elements.aiInput.value = '';
+          }
+        }
+      });
+    }
 
-    // HOTKEYS
+    // Globalne hotkeys
     document.addEventListener('keydown', e => this.handleHotkeys(e));
   }
 
-  // ===============================
-  // WORLD / GATE
-  // ===============================
-  switchWorld(id) {
-    this.currentWorld = id;
-    this.currentBrama = 1;
-    this.currentChapter = 1;
+  /* ===============================
+     ZMIANA STANU
+  =============================== */
+  setWorld(world) {
+    if (this.state.world === world) return;
 
-    document.querySelectorAll('.world-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`[data-world="${id}"]`)?.classList.add('active');
+    this.state.world = world;
+    this.state.gate = 1;
+    this.state.chapter = 1;
 
-    this.updateUI();
-    this.loadEditor();
-    this.emitWorldContext();
+    this.updateActive('.world-btn', 'data-world', world);
+    this.updateActive('.world-item', 'data-brama', 1);
 
-    document.dispatchEvent(new Event('worldChanged'));
+    this.updateTitle();
+    this.loadContent();
+
+    this.emit('worldChanged', { world });
   }
 
-  switchBrama(id) {
-    this.currentBrama = id;
-    this.currentChapter = 1;
+  setGate(gate) {
+    if (this.state.gate === gate) return;
 
-    document.querySelectorAll('.world-item').forEach(i => i.classList.remove('active'));
-    document.querySelector(`[data-brama="${id}"]`)?.classList.add('active');
+    this.state.gate = gate;
+    this.state.chapter = 1;
 
-    this.updateUI();
-    this.loadEditor();
-    this.emitWorldContext();
+    this.updateActive('.world-item', 'data-brama', gate);
 
-    document.dispatchEvent(new Event('bramaChanged'));
+    this.updateTitle();
+    this.loadContent();
+
+    this.emit('gateChanged', { gate });
   }
 
-  // ===============================
-  // TAB SYSTEM
-  // ===============================
-  switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  setChapter(chapter) {
+    this.state.chapter = chapter;
+    this.loadContent();
+    this.emit('chapterChanged', { chapter });
+  }
+
+  /* ===============================
+     AKTUALIZACJA UI
+  =============================== */
+  updateActive(selector, attr, value) {
+    document.querySelectorAll(selector).forEach(el => {
+      el.classList.toggle('active', Number(el.dataset[attr.replace('data-', '')]) === value);
+    });
+  }
+
+  switchTab(tabId) {
+    this.elements.tabBtns.forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-    document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
-    document.getElementById(`${tab}Tab`)?.classList.add('active');
+    const btn = document.querySelector(`[data-tab="${tabId}"]`);
+    const tab = document.getElementById(`${tabId}Tab`);
+
+    if (btn) btn.classList.add('active');
+    if (tab) tab.classList.add('active');
   }
 
-  // ===============================
-  // DATA
-  // ===============================
-  loadData() {
-    const raw = localStorage.getItem(this.STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+  updateTitle() {
+    if (!this.elements.bookTitle) return;
 
-    const data = {};
-    for (let w = 1; w <= 8; w++) {
-      data[w] = {};
-      for (let g = 1; g <= 10; g++) {
-        data[w][g] = {
-          chapters: {
-            1: { title: 'Rozdział 1', content: '' }
-          }
-        };
-      }
+    const worldName = window.eterData?.worldPresets[this.state.world]?.name || `Świat ${this.state.world}`;
+    const gateName = window.eterData?.gateTemplates[this.state.gate - 1]?.name || `Brama ${this.state.gate}`;
+
+    this.elements.bookTitle.textContent = `${worldName} · ${gateName}`;
+  }
+
+  updateStatus(msg) {
+    if (this.elements.status) {
+      this.elements.status.textContent = msg;
     }
-    return data;
   }
 
-  persist() {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data));
+  /* ===============================
+     ZAPIS / ODCZYT TREŚCI
+  =============================== */
+  storageKey() {
+    return window.eterDataAPI?.contentKey(this.state.world, this.state.gate, this.state.chapter) || 
+           `eter_w\( {this.state.world}_g \){this.state.gate}_ch${this.state.chapter}`;
   }
 
-  loadEditor() {
-    const editor = document.getElementById('mainEditor');
-    if (!editor) return;
+  loadContent() {
+    if (!this.elements.editor) return;
 
-    const node =
-      this.data[this.currentWorld]?.[this.currentBrama]?.chapters[this.currentChapter];
+    const key = this.storageKey();
+    const saved = localStorage.getItem(key);
 
-    editor.innerText = node?.content || '';
-  }
-
-  saveNow() {
-    const editor = document.getElementById('mainEditor');
-    if (!editor) return;
-
-    const text = editor.innerText;
-
-    const world = this.currentWorld;
-    const gate = this.currentBrama;
-    const ch = this.currentChapter;
-
-    if (!this.data[world][gate].chapters[ch]) {
-      this.data[world][gate].chapters[ch] = {
-        title: `Rozdział ${ch}`,
-        content: ''
-      };
+    if (saved) {
+      this.elements.editor.innerHTML = saved.replace(/\n/g, '<br>');
+    } else {
+      const defaultContent = window.eterData?.getDefaultContent(this.state.world, this.state.gate) || '';
+      this.elements.editor.innerHTML = defaultContent.replace(/\n/g, '<br>');
     }
-
-    this.data[world][gate].chapters[ch].content = text;
-    this.persist();
-
-    const status = document.getElementById('status');
-    if (status) status.textContent = `Zapisano ${new Date().toLocaleTimeString()}`;
   }
 
-  debounceSave() {
-    clearTimeout(this.saveTimeout);
-    this.saveTimeout = setTimeout(() => this.saveNow(), 1200);
+  saveContent() {
+    if (!this.elements.editor) return;
+
+    const key = this.storageKey();
+    const content = this.elements.editor.innerHTML.replace(/<br>/g, '\n').replace(/<div>/g, '\n').replace(/<\/div>/g, '');
+
+    localStorage.setItem(key, content);
+
+    this.updateStatus(`Zapisano ${new Date().toLocaleTimeString()}`);
+    this.emit('contentSaved', { key, content });
   }
 
-  // ===============================
-  // UI UPDATE
-  // ===============================
-  updateUI() {
-    const title = document.getElementById('bookTitle');
-    const cw = document.getElementById('currentWorld');
-    const cb = document.getElementById('currentBrama');
-
-    if (title)
-      title.textContent = `Świat ${this.currentWorld} | Brama ${this.currentBrama}`;
-    if (cw) cw.textContent = this.currentWorld;
-    if (cb) cb.textContent = this.currentBrama;
+  scheduleSave() {
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => this.saveContent(), 800);
+    this.updateStatus('Zapisywanie...');
   }
 
-  // ===============================
-  // AI CONTEXT
-  // ===============================
-  emitWorldContext() {
-    if (!window.eterDataAPI) return;
-
-    const world = window.eterDataAPI.getWorld(this.currentWorld);
-    const gate = window.eterDataAPI.getGate(this.currentBrama);
-
-    document.dispatchEvent(
-      new CustomEvent('worldSelected', {
-        detail: {
-          world: {
-            id: this.currentWorld,
-            name: world.name,
-            description: world.starter,
-            gate: gate.name
-          }
-        }
-      })
-    );
+  /* ===============================
+     AI COMMAND
+  =============================== */
+  handleAICommand(command) {
+    const output = document.getElementById('aiOutput');
+    if (output) {
+      output.innerHTML += `<p><strong>> ${command}</strong></p>`;
+      output.innerHTML += `<p>AI przetwarza żądanie... (integracja w budowie)</p>`;
+      output.scrollTop = output.scrollHeight;
+    }
   }
 
-  // ===============================
-  // HOTKEYS
-  // ===============================
+  /* ===============================
+     HOTKEYS
+  =============================== */
   handleHotkeys(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-      e.preventDefault();
-      this.saveNow();
-      console.log('💾 Zapis ręczny');
+    if (!e.ctrlKey && !e.metaKey) return;
+
+    switch (e.key.toLowerCase()) {
+      case 's':
+        e.preventDefault();
+        this.saveContent();
+        break;
+      case '1':
+        e.preventDefault();
+        this.switchTab('book');
+        break;
+      case '2':
+        e.preventDefault();
+        this.switchTab('cover');
+        break;
+      case '3':
+        e.preventDefault();
+        this.switchTab('audio');
+        break;
+      case '4':
+        e.preventDefault();
+        this.switchTab('bella');
+        break;
     }
+  }
+
+  /* ===============================
+     EVENT EMITTER
+  =============================== */
+  emit(name, detail = {}) {
+    document.dispatchEvent(new CustomEvent(name, { detail }));
+  }
+
+  /* ===============================
+     INICJALNA SYNCHRONIZACJA
+  =============================== */
+  syncInitialState() {
+    this.updateActive('.world-btn', 'data-world', this.state.world);
+    this.updateActive('.world-item', 'data-brama', this.state.gate);
   }
 }
 
-// ===============================
-// START
-// ===============================
+/* ===============================
+   BOOTSTRAP
+=============================== */
 document.addEventListener('DOMContentLoaded', () => {
-  window.eterNiverse = new EterNiverse();
+  // Czekamy na EterData
+  if (window.eterData) {
+    window.eterApp = new EterNiverseApp();
+  } else {
+    document.addEventListener('datastore:ready', () => {
+      window.eterApp = new EterNiverseApp();
+    });
+  }
 });
