@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ETERNIVERSE — PISANIE</title>
+<title>BELLA — ANALIZA TEKSTU</title>
 
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
   background:#050510;
@@ -14,194 +13,80 @@ body{
   font-family:system-ui,sans-serif;
 }
 header{
-  padding:12px;
+  padding:14px;
   background:#070720;
   border-bottom:2px solid #00ffff;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  font-weight:700;
+  text-align:center;
+}
+main{padding:12px}
+textarea{
+  width:100%;
+  min-height:40vh;
+  background:#0a0a25;
+  color:#e0ffff;
+  border:none;
+  padding:12px;
+  font-size:15px;
+  line-height:1.6;
 }
 button{
-  padding:10px 12px;
-  font-size:14px;
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  font-size:16px;
   font-weight:700;
   background:#00ffff;
   color:#000;
   border:none;
-  border-radius:6px;
 }
-nav{
-  display:flex;
-  overflow-x:auto;
-  background:#080820;
-  border-bottom:1px solid #00ffff;
-}
-nav button{
-  flex:1;
-  background:none;
-  color:#00ffff;
-}
-main{padding:10px}
-.panel{display:none}
-.panel.active{display:block}
-#editor{
-  min-height:55vh;
-  padding:14px;
-  font-size:16px;
-  line-height:1.7;
-  outline:none;
-  background:#0a0a25;
-  border-radius:8px;
-}
-.list button{width:100%;margin-bottom:6px}
-#overlay{
-  position:fixed;
-  top:10px;
-  right:10px;
+pre{
   background:#000;
-  color:#00ffff;
-  padding:10px;
-  border-radius:8px;
-  z-index:9999;
+  padding:12px;
+  margin-top:12px;
+  white-space:pre-wrap;
 }
-.session nav{opacity:.2}
 </style>
 </head>
 
 <body>
 
-<header>
-  <strong>ETERNIVERSE</strong>
-  <button id="sessionBtn">SESJA</button>
-</header>
-
-<nav>
-  <button onclick="show('book')">KSIĄŻKA</button>
-  <button onclick="show('gates')">BRAMY</button>
-  <button onclick="show('bella')">BELLA</button>
-</nav>
+<header>BELLA · ANALIZA</header>
 
 <main>
+<textarea id="input">
+Wklej TU całą książkę.
+</textarea>
 
-<div id="book" class="panel active">
-  <div id="editor" contenteditable="true">Zacznij pisać…</div>
-</div>
+<button onclick="analyze()">ANALIZUJ</button>
 
-<div id="gates" class="panel">
-  <div class="list" id="gateList"></div>
-</div>
-
-<div id="bella" class="panel">
-  <textarea id="bellaInput" style="width:100%;min-height:100px">Polecenie…</textarea>
-  <button onclick="bellaGenerate()">GENERUJ</button>
-  <pre id="bellaOut"></pre>
-</div>
-
+<pre id="output"></pre>
 </main>
 
 <script>
-/* ================= TABS ================= */
-function show(id){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+function analyze(){
+  const text=document.getElementById('input').value.trim();
+  const out=document.getElementById('output');
 
-/* ================= SYSTEM ================= */
-const GATES=[
- {id:1,name:'CIENIA'},
- {id:2,name:'GENEZY'},
- {id:3,name:'WOLI'},
- {id:4,name:'ARCHETYPÓW'},
- {id:5,name:'OBFITOŚCI'},
- {id:6,name:'CIAŁA'},
- {id:7,name:'SPLĄTANIA'},
- {id:8,name:'CZASU'},
- {id:9,name:'KOLEKTYWU'},
- {id:10,name:'INTEGRACJI'}
-];
+  if(!text){
+    out.textContent='Brak tekstu.';
+    return;
+  }
 
-const gateList=document.getElementById('gateList');
-const editor=document.getElementById('editor');
-let activeGate=null;
+  const words=text.split(/\s+/).filter(Boolean).length;
+  const chars=text.length;
+  const chapters=(text.match(/rozdział|chapter|kapitel/gi)||[]).length || 'nie wykryto';
 
-GATES.forEach(g=>{
-  const b=document.createElement('button');
-  b.textContent='BRAMA '+g.id+' — '+g.name;
-  b.onclick=()=>selectGate(g);
-  gateList.appendChild(b);
-});
+  out.textContent=
+`✔ ANALIZA ZAKOŃCZONA
 
-function selectGate(g){
-  activeGate=g;
-  show('book');
-  load();
-}
+Słowa: ${words}
+Znaki: ${chars}
+Rozdziały: ${chapters}
 
-function save(){
-  if(!activeGate)return;
-  localStorage.setItem('GATE_'+activeGate.id,editor.innerText);
-}
-
-function load(){
-  if(!activeGate)return;
-  editor.innerText=localStorage.getItem('GATE_'+activeGate.id)||'';
-}
-
-setInterval(save,2000);
-
-/* ================= BELLA ================= */
-function bellaGenerate(){
-  const p=document.getElementById('bellaInput').value;
-  document.getElementById('bellaOut').textContent=
-    activeGate
-    ? 'BRAMA '+activeGate.id+'\\n'+p+'\\n\\nNie jesteś myślą. Jesteś polem.'
-    : 'Wybierz Bramę.';
-}
-
-/* ================= SESJA ================= */
-let active=false,startTime=0,startWords=0,timer=null;
-const btn=document.getElementById('sessionBtn');
-
-btn.onclick=()=>active?stop():start();
-
-function start(){
-  active=true;
-  startTime=Date.now();
-  startWords=words();
-  document.body.classList.add('session');
-  overlay();
-  timer=setInterval(update,1000);
-}
-
-function stop(){
-  active=false;
-  clearInterval(timer);
-  document.body.classList.remove('session');
-  document.getElementById('overlay').remove();
-}
-
-function overlay(){
-  const o=document.createElement('div');
-  o.id='overlay';
-  o.innerHTML=`SESJA<br><span id="t">00:00</span><br><span id="w">0</span> słów<br><br><button onclick="stop()">STOP</button>`;
-  document.body.appendChild(o);
-}
-
-function update(){
-  save();
-  document.getElementById('t').textContent=time();
-  document.getElementById('w').textContent=words()-startWords;
-}
-
-function words(){
-  return editor.innerText.trim().split(/\\s+/).filter(Boolean).length;
-}
-
-function time(){
-  const s=Math.floor((Date.now()-startTime)/1000);
-  const m=Math.floor(s/60);
-  const r=s%60;
-  return m.toString().padStart(2,'0')+':'+r.toString().padStart(2,'0');
+STATUS:
+Tekst został poprawnie wczytany.
+Bella działa.`;
 }
 </script>
 
