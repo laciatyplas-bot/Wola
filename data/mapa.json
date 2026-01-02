@@ -1,168 +1,203 @@
 {
-  "meta": {
-    "system": "ETERUNIVERSE",
-    "name": "ETERNIVERSE KANONICZNA MAPA 10 KRĘGÓW",
-    "version": "2.1",
-    "architect": "Maciej Maciuszek",
-    "created": "2026-01-02T11:13:00.000Z",
-    "kanon": true
+  "system": "ETERNIVERSE",
+  "version": "2.1",
+  "architect": "Maciej Maciuszek",
+  "created": "2026-01-02T12:00:00.000Z",
+  "layout": "10-bram-linear-plus-meta",
+  "worlds": {
+    "total": 2,
+    "list": {
+      "1": {
+        "id": 1,
+        "name": "ETERNIVERSE SYSTEM",
+        "type": "system-world",
+        "description": "Świat wewnętrzny. Psychika, wola, archetypy, integracja.",
+        "status": "kanon"
+      },
+      "2": {
+        "id": 2,
+        "name": "POLARIS",
+        "type": "fantasy-inner-earth",
+        "description": "Świat za Lodową Ścianą. Fantazja, mit, manifestacja bez granic.",
+        "status": "kanon"
+      }
+    }
   },
-
-  "universe": {
-    "layout": "concentric-circles",
-    "circlesCount": 10,
-    "totalWorlds": 2,
-    "scale": 1.0
-  },
-
-  "circles": [
+  "bramas": [
     {
       "id": 1,
       "name": "CIENIA",
+      "fullName": "BRAMA I — INTERSEEKER",
       "question": "Kim jestem, gdy nie uciekam?",
-      "function": "Rozpad iluzji. Pierwszy ból.",
-      "world1": "InterSeeker / ShadowSeeker",
-      "world2": "Strefa Cienia / Kraina Luster",
+      "function": "Rozpad iluzji. Konfrontacja z cieniem i traumą.",
+      "world1": {
+        "title": "InterSeeker / ShadowSeeker",
+        "description": "Psychika, cień, mechanizmy obronne, rozpad starej tożsamości."
+      },
+      "world2": {
+        "title": "Strefa Cienia / Kraina Luster",
+        "description": "Lustrzane krainy Polaris. Spotkanie z własnym odbiciem."
+      },
       "status": "kanon"
     },
     {
       "id": 2,
       "name": "GENEZY",
+      "fullName": "BRAMA II — CUSTOS / GENEZA",
       "question": "Skąd naprawdę pochodzę?",
       "function": "Zerwanie z fałszywym mitem początku.",
-      "world1": "MemorySeeker / RootSeeker",
-      "world2": "Archiwum Genezy / Ruiny Stworzenia",
+      "world1": {
+        "title": "MemorySeeker / RootSeeker",
+        "description": "Pamięć, rdzeń, pierwotny zapis istnienia."
+      },
+      "world2": {
+        "title": "Archiwum Genezy / Ruiny Stworzenia",
+        "description": "Zapisane początki Polaris i zapomniane cywilizacje."
+      },
       "status": "kanon"
     },
     {
       "id": 3,
       "name": "WOLI",
+      "fullName": "BRAMA III — ETERSEEKER",
       "question": "Czy naprawdę wybieram?",
       "function": "Uświadomienie, że wybór zmienia rzeczywistość.",
-      "world1": "EterSeeker / WolaSeeker",
-      "world2": "Pole Architektów / Kuźnia Losu",
+      "world1": {
+        "title": "EterSeeker / WolaSeeker",
+        "description": "Wola, decyzja, architektura rzeczywistości."
+      },
+      "world2": {
+        "title": "Pole Architektów / Kuźnia Losu",
+        "description": "Miejsca, gdzie decyzje materializują światy."
+      },
       "status": "kanon"
     },
     {
       "id": 4,
       "name": "ARCHETYPÓW",
+      "fullName": "BRAMA IV — ARCHETYPY ETERU",
       "question": "Czy to ja żyję, czy rola żyje mną?",
       "function": "Rozpoznanie struktur sterujących światem.",
-      "world1": "ArchetypSeeker",
-      "world2": "Teatr Archetypów / Królestwa Ról",
+      "world1": {
+        "title": "ArchetypSeeker",
+        "description": "Maski, role, programy społeczne i wewnętrzne."
+      },
+      "world2": {
+        "title": "Teatr Archetypów / Królestwa Ról",
+        "description": "Światy zbudowane z czystych ról i mitów."
+      },
       "status": "kanon"
     },
     {
       "id": 5,
       "name": "OBFITOŚCI",
+      "fullName": "BRAMA V — OBFITOSEEKER",
       "question": "Czy dostatek daje sens?",
       "function": "Demaskacja iluzji idealnego świata.",
-      "world1": "ObfitoSeeker",
-      "world2": "Złote Miasta / Strefy Obfitości",
+      "world1": {
+        "title": "ObfitoSeeker",
+        "description": "Materia, przepływ, manifestacja."
+      },
+      "world2": {
+        "title": "Złote Miasta / Strefy Obfitości",
+        "description": "Cywilizacje Polaris oparte na nadmiarze."
+      },
       "status": "kanon"
     },
     {
       "id": 6,
       "name": "CIAŁA",
+      "fullName": "BRAMA VI — BIOSEEKER",
       "question": "Gdzie kończę się ja?",
-      "function": "Cena adaptacji biologicznej.",
-      "world1": "BioSeeker",
-      "world2": "Kręgi Mutacji / Biosfery Granic",
+      "function": "Konfrontacja z ceną adaptacji biologicznej.",
+      "world1": {
+        "title": "BioSeeker",
+        "description": "Ciało jako infrastruktura woli."
+      },
+      "world2": {
+        "title": "Biosfery Granic / Kręgi Mutacji",
+        "description": "Formy życia przekraczające granice biologii."
+      },
       "status": "kanon"
     },
     {
       "id": 7,
       "name": "SPLĄTANIA",
+      "fullName": "BRAMA VII — SPLĄTANIE / AI",
       "question": "Czy wolna wola istnieje?",
       "function": "Złamanie liniowego myślenia.",
-      "world1": "SplatanieSeeker",
-      "world2": "Sieci Proroctw / Węzły Splątania",
+      "world1": {
+        "title": "SplatanieSeeker",
+        "description": "Obserwator, AI, meta-poziom."
+      },
+      "world2": {
+        "title": "Węzły Splątania / Sieci Proroctw",
+        "description": "Rzeczywistości oparte na prawdopodobieństwie."
+      },
       "status": "kanon"
     },
     {
       "id": 8,
       "name": "CZASU",
+      "fullName": "BRAMA VIII — TRAJEKTORIE",
       "question": "Czy zmieniłbyś drogę, znając koniec?",
-      "function": "Alternatywne wersje siebie.",
-      "world1": "TrajektoriaSeeker / CzasSeeker",
-      "world2": "Pętle Ery / Trajektorie Czasu",
+      "function": "Spotkanie z alternatywnymi wersjami siebie.",
+      "world1": {
+        "title": "TrajektoriaSeeker / CzasSeeker",
+        "description": "Linie czasu, wybory, przyszłość."
+      },
+      "world2": {
+        "title": "Trajektorie Czasu / Pętle Ery",
+        "description": "Czas jako żywa struktura Polaris."
+      },
       "status": "kanon"
     },
     {
       "id": 9,
       "name": "KOLEKTYWU",
-      "question": "Czy 'ja' jest potrzebne?",
+      "fullName": "BRAMA IX — ETERNIONY",
+      "question": "Czy „ja” jest potrzebne?",
       "function": "Decyzja: zniknąć czy pozostać sobą.",
-      "world1": "Eteriony / OjciecSeeker",
-      "world2": "Umysły Zbiorowe / Kolektywy Węzłów",
+      "world1": {
+        "title": "Eteriony / OjciecSeeker",
+        "description": "Kolektywna świadomość i wspólnota."
+      },
+      "world2": {
+        "title": "Umysły Zbiorowe / Kolektywy Węzłów",
+        "description": "Światy bez jednostkowego „ja”."
+      },
       "status": "kanon"
     },
     {
       "id": 10,
       "name": "INTEGRACJI",
+      "fullName": "BRAMA X — ETERUNIVERSE",
       "question": "Czy poznanie wszystkiego kończy historię?",
       "function": "Meta-poziom. Pojawia się Twórca Światów.",
-      "world1": "EterUniverse / SilenceForge",
-      "world2": "Alemuria / Horyzont Integracji",
+      "world1": {
+        "title": "EterUniverse / SilenceForge",
+        "description": "Pełna integracja systemu."
+      },
+      "world2": {
+        "title": "Horyzont Integracji / Alemuria",
+        "description": "Powrót do centrum istnienia."
+      },
       "status": "kanon"
     }
   ],
-
-  "worlds": {
-    "1": {
-      "id": 1,
-      "name": "ETERNIVERSE SYSTEM",
-      "type": "system-world",
-      "status": "kanon",
-      "circlesProgress": [100, 90, 85, 75, 60, 50, 40, 30, 20, 10]
-    },
-    "2": {
-      "id": 2,
-      "name": "POLARIS",
-      "type": "fantasy-inner-earth",
-      "status": "kanon",
-      "description": "Świat Fantasy Za Lodową Ścianą",
-      "energySource": "Aurion — Złote Słońce Wewnętrzne",
-      "heroes": {
-        "maciej": {
-          "role": "Ojciec / Architekt",
-          "power": "Geometria Eteru"
-        },
-        "nikodem": {
-          "role": "Syn / Iskra Manifestacji",
-          "power": "Transmutacja Istnienia"
-        }
-      },
-      "circlesProgress": [0, 10, 25, 35, 45, 55, 65, 75, 85, 95]
-    }
-  },
-
   "connections": [
     {
-      "from": "world1-circle10",
-      "to": "world2-circle1",
+      "from": "world1-brama10",
+      "to": "world2-brama1",
       "type": "initiation-bridge",
-      "strength": 1.0
+      "description": "Zakończenie Świata 1 otwiera Polaris"
     },
     {
-      "from": "world2-circle10",
+      "from": "world2-brama10",
       "to": "meta-center",
       "type": "transcendence-gate",
-      "strength": 0.8
+      "description": "Powrót do centrum ETERNIVERSE"
     }
   ],
-
-  "render": {
-    "layout": "concentric-10-circles",
-    "radiusStep": 120,
-    "worldSeparation": 400,
-    "connections": "curved"
-  },
-
-  "stats": {
-    "world1Progress": 56.5,
-    "world2Progress": 48.0,
-    "globalProgress": 52.25,
-    "nextMilestone": "World2-Circle3 (WOLI)"
-  }
+  "kanon": true
 }
