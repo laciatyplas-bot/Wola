@@ -146,6 +146,194 @@
 
 <!-- DOCX -->
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
+<script>
+'use strict';
 
+// ========================================
+// BELLA — SESJA PISARSKA (TRYB 5)
+// Focus Mode • Zero Rozproszeń
+// ========================================
+
+class BellaWritingSession {
+  constructor() {
+    this.active = false;
+    this.startTime = null;
+    this.wordStart = 0;
+
+    this.init();
+  }
+
+  init() {
+    // skrót klawiszowy: CTRL + SHIFT + S
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        this.toggle();
+      }
+    });
+
+    console.log('Bella Writing Session READY');
+  }
+
+  toggle() {
+    this.active ? this.exit() : this.enter();
+  }
+
+  enter() {
+    if (this.active) return;
+
+    this.active = true;
+    this.startTime = Date.now();
+
+    const editor = document.getElementById('editor');
+    this.wordStart = this.countWords(editor.value);
+
+    document.body.classList.add('writing-session');
+
+    this.injectOverlay();
+    this.updateOverlay();
+
+    this.timer = setInterval(() => this.updateOverlay(), 1000);
+
+    this.toast('Sesja pisarska rozpoczęta');
+  }
+
+  exit() {
+    if (!this.active) return;
+
+    this.active = false;
+    clearInterval(this.timer);
+
+    const editor = document.getElementById('editor');
+    const wordsNow = this.countWords(editor.value);
+
+    const duration = Math.floor((Date.now() - this.startTime) / 1000);
+    const delta = wordsNow - this.wordStart;
+
+    document.body.classList.remove('writing-session');
+    document.getElementById('writingSessionOverlay')?.remove();
+
+    this.toast(
+      `Sesja zakończona • ${this.formatTime(duration)} • +${delta} słów`
+    );
+  }
+
+  // =========================
+  // UI
+  // =========================
+  injectOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'writingSessionOverlay';
+    overlay.innerHTML = `
+      <div class="ws-panel">
+        <div class="ws-title">SESJA PISARSKA</div>
+        <div class="ws-metric"><span id="wsTime">00:00</span> czasu</div>
+        <div class="ws-metric"><span id="wsWords">0</span> słów</div>
+        <button id="wsExit">Zakończ sesję</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.getElementById('wsExit').onclick = () => this.exit();
+  }
+
+  updateOverlay() {
+    if (!this.active) return;
+
+    const editor = document.getElementById('editor');
+    const wordsNow = this.countWords(editor.value);
+    const delta = wordsNow - this.wordStart;
+
+    const time = Math.floor((Date.now() - this.startTime) / 1000);
+
+    document.getElementById('wsTime').textContent = this.formatTime(time);
+    document.getElementById('wsWords').textContent = delta;
+  }
+
+  // =========================
+  // UTILS
+  // =========================
+  countWords(text) {
+    return text.trim().split(/\s+/).filter(Boolean).length;
+  }
+
+  formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  toast(msg) {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.cssText = `
+      position:fixed;bottom:20px;left:50%;
+      transform:translateX(-50%);
+      background:#00ffff;color:#000;
+      padding:12px 20px;border-radius:12px;
+      font-weight:bold;z-index:99999;
+    `;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+}
+
+// =========================
+// STYLES (inject)
+// =========================
+const style = document.createElement('style');
+style.textContent = `
+.writing-session header,
+.writing-session .profile-bar,
+.writing-session .controls,
+.writing-session .suggestions,
+.writing-session .analytics-section,
+.writing-session .footer {
+  display:none !important;
+}
+
+.writing-session .container {
+  grid-template-columns: 1fr !important;
+}
+
+#writingSessionOverlay {
+  position:fixed;
+  top:20px;right:20px;
+  background:rgba(0,0,0,0.85);
+  color:#00ffff;
+  padding:16px;
+  border-radius:16px;
+  z-index:9999;
+  box-shadow:0 0 30px rgba(0,255,255,0.4);
+}
+
+.ws-panel {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  text-align:center;
+}
+
+.ws-title {
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+#wsExit {
+  margin-top:10px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:#00ffff;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+`;
+document.head.appendChild(style);
+
+// INIT
+window.BellaWritingSession = new BellaWritingSession();
+</script>
 </body>
 </html>
