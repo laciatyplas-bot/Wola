@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0;background:#0a1228;color:white;height:100vh;font-family:Inter">
+  <div style="padding:2rem">
+    <h2>🧠 Bella AI Assistant</h2>
+    <div id="chat">Witaj! Jestem Bella.</div>
+    <input id="input" placeholder="Wpisz komendę CSR..." style="width:100%;padding:1rem">
+  </div>
+  <script>
+    document.getElementById('input').onkeypress = e => {
+      if(e.key==='Enter') {
+        parent.postMessage({
+          type:'BELLA_COMMAND',
+          command:'CSR_NAV',
+          data:{path: '/book'}
+        }, '*');
+      }
+    };
+  </script>
+</body>
+</html>
