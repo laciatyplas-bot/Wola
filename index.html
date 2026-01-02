@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BELLA — ANALIZA TEKSTU</title>
+<title>BELLA · ROZDZIAŁY (EDYCJA + ZAPIS)</title>
 
 <style>
 body{
@@ -22,7 +22,7 @@ header{
 main{padding:12px}
 textarea{
   width:100%;
-  min-height:40vh;
+  min-height:30vh;
   background:#0a0a25;
   color:#e0ffff;
   border:none;
@@ -40,10 +40,17 @@ button{
   color:#000;
   border:none;
 }
-pre{
+.list button{
+  width:100%;
+  margin-top:6px;
+  background:#000;
+  color:#00ffff;
+}
+#editor{
+  min-height:40vh;
   background:#000;
   padding:12px;
-  margin-top:12px;
+  margin-top:10px;
   white-space:pre-wrap;
 }
 </style>
@@ -51,43 +58,69 @@ pre{
 
 <body>
 
-<header>BELLA · ANALIZA</header>
+<header>BELLA · ROZDZIAŁY</header>
 
 <main>
+
 <textarea id="input">
 Wklej TU całą książkę.
 </textarea>
 
-<button onclick="analyze()">ANALIZUJ</button>
+<button onclick="splitAndSave()">PODZIEL I ZAPISZ</button>
 
-<pre id="output"></pre>
+<div class="list" id="chapterList"></div>
+
+<h3>EDYCJA ROZDZIAŁU</h3>
+<div id="editor" contenteditable="true"></div>
+
+<button onclick="saveChapter()">ZAPISZ ROZDZIAŁ</button>
+
 </main>
 
 <script>
-function analyze(){
+let chapters=[];
+let activeIndex=null;
+
+function splitAndSave(){
   const text=document.getElementById('input').value.trim();
-  const out=document.getElementById('output');
+  if(!text) return;
 
-  if(!text){
-    out.textContent='Brak tekstu.';
-    return;
-  }
+  chapters=text.split(/(?=ROZDZIAŁ|Rozdział|CHAPTER|Chapter|KAPITEL|Kapitel)/g)
+    .filter(t=>t.trim().length>50);
 
-  const words=text.split(/\s+/).filter(Boolean).length;
-  const chars=text.length;
-  const chapters=(text.match(/rozdział|chapter|kapitel/gi)||[]).length || 'nie wykryto';
-
-  out.textContent=
-`✔ ANALIZA ZAKOŃCZONA
-
-Słowa: ${words}
-Znaki: ${chars}
-Rozdziały: ${chapters}
-
-STATUS:
-Tekst został poprawnie wczytany.
-Bella działa.`;
+  localStorage.setItem('BELLA_CHAPTERS',JSON.stringify(chapters));
+  renderList();
 }
+
+function renderList(){
+  const list=document.getElementById('chapterList');
+  list.innerHTML='';
+  chapters.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.textContent='ROZDZIAŁ '+(i+1);
+    b.onclick=()=>openChapter(i);
+    list.appendChild(b);
+  });
+}
+
+function openChapter(i){
+  activeIndex=i;
+  document.getElementById('editor').innerText=chapters[i];
+}
+
+function saveChapter(){
+  if(activeIndex===null) return;
+  chapters[activeIndex]=document.getElementById('editor').innerText;
+  localStorage.setItem('BELLA_CHAPTERS',JSON.stringify(chapters));
+}
+
+(function load(){
+  const saved=localStorage.getItem('BELLA_CHAPTERS');
+  if(saved){
+    chapters=JSON.parse(saved);
+    renderList();
+  }
+})();
 </script>
 
 </body>
