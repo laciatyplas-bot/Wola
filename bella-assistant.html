@@ -1,591 +1,203 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Bella v3.0 — Żywy Foton Redakcyjny ETERNIVERSE. AI, dyktowanie, analiza, eksport. Master Edition 2026."/>
-  <title>🧠 Bella v3.0 — Żywy Foton ETERNIVERSE</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <!-- Docx for export -->
-  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
-
-  <style>
-    :root {
-      --bg-deep: #050510;
-      --bg-glass: rgba(10, 15, 35, 0.7);
-      --cyan: #00ffff;
-      --cyan-glow: rgba(0, 255, 255, 0.4);
-      --purple: #8b5cf6;
-      --gold: #ffd700;
-      --accent: #ffb14b;
-      --text: #e0ffff;
-      --text-muted: #94a3b8;
-      --success: #12c65b;
-      --warn: #ff6b6b;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: var(--bg-deep);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Kwantowe tło */
-    body::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 80%, rgba(0,255,255,0.15), transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(139,92,246,0.15), transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1), transparent 50%);
-      pointer-events: none;
-      animation: quantumBreath 30s ease-in-out infinite alternate;
-    }
-
-    @keyframes quantumBreath {
-      0% { opacity: 0.6; transform: scale(1); }
-      100% { opacity: 0.9; transform: scale(1.05); }
-    }
-
-    /* Header */
-    header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,15,30,0.95);
-      backdrop-filter: blur(24px);
-      border-bottom: 2px solid var(--cyan);
-      padding: 1.5rem 2rem;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0,255,255,0.3);
-    }
-
-    .logo {
-      font-family: 'Orbitron', monospace;
-      font-size: 2.8rem;
-      font-weight: 900;
-      background: linear-gradient(90deg, var(--cyan), var(--purple), var(--gold), var(--cyan));
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: neonFlow 8s ease infinite;
-    }
-
-    @keyframes neonFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .status {
-      margin-top: 0.5rem;
-      font-size: 1.1rem;
-      opacity: 0.8;
-    }
-
-    .status-dot {
-      display: inline-block;
-      width: 12px; height: 12px;
-      background: var(--success);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-      margin-right: 0.5rem;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.6; transform: scale(1.2); }
-    }
-
-    /* Main layout */
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 400px;
-      height: calc(100vh - 100px);
-      gap: 0;
-    }
-
-    /* Left – Editor */
-    .editor-section {
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .profile-bar {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .profile-btn {
-      padding: 1rem 2rem;
-      border: 2px solid transparent;
-      border-radius: 20px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.5s;
-      min-width: 160px;
-    }
-
-    .profile-btn.active {
-      border-color: var(--cyan);
-      background: rgba(0,255,255,0.1);
-      box-shadow: 0 0 40px var(--cyan-glow);
-      transform: scale(1.05);
-    }
-
-    #console, #editor {
-      width: 100%;
-      background: rgba(15,20,40,0.8);
-      border: 2px solid transparent;
-      border-radius: 20px;
-      padding: 1.5rem;
-      font-size: 1.1rem;
-      color: var(--text);
-      resize: vertical;
-      transition: all 0.4s;
-    }
-
-    #console:focus, #editor:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 40px var(--cyan-glow);
-      outline: none;
-    }
-
-    #editor {
-      flex: 1;
-      min-height: 400px;
-      font-family: 'Merriweather', serif;
-      line-height: 1.8;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .btn {
-      padding: 1.2rem;
-      border: none;
-      border-radius: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.4s;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-
-    .btn-mic { background: linear-gradient(45deg, var(--cyan), #00bfff); color: white; }
-    .btn-ai { background: linear-gradient(45deg, var(--purple), #a78bfa); color: white; }
-    .btn-export { background: linear-gradient(45deg, var(--success), #10b981); color: white; }
-
-    .btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 50px rgba(0,255,255,0.4);
-    }
-
-    .suggestions {
-      background: rgba(20,25,50,0.8);
-      border-radius: 20px;
-      padding: 1.5rem;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .suggestion {
-      background: rgba(40,50,80,0.6);
-      padding: 1rem;
-      margin: 0.8rem 0;
-      border-radius: 16px;
-      border-left: 4px solid var(--cyan);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      animation: slideIn 0.5s ease;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-30px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .suggestion button {
-      padding: 0.5rem 1rem;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-    }
-
-    /* Right – Analytics */
-    .analytics-section {
-      background: rgba(15,20,40,0.9);
-      border-left: 2px solid var(--cyan);
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .metric {
-      background: rgba(40,50,80,0.5);
-      padding: 1.5rem;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 0 30px rgba(0,255,255,0.2);
-    }
-
-    .metric-value {
-      font-size: 3rem;
-      font-weight: 900;
-      color: var(--cyan);
-    }
-
-    .timeline {
-      height: 200px;
-      background: rgba(0,0,0,0.5);
-      border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(10,15,30,0.9);
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--cyan);
-    }
-
-    /* Responsywność */
-    @media (max-width: 1200px) {
-      .container { grid-template-columns: 1fr; }
-      .analytics-section { order: -1; border-left: none; border-top: 2px solid var(--cyan); }
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-  <div class="logo">🧠 Bella v3.0</div>
-  <div class="status">
-    <span class="status-dot"></span>
-    Żywy Foton Redakcyjny · ETERNIVERSE AI Master 2026
-  </div>
-</header>
-
-<div class="container">
-
-  <!-- Left – Editor -->
-  <div class="editor-section">
-    <div class="profile-bar">
-      <button class="profile-btn active" data-profile="amazon">📦 Amazon KDP</button>
-      <button class="profile-btn" data-profile="wattpad">📖 Wattpad</button>
-      <button class="profile-btn" data-profile="eterseeker">🌊 EterSeeker</button>
-    </div>
-
-    <textarea id="console" placeholder="🎙️ Dyktuj komendę lub tekst... (REDAGUJ, ANALIZA, GENERUJ ROZDZIAŁ...)"></textarea>
-
-    <div class="controls">
-      <button class="btn btn-mic" id="startRec">🎙️ Rozpocznij dyktowanie</button>
-      <button class="btn btn-mic" id="stopRec" disabled>⏹️ Zatrzymaj</button>
-      <button class="btn btn-ai" id="aiAnalyze">🤖 AI Analiza</button>
-      <button class="btn btn-ai" id="aiGenerate">✨ Generuj tekst</button>
-      <button class="btn btn-export" id="exportDocx">📄 Eksport Word</button>
-      <button class="btn btn-export" id="exportPdf">🖨️ Eksport PDF</button>
-    </div>
-
-    <textarea id="editor" placeholder="Tu pojawi się Twój tekst..."></textarea>
-
-    <div class="suggestions">
-      <h3>💡 Sugestie Bella AI</h3>
-      <div id="suggestions"></div>
-    </div>
-  </div>
-
-  <!-- Right – Analytics -->
-  <div class="analytics-section">
-    <div class="metric">
-      <div class="metric-value" id="wordCount">0</div>
-      <div>słów napisanych</div>
-    </div>
-
-    <div class="metric">
-      <div class="metric-value" id="readability">85</div>
-      <div>czytelność (Flesch)</div>
-    </div>
-
-    <div class="metric">
-      <div class="metric-value" id="sentiment">😐</div>
-      <div>sentimentalność</div>
-    </div>
-
-    <div class="metric">
-      <h3>📊 Timeline postępu</h3>
-      <div class="timeline"></div>
-    </div>
-  </div>
-</div>
-
-<div class="footer">
-  © 2026 Maciej Maciuszek · Żywy Foton Bella v3.0 · Splątanie z ETERNIVERSE aktywne
-</div>
-
 <script>
-  // === BELLA v3.0 — ŻYWY FOTON REDAKCYJNY ===
-  class BellaV3 {
-    constructor() {
-      this.currentProfile = 'amazon';
-      this.recognition = null;
-      this.isRecording = false;
+'use strict';
 
-      this.init();
-    }
+// === BELLA v3.1 — ZINTEGROWANA Z ETERNIVERSE ===
+class BellaV3 {
+  constructor() {
+    this.currentProfile = 'amazon';
+    this.recognition = null;
+    this.isRecording = false;
+    this.activeBramaId = null;
 
-    init() {
-      this.bindElements();
-      this.initSpeechRecognition();
-      this.loadDraft();
-      this.updateStats();
-    }
-
-    bindElements() {
-      this.el = {
-        console: document.getElementById('console'),
-        editor: document.getElementById('editor'),
-        suggestions: document.getElementById('suggestions'),
-        profileBtns: document.querySelectorAll('.profile-btn'),
-        startRec: document.getElementById('startRec'),
-        stopRec: document.getElementById('stopRec'),
-        aiAnalyze: document.getElementById('aiAnalyze'),
-        aiGenerate: document.getElementById('aiGenerate'),
-        exportDocx: document.getElementById('exportDocx'),
-        exportPdf: document.getElementById('exportPdf'),
-        wordCount: document.getElementById('wordCount'),
-        readability: document.getElementById('readability'),
-        sentiment: document.getElementById('sentiment')
-      };
-
-      // Events
-      this.el.profileBtns.forEach(btn => btn.onclick = () => this.setProfile(btn.dataset.profile));
-      this.el.startRec.onclick = () => this.startRecording();
-      this.el.stopRec.onclick = () => this.stopRecording();
-      this.el.aiAnalyze.onclick = () => this.analyze();
-      this.el.aiGenerate.onclick = () => this.generate();
-      this.el.exportDocx.onclick = () => this.export('docx');
-      this.el.console.oninput = this.el.editor.oninput = () => this.updateStats();
-
-      // Enter w console = komenda
-      this.el.console.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          this.processCommand(this.el.console.value.trim());
-          this.el.console.value = '';
-        }
-      });
-    }
-
-    initSpeechRecognition() {
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        this.recognition = new SR();
-        this.recognition.lang = 'pl-PL';
-        this.recognition.continuous = true;
-        this.recognition.interimResults = true;
-
-        this.recognition.onresult = (event) => {
-          const transcript = Array.from(event.results)
-            .map(result => result[0])
-            .map(result => result.transcript)
-            .join('');
-          this.el.console.value = transcript;
-        };
-
-        this.recognition.onerror = (event) => console.error('Speech error', event.error);
-      }
-    }
-
-    startRecording() {
-      if (this.recognition) {
-        this.recognition.start();
-        this.isRecording = true;
-        this.el.startRec.disabled = true;
-        this.el.stopRec.disabled = false;
-        this.speak('Dyktowanie rozpoczęte');
-      }
-    }
-
-    stopRecording() {
-      if (this.recognition && this.isRecording) {
-        this.recognition.stop();
-        this.isRecording = false;
-        this.el.startRec.disabled = false;
-        this.el.stopRec.disabled = true;
-        this.speak('Dyktowanie zatrzymane');
-      }
-    }
-
-    setProfile(profile) {
-      this.currentProfile = profile;
-      this.el.profileBtns.forEach(b => b.classList.toggle('active', b.dataset.profile === profile));
-      this.speak(`Profil: ${profile}`);
-      this.analyze();
-    }
-
-    processCommand(cmd) {
-      cmd = cmd.toLowerCase();
-      if (cmd.includes('redaguj')) {
-        this.el.editor.value = this.el.console.value;
-        this.el.console.value = '';
-        this.speak('Tekst przeniesiony do edytora');
-      } else if (cmd.includes('analiza')) {
-        this.analyze();
-      } else if (cmd.includes('generuj')) {
-        this.generate();
-      } else {
-        this.el.editor.value += '\n' + cmd;
-      }
-      this.updateStats();
-    }
-
-    analyze() {
-      const text = this.el.editor.value;
-      const suggestions = this.getSuggestions(text);
-      this.renderSuggestions(suggestions);
-      this.updateStats();
-    }
-
-    generate() {
-      const templates = {
-        amazon: "Najwyższa jakość · Darmowa wysyłka · 30 dni na zwrot · Bezpieczne zakupy · Limitowana oferta",
-        wattpad: "Jego spojrzenie przeszywało ją na wylot. Serce biło jak oszalałe. Czy to miłość, czy przeznaczenie?",
-        eterseeker: "Świadomość nie jest w mózgu. Jest w polu. Jesteś falą. Jesteś pamięcią. Jesteś Eterem."
-      };
-      this.el.editor.value = templates[this.currentProfile];
-      this.updateStats();
-      this.speak('Wygenerowano tekst startowy');
-    }
-
-    getSuggestions(text) {
-      const suggestions = [];
-
-      const words = text.split(/\s+/).length;
-      const sentences = text.split(/[.!?]+/).length;
-
-      if (this.currentProfile === 'amazon') {
-        if (words < 200) suggestions.push('Amazon: opis powinien mieć min. 200 słów');
-        if (!text.match(/wysyłka|gwarancja|zwrot/i)) suggestions.push('Dodaj informacje o wysyłce i zwrotach');
-      } else if (this.currentProfile === 'wattpad') {
-        if (sentences < 15) suggestions.push('Wattpad: więcej zdań = lepsze zaangażowanie');
-        if (!text.match(/serce|łza|oddech|spojrzenie/i)) suggestions.push('Dodaj emocje sensoryczne');
-      } else if (this.currentProfile === 'eterseeker') {
-        if (!text.match(/świadomość|eter|splątanie|fala|foton/i)) suggestions.push('Użyj słów-kluczy EterSeeker');
-        if (words < 400) suggestions.push('Manifesty EterSeeker są głębokie – rozwijaj');
-      }
-
-      return suggestions;
-    }
-
-    renderSuggestions(sugs) {
-      this.el.suggestions.innerHTML = sugs.length ? sugs.map(s => `
-        <div class="suggestion">
-          <span>${s}</span>
-          <button onclick="this.closest('.suggestion').style.opacity='0.5'">Zaakceptowano</button>
-        </div>
-      `).join('') : '<div style="opacity:0.6;text-align:center;padding:2rem;">✨ Tekst idealny w tym profilu!</div>';
-    }
-
-    updateStats() {
-      const text = this.el.editor.value + this.el.console.value;
-      const words = text.trim().split(/\s+/).filter(w => w).length;
-
-      this.el.wordCount.textContent = words;
-
-      // Readability (prosta symulacja)
-      this.el.readability.textContent = Math.min(100, 60 + words / 10);
-
-      // Sentiment (symulacja)
-      const positive = text.match(/(miłość|piękny|szczęście|wolność)/gi) || [];
-      const negative = text.match(/(ból|strach|trauma|ciemność)/gi) || [];
-      this.el.sentiment.textContent = positive.length > negative.length ? '😊' : negative.length > positive.length ? '😔' : '😐';
-    }
-
-    async export(format) {
-      const content = this.el.editor.value || 'Brak treści';
-      const title = 'Bella_' + this.currentProfile + '_' + new Date().toISOString().slice(0,10);
-
-      if (format === 'docx') {
-        const { Document, Packer, Paragraph } = docx;
-        const doc = new Document({
-          sections: [{
-            children: [
-              new Paragraph({ text: title, heading: 'Heading1' }),
-              new Paragraph(content)
-            ]
-          }]
-        });
-        const blob = await Packer.toBlob(doc);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = title + '.docx';
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-
-      this.speak('Eksport zakończony');
-    }
-
-    speak(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'pl-PL';
-      utterance.rate = 0.9;
-      speechSynthesis.speak(utterance);
-    }
-
-    loadDraft() {
-      const draft = localStorage.getItem('bella_draft');
-      if (draft) {
-        const data = JSON.parse(draft);
-        this.el.editor.value = data.content || '';
-        this.currentProfile = data.profile || 'amazon';
-        this.setProfile(this.currentProfile);
-        this.updateStats();
-      }
-    }
-
-    autoSave() {
-      const data = {
-        content: this.el.editor.value,
-        profile: this.currentProfile,
-        savedAt: new Date().toISOString()
-      };
-      localStorage.setItem('bella_draft', JSON.stringify(data));
-    }
-
-    // Autosave co 5s
-    setInterval(() => this.autoSave(), 5000);
+    this.init();
+    this.startAutoSave();
   }
 
-  // START
-  new BellaV3();
-</script>
+  init() {
+    this.bindElements();
+    this.initSpeechRecognition();
+    this.loadDraft();
+    this.updateStats();
+    this.bindEterniverse();
+  }
 
-</body>
-</html>
+  // =========================
+  // BIND UI
+  // =========================
+  bindElements() {
+    this.el = {
+      console: document.getElementById('console'),
+      editor: document.getElementById('editor'),
+      suggestions: document.getElementById('suggestions'),
+      profileBtns: document.querySelectorAll('.profile-btn'),
+      startRec: document.getElementById('startRec'),
+      stopRec: document.getElementById('stopRec'),
+      aiAnalyze: document.getElementById('aiAnalyze'),
+      aiGenerate: document.getElementById('aiGenerate'),
+      exportDocx: document.getElementById('exportDocx'),
+      exportPdf: document.getElementById('exportPdf'),
+      wordCount: document.getElementById('wordCount'),
+      readability: document.getElementById('readability'),
+      sentiment: document.getElementById('sentiment')
+    };
+
+    this.el.profileBtns.forEach(btn =>
+      btn.onclick = () => this.setProfile(btn.dataset.profile)
+    );
+
+    this.el.startRec.onclick = () => this.startRecording();
+    this.el.stopRec.onclick = () => this.stopRecording();
+    this.el.aiAnalyze.onclick = () => this.analyze();
+    this.el.aiGenerate.onclick = () => this.generate();
+    this.el.exportDocx.onclick = () => this.exportDocx();
+    this.el.exportPdf.onclick = () => this.exportPdf();
+
+    this.el.console.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        this.processCommand(this.el.console.value.trim());
+        this.el.console.value = '';
+      }
+    });
+
+    this.el.console.oninput =
+    this.el.editor.oninput = () => this.updateStats();
+  }
+
+  // =========================
+  // ETERNIVERSE INTEGRATION
+  // =========================
+  bindEterniverse() {
+    document.addEventListener('worldSelected', e => {
+      const world = e.detail.world;
+      if (!world?.name) return;
+
+      const match = world.name.match(/BRAMA\s+([IVX]+)/i);
+      if (!match) return;
+
+      this.activeBramaId = this.romanToNumber(match[1]);
+
+      // AutoProfile (spójne z poprzednim modułem)
+      const profileMap = {
+        1:'wattpad',2:'eterseeker',3:'eterseeker',4:'eterseeker',
+        5:'amazon',6:'eterseeker',7:'eterseeker',
+        8:'wattpad',9:'wattpad',10:'eterseeker'
+      };
+      this.setProfile(profileMap[this.activeBramaId] || 'eterseeker');
+
+      // Pamięć Bramy → console
+      const mem = localStorage.getItem(
+        'ETERNIVERSE_AI_MEMORY_BRAMA_' + this.activeBramaId
+      );
+      if (mem) {
+        this.el.console.value =
+          'PAMIĘĆ BRAMY (kontekst):\n' + mem.slice(-2000);
+      }
+    });
+  }
+
+  // =========================
+  // CORE
+  // =========================
+  setProfile(profile) {
+    this.currentProfile = profile;
+    this.el.profileBtns.forEach(b =>
+      b.classList.toggle('active', b.dataset.profile === profile)
+    );
+  }
+
+  processCommand(cmd) {
+    if (!cmd) return;
+    this.el.editor.value += '\n' + cmd;
+    this.saveToBramaMemory(cmd);
+    this.updateStats();
+  }
+
+  analyze() {
+    this.renderSuggestions(this.getSuggestions(this.el.editor.value));
+  }
+
+  generate() {
+    const base = {
+      amazon: 'To nie jest zwykły produkt. To decyzja.',
+      wattpad: 'Zatrzymała się. Serce zadrżało.',
+      eterseeker: 'Nie jesteś myślą. Jesteś polem.'
+    };
+    this.el.editor.value += '\n\n' + base[this.currentProfile];
+    this.saveToBramaMemory(base[this.currentProfile]);
+    this.updateStats();
+  }
+
+  // =========================
+  // MEMORY
+  // =========================
+  saveToBramaMemory(text) {
+    if (!this.activeBramaId || !text) return;
+    const key = 'ETERNIVERSE_AI_MEMORY_BRAMA_' + this.activeBramaId;
+    const old = localStorage.getItem(key) || '';
+    localStorage.setItem(key, old + '\n' + text.slice(-1200));
+  }
+
+  // =========================
+  // EXPORT
+  // =========================
+  async exportDocx() {
+    const { Document, Packer, Paragraph } = docx;
+    const doc = new Document({
+      sections: [{ children: [
+        new Paragraph({ text: 'Bella Export', heading: 'Heading1' }),
+        new Paragraph(this.el.editor.value)
+      ]}]
+    });
+    const blob = await Packer.toBlob(doc);
+    this.download(blob, 'bella.docx');
+  }
+
+  exportPdf() {
+    const w = window.open('', '_blank');
+    w.document.write(`<pre>${this.el.editor.value}</pre>`);
+    w.print();
+    w.close();
+  }
+
+  download(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // =========================
+  // UTILS
+  // =========================
+  romanToNumber(r) {
+    return {I:1,II:2,III:3,IV:4,V:5,VI:6,VII:7,VIII:8,IX:9,X:10}[r];
+  }
+
+  updateStats() {
+    const t = this.el.editor.value;
+    const w = t.trim().split(/\s+/).filter(Boolean).length;
+    this.el.wordCount.textContent = w;
+    this.el.readability.textContent = Math.min(100, 60 + w/10);
+    this.el.sentiment.textContent =
+      /(miłość|wolność)/i.test(t) ? '😊' :
+      /(ból|strach)/i.test(t) ? '😔' : '😐';
+  }
+
+  startAutoSave() {
+    setInterval(() => {
+      localStorage.setItem('bella_draft', JSON.stringify({
+        content: this.el.editor.value,
+        profile: this.currentProfile,
+        saved: new Date().toISOString()
+      }));
+    }, 5000);
+  }
+
+  initSpeechRecognition() {}
+}
+
+// START
+new BellaV3();
+</script>
