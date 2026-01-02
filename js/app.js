@@ -1,232 +1,233 @@
-// js/app.js — ETERNIVERSE BOOK MASTER v3.0
-// Centralny silnik aplikacji (STATE + EVENTS + AUTOSAVE)
-// Master Edition 2026 | Maciej Maciuszek
+/**
+ * ETERNIVERSE - WZMOCNIONY APP.JS
+ * Landing + Editor Core | v2.6 | 2026
+ * Maciej Maciuszek | Sosnowiec
+ */
 
-'use strict';
-
-class EterApp {
+class EterniverseApp {
   constructor() {
-    this.state = {
-      world: 1,
-      gate: 1,
-      chapter: 1,
-      tab: 'book'
+    this.isMobile = window.innerWidth <= 768;
+    this.sessionActive = false;
+    this.wordCount = 0;
+    this.sessionTime = 0;
+    this.shortcuts = {
+      writing: 'Ctrl+Shift+W',
+      bella: 'Ctrl+Shift+B', 
+      session: 'Ctrl+Shift+S',
+      bramy: 'Ctrl+B'
     };
-
-    this.STORAGE_STATE_KEY = 'eter-app-state';
-    this.AUTOSAVE_DELAY = 1200;
-    this.saveTimer = null;
-
-    this.restoreState();
-    this.bindUI();
-    this.bindGlobalEvents();
-    this.initEditor();
-    this.emitAll();
-
-    console.log('🚀 EterApp v3.0 READY', this.state);
+    
+    this.init();
   }
 
-  /* ===============================
-     🔄 STATE
-  =============================== */
-  restoreState() {
-    const raw = localStorage.getItem(this.STORAGE_STATE_KEY);
-    if (!raw) return;
-
-    try {
-      const saved = JSON.parse(raw);
-      this.state = { ...this.state, ...saved };
-    } catch (_) {}
-  }
-
-  persistState() {
-    localStorage.setItem(this.STORAGE_STATE_KEY, JSON.stringify(this.state));
-  }
-
-  setState(patch) {
-    this.state = { ...this.state, ...patch };
-    this.persistState();
-  }
-
-  /* ===============================
-     🔗 UI BINDINGS
-  =============================== */
-  bindUI() {
-    // 🌍 Światy
-    document.querySelectorAll('.world-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const world = Number(btn.dataset.world) || 1;
-        this.setWorld(world);
-      });
-    });
-
-    // 🚪 Bramy (delegacja)
-    document.addEventListener('click', e => {
-      const gateEl = e.target.closest('[data-brama]');
-      if (!gateEl) return;
-      const gate = Number(gateEl.dataset.brama);
-      this.setGate(gate);
-    });
-
-    // 📑 Rozdziały
-    document.addEventListener('click', e => {
-      const chEl = e.target.closest('[data-chapter]');
-      if (!chEl) return;
-      const chapter = Number(chEl.dataset.chapter);
-      this.setChapter(chapter);
-    });
-
-    // 📂 Taby
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.setTab(btn.dataset.tab);
-      });
-    });
-
-    // ➕ Nowy rozdział
-    const addChapterBtn = document.getElementById('addChapterBtn');
-    if (addChapterBtn) {
-      addChapterBtn.addEventListener('click', () => this.addChapter());
-    }
-  }
-
-  /* ===============================
-     ⌨️ EDYTOR
-  =============================== */
-  initEditor() {
-    this.editor = document.getElementById('mainEditor');
-    if (!this.editor) return;
-
-    this.loadEditorContent();
-
-    this.editor.addEventListener('input', () => {
-      clearTimeout(this.saveTimer);
-      this.saveTimer = setTimeout(() => this.saveEditorContent(), this.AUTOSAVE_DELAY);
+  init() {
+    console.log('🌌 ETERNIVERSE v2.6 - Initialized');
+    this.enhanceNavigation();
+    this.setupKeyboardShortcuts();
+    this.loadSessionState();
+    this.initScrollReveal();
+    this.startHeartbeat();
+    
+    // Mobile detection change handler
+    window.addEventListener('resize', () => {
+      this.isMobile = window.innerWidth <= 768;
     });
   }
 
-  loadEditorContent() {
-    if (!this.editor || !window.eterDataAPI) return;
-
-    const key = window.eterDataAPI.contentKey(
-      this.state.world,
-      this.state.gate,
-      this.state.chapter
-    );
-
-    const content = localStorage.getItem(key) || '';
-    this.editor.innerText = content;
-  }
-
-  saveEditorContent() {
-    if (!this.editor || !window.eterDataAPI) return;
-
-    const key = window.eterDataAPI.contentKey(
-      this.state.world,
-      this.state.gate,
-      this.state.chapter
-    );
-
-    localStorage.setItem(key, this.editor.innerText);
-
-    document.dispatchEvent(new CustomEvent('contentSaved'));
-    this.toast('Zapisano');
-  }
-
-  addChapter() {
-    let ch = 1;
-    let key;
-
-    do {
-      ch++;
-      key = window.eterDataAPI.contentKey(this.state.world, this.state.gate, ch);
-    } while (localStorage.getItem(key));
-
-    localStorage.setItem(key, '');
-    this.setChapter(ch);
-    this.toast(`Dodano rozdział ${ch}`);
-  }
-
-  /* ===============================
-     🌍 ZMIANY STANU
-  =============================== */
-  setWorld(world) {
-    this.setState({ world, gate: 1, chapter: 1 });
-    this.updateWorldButtons();
-    this.loadEditorContent();
-    this.emit('worldChanged', { world });
-  }
-
-  setGate(gate) {
-    this.setState({ gate, chapter: 1 });
-    this.loadEditorContent();
-    this.emit('gateChanged', { gate });
-  }
-
-  setChapter(chapter) {
-    this.setState({ chapter });
-    this.loadEditorContent();
-    this.emit('chapterChanged', { chapter });
-  }
-
-  setTab(tab) {
-    this.setState({ tab });
-    this.updateTabs();
-  }
-
-  /* ===============================
-     🔔 EVENTS
-  =============================== */
-  emit(name, detail = {}) {
-    document.dispatchEvent(new CustomEvent(name, { detail }));
-  }
-
-  emitAll() {
-    this.emit('worldChanged', { world: this.state.world });
-    this.emit('gateChanged', { gate: this.state.gate });
-    this.emit('chapterChanged', { chapter: this.state.chapter });
-  }
-
-  bindGlobalEvents() {
-    // CTRL + S
-    document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+  // 🔄 Enhanced Navigation
+  enhanceNavigation() {
+    const buttons = document.querySelectorAll('nav button');
+    
+    buttons.forEach((btn, i) => {
+      btn.addEventListener('click', (e) => {
         e.preventDefault();
-        this.saveEditorContent();
+        this.animateButtonClick(btn);
+        
+        const mode = btn.textContent.toLowerCase().includes('pisanie') ? 'writing' :
+                    btn.textContent.toLowerCase().includes('bella') ? 'bella' : 'session';
+        
+        this.switchMode(mode);
+      });
+    });
+  }
+
+  animateButtonClick(button) {
+    button.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      button.style.transform = '';
+    }, 150);
+  }
+
+  switchMode(mode) {
+    const transitions = {
+      writing: () => window.location.href = "index.html#writing",
+      bella: () => window.location.href = "bella-assistant.html",
+      session: () => this.startWritingSession()
+    };
+    
+    transitions[mode]?.();
+  }
+
+  // ⌨️ Supercharged Keyboard Shortcuts
+  setupKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      
+      // Ctrl+Shift combos
+      if (e.ctrlKey && e.shiftKey) {
+        switch (true) {
+          case e.key.toLowerCase() === 'w':
+            e.preventDefault();
+            this.openWriting();
+            break;
+          case e.key.toLowerCase() === 'b':
+            e.preventDefault();
+            this.openBella();
+            break;
+          case e.key.toLowerCase() === 's':
+            e.preventDefault();
+            this.toggleSession();
+            break;
+        }
+      }
+      
+      // Single Ctrl+B for bramy
+      if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        this.openBramy();
       }
     });
   }
 
-  /* ===============================
-     🧭 UI HELPERS
-  =============================== */
-  updateWorldButtons() {
-    document.querySelectorAll('.world-btn').forEach(b =>
-      b.classList.toggle('active', Number(b.dataset.world) === this.state.world)
-    );
+  // 📱 Mobile-First Scroll Reveal
+  initScrollReveal() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('section, header').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      observer.observe(el);
+    });
   }
 
-  updateTabs() {
-    document.querySelectorAll('.tab-btn').forEach(b =>
-      b.classList.toggle('active', b.dataset.tab === this.state.tab)
-    );
-    document.querySelectorAll('.tab-content').forEach(c =>
-      c.classList.toggle('active', c.id === `${this.state.tab}Tab`)
-    );
+  // ⏱️ Enhanced Writing Session Manager
+  toggleSession() {
+    if (this.sessionActive) {
+      this.stopSession();
+    } else {
+      this.startWritingSession();
+    }
   }
 
-  toast(text) {
-    const el = document.createElement('div');
-    el.className = 'toast';
-    el.textContent = text;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 2400);
+  startWritingSession() {
+    this.sessionActive = true;
+    this.sessionTime = 0;
+    this.wordCount = 0;
+    
+    // UI feedback
+    const status = document.querySelector('section p');
+    if (status) {
+      status.innerHTML = '🟢 <strong>SESJA AKTYWNA</strong> | ⏱️ ' + 
+        this.formatTime(0) + ' | ✍️ ' + this.wordCount + ' słów';
+      status.style.color = '#00ff88';
+    }
+    
+    this.sessionInterval = setInterval(() => {
+      this.sessionTime++;
+      this.updateSessionUI();
+    }, 1000);
+    
+    this.saveSessionState();
+    console.log('📝 Sesja pisarska uruchomiona');
+  }
+
+  stopSession() {
+    this.sessionActive = false;
+    clearInterval(this.sessionInterval);
+    this.saveSessionState();
+    
+    const status = document.querySelector('section p');
+    if (status) {
+      status.innerHTML = '🟢 Repo kompletne · 📱 Mobile OK · 🧠 Bella aktywna';
+      status.style.color = '';
+    }
+    
+    console.log(`✅ Sesja zakończona: ${this.formatTime(this.sessionTime)} | ${this.wordCount} słów`);
+  }
+
+  updateSessionUI() {
+    const status = document.querySelector('section p');
+    if (status && this.sessionActive) {
+      status.innerHTML = `🟢 <strong>SESJA #${this.sessionId}</strong> | ⏱️ ${this.formatTime(this.sessionTime)} | ✍️ ${this.wordCount} słów`;
+    }
+  }
+
+  formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  // 💾 LocalStorage Persistence
+  loadSessionState() {
+    const saved = localStorage.getItem('eterniverse-session');
+    if (saved) {
+      const data = JSON.parse(saved);
+      this.sessionActive = data.active || false;
+      this.sessionTime = data.time || 0;
+      this.wordCount = data.words || 0;
+      this.sessionId = data.id || Date.now();
+      
+      if (this.sessionActive) {
+        this.startWritingSession();
+      }
+    } else {
+      this.sessionId = Date.now();
+    }
+  }
+
+  saveSessionState() {
+    localStorage.setItem('eterniverse-session', JSON.stringify({
+      active: this.sessionActive,
+      time: this.sessionTime,
+      words: this.wordCount,
+      id: this.sessionId
+    }));
+  }
+
+  // ❤️ System Heartbeat (performance monitoring)
+  startHeartbeat() {
+    setInterval(() => {
+      const mem = performance.memory || {};
+      console.log(`💓 ETERNIVERSE Heartbeat | RAM: ${(mem.usedJSHeapSize/1024/1024).toFixed(1)}MB | Mobile: ${this.isMobile}`);
+    }, 30000);
+  }
+
+  // Quick actions
+  openWriting() { window.location.href = "index.html#writing"; }
+  openBella() { window.location.href = "bella-assistant.html"; }
+  openBramy() { 
+    if (location.hash !== '#bramy') {
+      window.location.href = "index.html#bramy";
+    }
   }
 }
 
-/* ===============================
-   🚀 START
-=============================== */
-document.addEventListener('DOMContentLoaded', () => {
-  window.eterApp = new EterApp();
-});
+// 🚀 Initialize on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => new EterniverseApp());
+} else {
+  new EterniverseApp();
+}
+
+// 🌐 Export dla innych modułów
+window.EterniverseApp = EterniverseApp;
