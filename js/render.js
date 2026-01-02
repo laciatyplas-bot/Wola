@@ -1,281 +1,241 @@
-// render.js — ETERNIVERSE BOOK MASTER v2.0 — KWANTOWY RENDER ENGINE
-// Dynamiczne renderowanie treści | 8 Światów × 10 Bram
-// Wydawnictwo Architekta Woli | 2026 | Renderowanie komponentów
+// render.js — ETERNIVERSE BOOK MASTER v2.1
+// Quantum Render Engine — stabilny, deterministyczny, SPA-ready
+// 8 Światów × 10 Bram | 2026 | Maciej Maciuszek
+
+'use strict';
 
 class QuantumRender {
   constructor() {
     this.components = new Map();
     this.cache = new Map();
-    this.morphs = 0;
+    this.dirty = new Set();
+    this.lastFrame = 0;
+
     this.initComponents();
+    this.bindEvents();
     this.startRenderLoop();
+
+    console.log('🌀 QuantumRender v2.1 uruchomiony');
   }
 
-  // 🏗️ REJESTRACJA KOMPONENTÓW
+  // ===============================
+  // REJESTRACJA KOMPONENTÓW
+  // ===============================
   initComponents() {
-    this.components.set('chapter-list', this.renderChapterList.bind(this));
-    this.components.set('world-stats', this.renderWorldStats.bind(this));
-    this.components.set('cover-generator', this.renderCoverGenerator.bind(this));
-    this.components.set('audio-waveform', this.renderAudioWaveform.bind(this));
-    this.components.set('ai-console-history', this.renderAIHistory.bind(this));
+    this.components.set('chapter-list', this.renderChapterList);
+    this.components.set('world-stats', this.renderWorldStats);
+    this.components.set('cover-generator', this.renderCoverGenerator);
+    this.components.set('audio-waveform', this.renderAudioWaveform);
+    this.components.set('ai-console-history', this.renderAIHistory);
   }
 
-  // 🔄 GŁÓWNA PĘTLA RENDER
+  // ===============================
+  // EVENTY GLOBALNE
+  // ===============================
+  bindEvents() {
+    document.addEventListener('worldChanged', () => this.markDirty('chapter-list', 'world-stats', 'cover-generator'));
+    document.addEventListener('bramaChanged', () => this.markDirty('chapter-list'));
+    document.addEventListener('chapterChanged', () => this.markDirty('chapter-list'));
+    document.addEventListener('statsUpdated', () => this.markDirty('world-stats'));
+    document.addEventListener('aiHistoryUpdated', () => this.markDirty('ai-console-history'));
+  }
+
+  markDirty(...components) {
+    components.forEach(c => this.dirty.add(c));
+  }
+
+  // ===============================
+  // GŁÓWNA PĘTLA RENDER
+  // ===============================
   startRenderLoop() {
-    const renderFrame = () => {
-      this.morphs++;
-      if (this.shouldReRender()) {
+    const loop = (ts) => {
+      if (ts - this.lastFrame > 120) {
         this.renderDirtyComponents();
+        this.lastFrame = ts;
       }
-      requestAnimationFrame(renderFrame);
+      requestAnimationFrame(loop);
     };
-    renderFrame();
+    requestAnimationFrame(loop);
   }
 
-  shouldReRender() {
-    return this.morphs % 3 === 0 || document.visibilityState === 'visible';
-  }
-
-  // 📦 RENDER KOMPONENTU
-  render(componentId, targetSelector, data = {}) {
+  // ===============================
+  // CORE RENDER
+  // ===============================
+  render(componentId, targetSelector, data) {
     const renderer = this.components.get(componentId);
     if (!renderer) return;
 
-    const cacheKey = `${componentId}:${JSON.stringify(data)}`;
-    if (this.cache.has(cacheKey)) {
-      this.updateDOM(targetSelector, this.cache.get(cacheKey));
+    const target = document.querySelector(targetSelector);
+    if (!target) return;
+
+    const key = componentId + ':' + JSON.stringify(data || {});
+    if (this.cache.get(key)) {
+      target.innerHTML = this.cache.get(key);
       return;
     }
 
-    const html = renderer(data);
-    this.cache.set(cacheKey, html);
-    this.updateDOM(targetSelector, html);
+    const html = renderer.call(this, data);
+    this.cache.set(key, html);
+    target.innerHTML = html;
+    this.applyMorph(target);
   }
 
-  updateDOM(selector, html) {
-    const target = document.querySelector(selector);
-    if (target) {
-      target.innerHTML = html;
-      this.applyMorphEffects(target);
-    }
-  }
-
-  applyMorphEffects(element) {
-    element.style.opacity = '0';
-    element.style.transform = 'scale(0.95)';
-    
+  applyMorph(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(6px) scale(0.98)';
     requestAnimationFrame(() => {
-      element.style.transition = 'all 0.4s cubic-bezier(0.25,1,0.3,1)';
-      element.style.opacity = '1';
-      element.style.transform = 'scale(1)';
+      el.style.transition = 'all 0.25s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
     });
   }
 
-  // 📖 RENDER LISTY ROZDZIAŁÓW
-  renderChapterList(data) {
-    const { world, brama, chapters = [] } = data;
-    return chapters.map(chapter => `
-      <div class="chapter-morph ${chapter.active ? 'active' : ''}" data-chapter="${chapter.id}">
-        <div class="chapter-header">
-          <span class="chapter-num">#${chapter.id}</span>
-          <h4 class="chapter-title">${chapter.title}</h4>
-        </div>
-        <div class="chapter-progress">
-          <div class="progress-ring" style="--progress: ${chapter.progress}">
-            <span>${chapter.progress}%</span>
-          </div>
-          <div class="chapter-meta">
-            <span class="words">${chapter.words.toLocaleString()} słów</span>
-            <span class="status ${chapter.status.toLowerCase()}">${chapter.status}</span>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // 📊 RENDER STATYSTYK ŚWIATÓW
-  renderWorldStats(data) {
-    const { stats } = data;
-    return `
-      <div class="stats-morph">
-        <div class="stat-grid">
-          <div class="stat-item total-words">
-            <div class="stat-number">${stats.totalWords.toLocaleString()}</div>
-            <div class="stat-label">Słów w Univerum</div>
-          </div>
-          <div class="stat-item progress">
-            <div class="stat-number">${stats.progress}%</div>
-            <div class="stat-label">Postęp Bram</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${stats.progress}%"></div>
-            </div>
-          </div>
-          <div class="stat-item worlds">
-            <div class="stat-number">${stats.worldsActive}</div>
-            <div class="stat-label">Aktywne Światy</div>
-          </div>
-          <div class="stat-item avg-gate">
-            <div class="stat-number">${stats.avgWords.toLocaleString()}</div>
-            <div class="stat-label">Średnio na Bramę</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  // 🖼️ RENDER GENERATORA OKŁADEK
-  renderCoverGenerator(data) {
-    const { world, style } = data;
-    const worldColor = window.eterData?.worldPresets[world]?.color || '#28D3C6';
-    
-    return `
-      <div class="cover-morph">
-        <canvas class="cover-canvas" width="480" height="640"></canvas>
-        <div class="cover-controls">
-          <div class="color-presets">
-            ${Object.entries(window.eterData?.coverStyles || {}).map(([name, gradient]) => `
-              <button class="color-btn" data-gradient="${gradient}" style="background: ${gradient}">
-                ${name}
-              </button>
-            `).join('')}
-          </div>
-          <button class="ai-cover-btn">🤖 AI Okładka</button>
-          <button class="export-cover-btn">💾 PNG</button>
-        </div>
-      </div>
-    `;
-  }
-
-  // 🎧 RENDER FORMY DŹWIĘKOWEJ
-  renderAudioWaveform(data) {
-    const { duration, progress } = data;
-    return `
-      <div class="waveform-morph">
-        <div class="wave-container">
-          <div class="wave-peaks" style="--peaks: 20; --progress: ${progress}">
-            ${Array.from({ length: 20 }, (_, i) => `
-              <div class="wave-peak" style="--index: ${i}; --height: ${Math.random() * 80 + 20}%"></div>
-            `).join('')}
-          </div>
-        </div>
-        <div class="audio-controls">
-          <span class="time">${this.formatTime(duration)}</span>
-          <div class="transport">
-            <button class="rewind">⏮</button>
-            <button class="play-pause">▶️</button>
-            <button class="stop">⏹️</button>
-            <button class="forward">⏭</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  // 💭 RENDER HISTORII AI
-  renderAIHistory(data) {
-    const { history = [] } = data;
-    return history.map((entry, index) => `
-      <div class="ai-entry morph-${index % 3}">
-        <div class="ai-timestamp">${this.formatTimestamp(entry.time)}</div>
-        <div class="ai-command">${entry.command}</div>
-        <div class="ai-response">${entry.response}</div>
-        <button class="ai-repeat" data-command="${entry.command}">🔄 Powtórz</button>
-      </div>
-    `).join('');
-  }
-
-  // 🔧 RENDER DIRTY COMPONENTS
+  // ===============================
+  // DIRTY RENDER
+  // ===============================
   renderDirtyComponents() {
-    // Automatyczne renderowanie zmienionych komponentów
-    if (window.eterNiverse) {
+    if (!window.eterNiverse) return;
+
+    if (this.dirty.has('chapter-list')) {
       this.render('chapter-list', '#chaptersList', {
-        world: window.eterNiverse.currentWorld,
-        brama: window.eterNiverse.currentBrama
+        chapters: window.eterNiverse.data?.[window.eterNiverse.currentWorld]?.[window.eterNiverse.currentBrama]?.chapters || []
       });
-      
+      this.dirty.delete('chapter-list');
+    }
+
+    if (this.dirty.has('world-stats') && window.eterDataAPI) {
       this.render('world-stats', '#statsContainer', {
         stats: window.eterDataAPI.getStats()
       });
+      this.dirty.delete('world-stats');
+    }
+
+    if (this.dirty.has('cover-generator')) {
+      this.render('cover-generator', '#coverContainer', {
+        world: window.eterNiverse.currentWorld
+      });
+      this.dirty.delete('cover-generator');
+    }
+
+    if (this.dirty.has('ai-console-history')) {
+      this.render('ai-console-history', '#aiHistory', {
+        history: window.eterAI?.history || []
+      });
+      this.dirty.delete('ai-console-history');
     }
   }
 
-  // 🎨 UTILITY FUNCTIONS
-  formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  // ===============================
+  // KOMPONENTY
+  // ===============================
+  renderChapterList({ chapters }) {
+    if (!chapters.length) {
+      return `<div class="empty">Brak rozdziałów</div>`;
+    }
+
+    return chapters.map((ch, i) => `
+      <div class="chapter-item ${ch.active ? 'active' : ''}" data-chapter="${i + 1}">
+        <div class="chapter-title">${ch.title || `Rozdział ${i + 1}`}</div>
+        <div class="chapter-meta">
+          <span>${ch.words || 0} słów</span>
+          <span class="status ${ch.status || 'draft'}">${ch.status || 'draft'}</span>
+        </div>
+      </div>
+    `).join('');
   }
 
-  formatTimestamp(isoString) {
-    return new Date(isoString).toLocaleTimeString('pl-PL', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  renderWorldStats({ stats }) {
+    if (!stats) return '';
+
+    return `
+      <div class="stats-grid">
+        <div class="stat">
+          <strong>${stats.totalWords.toLocaleString()}</strong>
+          <span>Słów</span>
+        </div>
+        <div class="stat">
+          <strong>${stats.progress}%</strong>
+          <span>Postęp</span>
+        </div>
+        <div class="stat">
+          <strong>${stats.worldsActive}</strong>
+          <span>Światy</span>
+        </div>
+        <div class="stat">
+          <strong>${stats.avgWords.toLocaleString()}</strong>
+          <span>Śr./Brama</span>
+        </div>
+      </div>
+    `;
+  }
+
+  renderCoverGenerator({ world }) {
+    return `
+      <canvas class="cover-canvas" width="480" height="640" data-world="${world}"></canvas>
+      <div class="cover-actions">
+        <button class="ai-cover">🤖 AI</button>
+        <button class="save-cover">💾 PNG</button>
+      </div>
+    `;
+  }
+
+  renderAudioWaveform({ progress = 0 }) {
+    return `
+      <div class="waveform">
+        ${Array.from({ length: 24 }).map(() => `<span></span>`).join('')}
+        <div class="progress" style="width:${progress}%"></div>
+      </div>
+    `;
+  }
+
+  renderAIHistory({ history }) {
+    if (!history.length) return `<div class="empty">Brak historii AI</div>`;
+
+    return history.map(h => `
+      <div class="ai-entry">
+        <div class="cmd">${h.command}</div>
+        <div class="resp">${h.response}</div>
+        <small>${new Date(h.time).toLocaleTimeString()}</small>
+      </div>
+    `).join('');
   }
 }
 
-// 🖼️ COVER CANVAS RENDERER
+// ===============================
+// COVER RENDERER
+// ===============================
 class CoverRenderer {
-  static generate(world, style = 'cosmic') {
+  static generate(world) {
     const canvas = document.querySelector('.cover-canvas');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    const gradient = ctx.createRadialGradient(240, 320, 0, 240, 320, 400);
-    
-    const worldColor = window.eterData?.worldPresets[world]?.color || '#28D3C6';
-    gradient.addColorStop(0, worldColor);
-    gradient.addColorStop(0.4, style);
-    gradient.addColorStop(0.8, '#0a0a1a');
-    gradient.addColorStop(1, '#000');
-    
-    ctx.fillStyle = gradient;
+    const g = ctx.createLinearGradient(0, 0, 480, 640);
+
+    g.addColorStop(0, '#28D3C6');
+    g.addColorStop(1, '#0A0A1A');
+
+    ctx.fillStyle = g;
     ctx.fillRect(0, 0, 480, 640);
-    
-    // Tytuł świata
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.font = 'bold 64px Orbitron, sans-serif';
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 48px Orbitron';
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.shadowColor = 'rgba(0,0,0,0.8)';
-    ctx.shadowBlur = 32;
-    ctx.fillText(`ŚWIAT ${world}`, 240, 280);
-    
-    // Podtytuł
-    ctx.font = 'bold 28px Inter, sans-serif';
-    ctx.shadowBlur = 16;
-    ctx.fillText(window.eterData?.worldPresets[world]?.name || 'Nowa opowieść', 240, 340);
+    ctx.fillText(`ŚWIAT ${world}`, 240, 320);
   }
 }
 
-// 🎵 WAVEFORM ANIMATOR
-class WaveformAnimator {
-  static animate() {
-    const peaks = document.querySelectorAll('.wave-peak');
-    peaks.forEach((peak, index) => {
-      const progress = parseFloat(peak.parentElement.style.getPropertyValue('--progress') || 0);
-      const height = parseFloat(peak.style.getPropertyValue('--height') || 50);
-      peak.style.transform = `scaleY(${0.5 + (height / 100) * progress / 100})`;
-    });
-  }
-}
-
-// 🚀 GLOBAL EXPORTS
-window.QuantumRender = QuantumRender;
-window.CoverRenderer = CoverRenderer;
-window.WaveformAnimator = WaveformAnimator;
-
-// INICJALIZACJA
+// ===============================
+// INIT
+// ===============================
 document.addEventListener('DOMContentLoaded', () => {
   window.qRender = new QuantumRender();
-  
-  // Bind global events
-  setInterval(() => {
-    WaveformAnimator.animate();
-  }, 100);
-  
-  // Auto-render covers on world change
-  document.addEventListener('worldChanged', (e) => {
+
+  document.addEventListener('worldChanged', e => {
     CoverRenderer.generate(e.detail.world);
   });
 });
+
+// EXPORT
+window.QuantumRender = QuantumRender;
+window.CoverRenderer = CoverRenderer;
