@@ -1,153 +1,156 @@
-'use strict';
+// session.js — zarządzanie stanem pisania ETERNIVERSE
+// Kompatybilne z Bella Pro, zapisuje sesje, bramy, rozdziały
 
-/*
-========================================
-BELLA WRITING SESSION — SAFE MODE
-ETERNIVERSE BOOK MASTER v4.x
-========================================
-CTRL + SHIFT + S → start / stop
-========================================
-*/
-
-(function () {
-  // ===== BEZPIECZNIKI =====
-  if (window.__BELLA_WRITING_SESSION__) return;
-  window.__BELLA_WRITING_SESSION__ = true;
-
-  const STATE = {
-    active: false,
-    startTime: 0,
-    startWords: 0,
-    editor: null,
-    timer: null
-  };
-
-  // ===== SZUKAMY EDYTORA (NA PEWNO) =====
-  function findEditor() {
-    return (
-      document.getElementById('mainEditor') ||
-      document.querySelector('[contenteditable="true"]')
-    );
+class EterSession {
+  constructor() {
+    this.storageKey = 'eterniverse_bella';
+    this.init();
   }
 
-  // ===== LICZENIE SŁÓW =====
-  function countWords(text) {
-    return text.trim().split(/\s+/).filter(Boolean).length;
+  init() {
+    this.state = this.load() || {
+      chapter: 1,
+      gate: 'inter',
+      scene: 'enter',
+      blocksUsed: [],
+      timestamp: Date.now(),
+      autosaves: []
+    };
+    this.syncUI();
+    this.autoSaveInterval = setInterval(() => this.autoSave(), 30000); // 30s
   }
 
-  function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  }
-
-  // ===== OVERLAY =====
-  function createOverlay() {
-    const el = document.createElement('div');
-    el.id = 'bellaWritingSessionOverlay';
-    el.innerHTML = `
-      <div style="
-        background:#000;
-        color:#0ff;
-        padding:14px;
-        border-radius:12px;
-        font-weight:bold;
-        text-align:center;
-        min-width:160px;
-      ">
-        <div>SESJA PISARSKA</div>
-        <div id="bws-time">00:00</div>
-        <div><span id="bws-words">0</span> słów</div>
-        <button id="bws-exit"
-          style="margin-top:8px;padding:6px 10px;font-weight:bold;">
-          Zakończ
-        </button>
-      </div>
-    `;
-    document.body.appendChild(el);
-
-    document.getElementById('bws-exit').onclick = stopSession;
-  }
-
-  function removeOverlay() {
-    document.getElementById('bellaWritingSessionOverlay')?.remove();
-  }
-
-  // ===== START =====
-  function startSession() {
-    STATE.editor = findEditor();
-    if (!STATE.editor) return;
-
-    STATE.active = true;
-    STATE.startTime = Date.now();
-    STATE.startWords = countWords(STATE.editor.innerText);
-
-    document.body.classList.add('bella-writing-session');
-
-    createOverlay();
-    update();
-
-    STATE.timer = setInterval(update, 1000);
-  }
-
-  // ===== STOP =====
-  function stopSession() {
-    STATE.active = false;
-    clearInterval(STATE.timer);
-    STATE.timer = null;
-
-    document.body.classList.remove('bella-writing-session');
-    removeOverlay();
-  }
-
-  // ===== UPDATE =====
-  function update() {
-    if (!STATE.active || !STATE.editor) return;
-
-    const time = Math.floor((Date.now() - STATE.startTime) / 1000);
-    const words =
-      countWords(STATE.editor.innerText) - STATE.startWords;
-
-    document.getElementById('bws-time').textContent = formatTime(time);
-    document.getElementById('bws-words').textContent = words;
-  }
-
-  // ===== TOGGLE =====
-  function toggleSession() {
-    STATE.active ? stopSession() : startSession();
-  }
-
-  // ===== KLATURA =====
-  document.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
-      e.preventDefault();
-      toggleSession();
+  load() {
+    try {
+      return JSON.parse(localStorage.getItem(this.storageKey));
+    } catch {
+      return null;
     }
-  });
+  }
 
-  // ===== STYLE (SAFE) =====
-  const style = document.createElement('style');
-  style.textContent = `
-    body.bella-writing-session header,
-    body.bella-writing-session nav,
-    body.bella-writing-session aside,
-    body.bella-writing-session .chapters-panel,
-    body.bella-writing-session .editor-header,
-    body.bella-writing-session #toastContainer {
-      display:none !important;
+  save() {
+    localStorage.setItem(this.storageKey, JSON.stringify(this.state));
+  }
+
+  autoSave() {
+    const bookContent = document.getElementById('book')?.value || '';
+    this.state.autosaves.unshift({
+      content: bookContent,
+      gate: this.state.gate,
+      scene: this.state.scene,
+      time: new Date().toLocaleString('pl-PL')
+    });
+    this.state.autosaves = this.state.autosaves.slice(0, 5); // max 5
+    this.save();
+  }
+
+  updateFromUI() {
+    const book = document.getElementById('book');
+    const gateSelect = document.getElementById('gate');
+    const sceneSelect = document.getElementById('scene');
+
+    if (book) this.state.currentContent = book.value;
+    if (gateSelect) this.state.gate = gateSelect.value;
+    if (sceneSelect) this.state.scene = sceneSelect.value;
+
+    this.save();
+  }
+
+  syncUI() {
+    const book = document.getElementById('book');
+    const gateSelect = document.getElementById('gate');
+    const sceneSelect = document.getElementById('scene');
+
+    if (book && this.state.currentContent) {
+      book.value = this.state.currentContent;
     }
-
-    body.bella-writing-session .main-container {
-      grid-template-columns:1fr !important;
+    if (gateSelect) {
+      gateSelect.value = this.state.gate;
     }
-
-    #bellaWritingSessionOverlay {
-      position:fixed;
-      top:20px;
-      right:20px;
-      z-index:99999;
+    if (sceneSelect) {
+      sceneSelect.value = this.state.scene;
     }
-  `;
-  document.head.appendChild(style);
+  }
 
-})();
+  newChapter(chapterNum) {
+    this.state.chapter = chapterNum;
+    this.state.currentContent = `ROZDZIAŁ ${chapterNum}
+
+Początek jeszcze nie wiedział, że jest początkiem.`;
+    this.syncUI();
+    this.save();
+  }
+
+  trackBlock(gate, scene, blockIndex) {
+    this.state.blocksUsed.push({
+      gate, scene, blockIndex,
+      usedAt: Date.now()
+    });
+    this.state.blocksUsed = this.state.blocksUsed.slice(-20); // ostatnie 20
+    this.save();
+  }
+
+  loadAutosave(index = 0) {
+    if (this.state.autosaves[index]) {
+      document.getElementById('book').value = this.state.autosaves[index].content;
+      this.state.gate = this.state.autosaves[index].gate;
+      this.state.scene = this.state.autosaves[index].scene;
+      this.syncUI();
+      this.save();
+    }
+  }
+
+  clearSession() {
+    localStorage.removeItem(this.storageKey);
+    location.reload();
+  }
+
+  exportSession() {
+    const dataStr = JSON.stringify(this.state, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `eterniverse_session_${new Date().toISOString().slice(0,10)}.json`;
+    link.click();
+  }
+
+  stats() {
+    return {
+      totalBlocks: this.state.blocksUsed.length,
+      sessions: this.state.autosaves.length,
+      lastSave: new Date(this.state.timestamp).toLocaleString('pl-PL'),
+      chapter: this.state.chapter
+    };
+  }
+}
+
+// Inicjalizacja globalna
+const session = new EterSession();
+
+// Rozszerzenie funkcji expandScene o session tracking
+const originalExpandScene = window.expandScene;
+window.expandScene = function() {
+  session.updateFromUI();
+  
+  const g = document.getElementById('gate').value;
+  const s = document.getElementById('scene').value;
+  const blocks = EXPAND[g][s];
+  const blockIndex = Math.floor(Math.random() * blocks.length);
+  
+  session.trackBlock(g, s, blockIndex);
+  
+  originalExpandScene();
+  
+  session.updateFromUI();
+  session.autoSave();
+};
+
+// API dla przycisków UI (możesz dodać do HTML)
+window.EterAPI = {
+  newChapter: (num) => session.newChapter(num),
+  loadAutosave: (index) => session.loadAutosave(index),
+  clear: () => session.clearSession(),
+  export: () => session.exportSession(),
+  stats: () => session.stats()
+};
