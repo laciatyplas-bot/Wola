@@ -3,101 +3,149 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="ETERNIVERSE BOOK MASTER v4.0 – Panel redakcyjny EterSeeker."/>
-  <title>ETERNIVERSE · BOOK MASTER v4.0</title>
+  <title>ETERNIVERSE · BOOK MASTER (SAFE)</title>
 
   <!-- FONTS -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- ICONS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      background: #050510;
+      color: #e0ffff;
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles.css">
+    header {
+      padding: 1rem 2rem;
+      background: #070720;
+      border-bottom: 2px solid #00ffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #00ffff;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      height: calc(100vh - 70px);
+    }
+
+    aside {
+      background: #080820;
+      border-right: 2px solid #00ffff;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    #mainEditor {
+      flex: 1;
+      background: #0a0a25;
+      border: 2px solid #00ffff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      font-family: 'Merriweather', serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #e0ffff;
+      outline: none;
+      overflow-y: auto;
+    }
+
+    .hint {
+      opacity: 0.6;
+      font-size: 0.85rem;
+    }
+
+    /* ===== SESJA PISARSKA ===== */
+    .writing-session header,
+    .writing-session aside {
+      display: none !important;
+    }
+
+    .writing-session .main {
+      grid-template-columns: 1fr !important;
+    }
+
+    #writingSessionOverlay {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.9);
+      color: #00ffff;
+      padding: 14px;
+      border-radius: 12px;
+      z-index: 99999;
+      font-weight: bold;
+      box-shadow: 0 0 25px rgba(0,255,255,0.4);
+    }
+
+    #wsExit {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      background: #00ffff;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<header class="header">
-  <div class="header-grid">
-    <div>
-      <div class="logo">ETERNIVERSE</div>
-      <small>BOOK MASTER v4.0</small>
-    </div>
-    <div class="world-selector">
-      <button class="world-btn active">Rdzeń</button>
-      <button class="world-btn">Polaris</button>
-    </div>
-    <div class="status">
-      <span>Splątanie aktywne</span>
-    </div>
-  </div>
+<header>
+  <div class="logo">ETERNIVERSE</div>
+  <div class="hint">CTRL + SHIFT + S — Sesja Pisarska</div>
 </header>
 
-<nav class="tab-nav">
-  <button class="tab-btn active">Książka</button>
-  <button class="tab-btn">Okładka</button>
-  <button class="tab-btn">Audio</button>
-  <button class="tab-btn">Bella AI</button>
-  <button class="tab-btn">Eksport</button>
-  <button class="tab-btn">Podgląd</button>
-</nav>
-
-<main class="main-container">
-
-  <aside class="sidebar">
-    <h3>Bramy</h3>
-    <div id="gateList"></div>
+<div class="main">
+  <aside>
+    <strong>Bramy</strong>
+    <p class="hint">Tu później podepniesz system</p>
   </aside>
 
   <section class="content">
+    <div class="hint">Piszesz bezpiecznie. Nic tu się nie rozsypie.</div>
 
-    <!-- BOOK -->
-    <div class="tab-content active">
-      <div class="editor-header">
-        <h2>Świat · Brama</h2>
-      </div>
-
-      <div class="chapters-panel">
-        <div id="chaptersList"></div>
-      </div>
-
-      <!-- 🔴 JEDYNY EDYTOR -->
-      <div id="mainEditor"
-           class="editor-area"
-           contenteditable="true"
-           spellcheck="false">
-      </div>
+    <!-- JEDYNY EDYTOR -->
+    <div id="mainEditor" contenteditable="true" spellcheck="false">
+Zacznij pisać tutaj…
     </div>
-
   </section>
-</main>
+</div>
 
-<div id="toastContainer"></div>
-
-<!-- ================= SCRIPTS SYSTEMOWE ================= -->
-<script src="js/data.js"></script>
-<script src="js/render.js"></script>
-<script src="js/editor.js"></script>
-<script src="js/app.js"></script>
-<script src="js/ai-integration.js"></script>
-<script src="js/upload.js"></script>
-
-<!-- ================= TRYB SESJA PISARSKA ================= -->
 <script>
 'use strict';
 
-class BellaWritingSession {
+/* ========================================
+   SESJA PISARSKA — BUILT-IN, IDIOT-RESISTANT
+======================================== */
+
+class WritingSession {
   constructor() {
     this.active = false;
     this.startTime = 0;
     this.startWords = 0;
     this.editor = document.getElementById('mainEditor');
 
-    this.init();
-  }
-
-  init() {
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
         e.preventDefault();
@@ -111,15 +159,11 @@ class BellaWritingSession {
   }
 
   enter() {
-    if (!this.editor) return;
-
     this.active = true;
     this.startTime = Date.now();
     this.startWords = this.countWords();
-
     document.body.classList.add('writing-session');
-    this.injectOverlay();
-
+    this.showOverlay();
     this.timer = setInterval(() => this.update(), 1000);
   }
 
@@ -133,7 +177,6 @@ class BellaWritingSession {
   update() {
     const t = Math.floor((Date.now() - this.startTime) / 1000);
     const w = this.countWords() - this.startWords;
-
     document.getElementById('wsTime').textContent = this.formatTime(t);
     document.getElementById('wsWords').textContent = w;
   }
@@ -148,55 +191,21 @@ class BellaWritingSession {
     return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
 
-  injectOverlay() {
+  showOverlay() {
     const o = document.createElement('div');
     o.id = 'writingSessionOverlay';
     o.innerHTML = `
-      <div class="ws-panel">
-        <strong>SESJA PISARSKA</strong>
-        <div><span id="wsTime">00:00</span></div>
-        <div><span id="wsWords">0</span> słów</div>
-        <button id="wsExit">Zakończ</button>
-      </div>
+      <div>SESJA PISARSKA</div>
+      <div><span id="wsTime">00:00</span></div>
+      <div><span id="wsWords">0</span> słów</div>
+      <button id="wsExit">Zakończ</button>
     `;
     document.body.appendChild(o);
     document.getElementById('wsExit').onclick = () => this.exit();
   }
 }
 
-const style = document.createElement('style');
-style.textContent = `
-.writing-session header,
-.writing-session nav,
-.writing-session aside,
-.writing-session .chapters-panel,
-.writing-session .editor-header {
-  display:none !important;
-}
-
-.writing-session .main-container {
-  grid-template-columns: 1fr !important;
-}
-
-#writingSessionOverlay {
-  position:fixed;
-  top:20px;right:20px;
-  background:#000;
-  color:#0ff;
-  padding:14px;
-  border-radius:12px;
-  z-index:99999;
-}
-
-#wsExit {
-  margin-top:8px;
-  padding:6px 10px;
-  font-weight:bold;
-}
-`;
-document.head.appendChild(style);
-
-window.BellaWritingSession = new BellaWritingSession();
+new WritingSession();
 </script>
 
 </body>
