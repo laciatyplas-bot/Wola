@@ -1,18 +1,17 @@
-// data.js — ETERNIVERSE BOOK MASTER v2.1
-// Stabilna struktura danych | 8 Światów × 10 Bram
-// 2026 | Maciej Maciuszek
+// js/data.js — ETERNIVERSE BOOK MASTER v2.2
+// Stabilna struktura danych | 8 Światów × 10 Bram × wiele rozdziałów
+// Master Edition 2026 | Maciej Maciuszek
 
 'use strict';
 
 class EterData {
   constructor() {
-    this.version = '2.1';
+    this.version = '2.2';
     this.created = new Date().toISOString();
-
     this.universe = {
       worlds: 8,
-      gates: 10,
-      defaultChapters: 1
+      gatesPerWorld: 10,
+      defaultChaptersPerGate: 1
     };
 
     this.worldPresets = this.initWorldPresets();
@@ -25,7 +24,7 @@ class EterData {
   }
 
   // ===============================
-  // 🌌 ŚWIATY
+  // 🌌 PRESETY ŚWIATÓW
   // ===============================
   initWorldPresets() {
     return {
@@ -41,7 +40,7 @@ class EterData {
   }
 
   // ===============================
-  // 🚪 BRAMY
+  // 🚪 SZABLONY BRAM
   // ===============================
   initGateTemplates() {
     return [
@@ -59,149 +58,192 @@ class EterData {
   }
 
   // ===============================
-  // 🤖 AI PROMPTS
+  // 🤖 PROMPTY AI
   // ===============================
   initAIPrompts() {
     return {
       plot: [
         'Rozwiń fabułę dla Świata {world} i Bramy {gate}',
         'Dodaj konflikt i stawkę emocjonalną',
-        'Zaproponuj punkt zwrotny'
+        'Zaproponuj punkt zwrotny',
+        'Wprowadź bohatera z wewnętrznym konfliktem'
+      ],
+      style: [
+        'Napisz w stylu Macieja Maciuszka – surowo, filozoficznie, bez ozdobników',
+        'Użyj metafory ognia, cienia, oddechu',
+        'Zakończ rozdział pytaniem do czytelnika'
       ]
     };
   }
 
   // ===============================
-  // 🎧 GŁOSY
+  // 🎧 GŁOSY SYNTEZY
   // ===============================
   initVoices() {
     return [
-      { name: 'Bella', lang: 'pl-PL', rate: 0.9, pitch: 1.1 },
-      { name: 'Narrator', lang: 'pl-PL', rate: 0.85, pitch: 0.9 }
+      { name: 'Bella', voice: 'pl-PL-Standard-A', rate: 0.9, pitch: 1.1 },
+      { name: 'Narrator Głęboki', voice: 'pl-PL-Standard-B', rate: 0.85, pitch: 0.9 },
+      { name: 'Eter', voice: 'pl-PL-Standard-C', rate: 0.95, pitch: 1.0 }
     ];
   }
 
   // ===============================
-  // 🖼️ OKŁADKI
+  // 🖼️ STYLE OKŁADEK
   // ===============================
   initCoverStyles() {
     return {
-      cosmic: '#667eea',
-      fantasy: '#ff6b6b',
-      noir: '#1a1a1a'
+      cosmic: { bg: '#0a001f', accent: '#00ffff', secondary: '#ff00ff' },
+      fire: { bg: '#1a0000', accent: '#ff6b6b', secondary: '#ffd700' },
+      shadow: { bg: '#000011', accent: '#8b5cf6', secondary: '#ffffff' },
+      ocean: { bg: '#001a1a', accent: '#28d3c6', secondary: '#ffffff' }
     };
   }
 
   // ===============================
-  // 💾 STORAGE
+  // 💾 STORAGE – inicjalizacja defaultów
   // ===============================
   ensureStorage() {
-    for (let w = 1; w <= 8; w++) {
-      for (let g = 1; g <= 10; g++) {
-        const key = this.contentKey(w, g, 1);
-        if (!localStorage.getItem(key)) {
-          localStorage.setItem(key, this.getDefaultContent(w, g));
+    for (let w = 1; w <= this.universe.worlds; w++) {
+      for (let g = 1; g <= this.universe.gatesPerWorld; g++) {
+        for (let ch = 1; ch <= this.universe.defaultChaptersPerGate; ch++) {
+          const key = this.contentKey(w, g, ch);
+          if (!localStorage.getItem(key)) {
+            localStorage.setItem(key, this.getDefaultContent(w, g));
+          }
         }
       }
     }
   }
 
-  contentKey(world, gate, chapter) {
-    return `eter-w${world}b${gate}-ch${chapter}`;
+  contentKey(world, gate, chapter = 1) {
+    return `eter_w\( {world}_g \){gate}_ch${chapter}`;
+  }
+
+  getDefaultContent(world, gate) {
+    const w = this.worldPresets[world];
+    const g = this.gateTemplates.find(t => t.id === gate);
+
+    return `=== ${w.name} — ${g.name} ===
+
+${w.starter}
+
+Cel bramy: ~${g.targetWords} słów
+
+[Tu zaczyna się Twoja narracja]
+
+`;
   }
 
   // ===============================
-  // 📊 STATYSTYKI
+  // 📊 STATYSTYKI PROJEKTU
   // ===============================
   getStats() {
     let totalWords = 0;
     let completedGates = 0;
+    let totalGates = this.universe.worlds * this.universe.gatesPerWorld;
 
-    for (let w = 1; w <= 8; w++) {
-      for (let g = 1; g <= 10; g++) {
-        const txt = localStorage.getItem(this.contentKey(w, g, 1)) || '';
-        const words = txt.trim().split(/\s+/).filter(Boolean).length;
-        totalWords += words;
+    for (let w = 1; w <= this.universe.worlds; w++) {
+      for (let g = 1; g <= this.universe.gatesPerWorld; g++) {
+        let gateWords = 0;
+        let ch = 1;
+        let key;
+        do {
+          key = this.contentKey(w, g, ch);
+          const text = localStorage.getItem(key) || '';
+          const words = text.trim().split(/\s+/).filter(Boolean).length;
+          gateWords += words;
+          ch++;
+        } while (localStorage.getItem(key));
 
-        if (words >= this.gateTemplates[g - 1].targetWords) {
-          completedGates++;
-        }
+        totalWords += gateWords;
+
+        const target = this.gateTemplates[g - 1].targetWords;
+        if (gateWords >= target * 0.9) completedGates++; // 90% = ukończona
       }
     }
 
     return {
       totalWords,
-      avgWords: Math.round(totalWords / 80),
+      totalGates,
       completedGates,
-      progress: Math.round((completedGates / 80) * 100),
-      worldsActive: 8
+      progress: Math.round((completedGates / totalGates) * 100),
+      avgWordsPerGate: Math.round(totalWords / totalGates),
+      worldsActive: this.universe.worlds
     };
   }
 
   // ===============================
-  // 📦 EXPORT / IMPORT
+  // 📦 EKSPORT / IMPORT CAŁEGO UNIWERSUM
   // ===============================
   exportUniverse() {
     const payload = {
+      app: 'ETERNIVERSE BOOK MASTER',
       version: this.version,
-      exported: new Date().toISOString(),
+      exportedAt: new Date().toISOString(),
+      stats: this.getStats(),
       data: {}
     };
 
     for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.startsWith('eter-')) {
-        payload.data[k] = localStorage.getItem(k);
+      const key = localStorage.key(i);
+      if (key && key.startsWith('eter_')) {
+        payload.data[key] = localStorage.getItem(key);
       }
     }
 
     return payload;
   }
 
-  importUniverse(json) {
-    if (!json || json.version !== this.version) {
-      throw new Error('Niekompatybilna wersja danych');
-    }
+  importUniverse(jsonString) {
+    try {
+      const payload = JSON.parse(jsonString);
+      if (payload.app !== 'ETERNIVERSE BOOK MASTER') throw new Error('Nieprawidłowy format');
 
-    Object.entries(json.data).forEach(([k, v]) => {
-      localStorage.setItem(k, v);
-    });
+      Object.entries(payload.data).forEach(([key, value]) => {
+        localStorage.setItem(key, value);
+      });
+
+      location.reload();
+    } catch (err) {
+      console.error('Błąd importu:', err);
+      alert('Błąd importu danych');
+    }
   }
 
-  // ===============================
-  // 🧱 DEFAULT CONTENT
-  // ===============================
-  getDefaultContent(world, gate) {
-    const w = this.worldPresets[world];
-    const g = this.gateTemplates[gate - 1];
-
-    return `=== ${w.name} — Brama ${g.name} ===
-
-${w.starter}
-
-Cel bramy: ${g.targetWords} słów
-
-[Tu zaczyna się narracja]
-`;
+  clearUniverse() {
+    if (confirm('Na pewno wyczyścić cały wszechświat? To nieodwracalne.')) {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('eter_')) {
+          localStorage.removeItem(key);
+        }
+      }
+      this.ensureStorage();
+      location.reload();
+    }
   }
 }
 
 // ===============================
-// 🌍 GLOBAL
-// ===============================
+  // 🌍 GLOBALNY DOSTĘP
+  // ===============================
 window.EterData = EterData;
 
 document.addEventListener('DOMContentLoaded', () => {
   window.eterData = new EterData();
-  console.log('📚 EterData v2.1 gotowa', window.eterData.getStats());
+  console.log('📚 ETERNIVERSE BOOK MASTER v2.2 załadowany');
+  console.log('Statystyki:', window.eterData.getStats());
 });
 
 // ===============================
-// 🔌 API DLA APP / RENDER
-// ===============================
+  // 🔌 PUBLIC API DLA APP / RENDER
+  // ===============================
 window.eterDataAPI = {
   getWorld: (id) => window.eterData.worldPresets[id],
   getGate: (id) => window.eterData.gateTemplates[id - 1],
   getStats: () => window.eterData.getStats(),
-  exportUniverse: () => window.eterData.exportUniverse()
+  exportUniverse: () => JSON.stringify(window.eterData.exportUniverse(), null, 2),
+  importUniverse: (json) => window.eterData.importUniverse(json),
+  clearUniverse: () => window.eterData.clearUniverse(),
+  contentKey: (w, g, ch) => window.eterData.contentKey(w, g, ch)
 };
