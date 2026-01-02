@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="ETERNIVERSE BOOK MASTER v4.0 – Panel redakcyjny EterSeeker. Edytor, światy, bramy, Bella AI, audio, okładki, eksport."/>
+  <meta name="description" content="ETERNIVERSE BOOK MASTER v4.0 – Panel redakcyjny EterSeeker."/>
   <title>ETERNIVERSE · BOOK MASTER v4.0</title>
 
   <!-- FONTS -->
@@ -18,125 +18,64 @@
 
 <body>
 
-<!-- ================= HEADER ================= -->
 <header class="header">
   <div class="header-grid">
     <div>
       <div class="logo">ETERNIVERSE</div>
       <small>BOOK MASTER v4.0</small>
     </div>
-
     <div class="world-selector">
-      <button class="world-btn active" data-world="core">Rdzeń</button>
-      <button class="world-btn" data-world="polaris">Polaris</button>
+      <button class="world-btn active">Rdzeń</button>
+      <button class="world-btn">Polaris</button>
     </div>
-
     <div class="status">
-      <span id="status">Splątanie aktywne</span>
+      <span>Splątanie aktywne</span>
     </div>
   </div>
 </header>
 
-<!-- ================= TABS ================= -->
 <nav class="tab-nav">
-  <button class="tab-btn active" data-tab="book"><i class="fas fa-book"></i> Książka</button>
-  <button class="tab-btn" data-tab="cover"><i class="fas fa-image"></i> Okładka</button>
-  <button class="tab-btn" data-tab="audio"><i class="fas fa-microphone"></i> Audio</button>
-  <button class="tab-btn" data-tab="bella"><i class="fas fa-brain"></i> Bella AI</button>
-  <button class="tab-btn" data-tab="export"><i class="fas fa-download"></i> Eksport</button>
-  <button class="tab-btn" data-tab="preview"><i class="fas fa-eye"></i> Podgląd</button>
+  <button class="tab-btn active">Książka</button>
+  <button class="tab-btn">Okładka</button>
+  <button class="tab-btn">Audio</button>
+  <button class="tab-btn">Bella AI</button>
+  <button class="tab-btn">Eksport</button>
+  <button class="tab-btn">Podgląd</button>
 </nav>
 
-<!-- ================= MAIN ================= -->
 <main class="main-container">
 
-  <!-- ===== SIDEBAR / BRAMY ===== -->
   <aside class="sidebar">
-    <h3><i class="fas fa-portal-enter"></i> Bramy</h3>
+    <h3>Bramy</h3>
     <div id="gateList"></div>
   </aside>
 
-  <!-- ===== CONTENT ===== -->
   <section class="content">
 
-    <!-- ===== BOOK ===== -->
-    <div id="bookTab" class="tab-content active">
+    <!-- BOOK -->
+    <div class="tab-content active">
       <div class="editor-header">
-        <h2 id="bookTitle">Świat · Brama</h2>
-        <div class="editor-tools">
-          <button id="addChapterBtn"><i class="fas fa-plus"></i> Rozdział</button>
-        </div>
+        <h2>Świat · Brama</h2>
       </div>
 
       <div class="chapters-panel">
         <div id="chaptersList"></div>
       </div>
 
-      <div id="mainEditor" class="editor-area" contenteditable="true" spellcheck="false"></div>
-    </div>
-
-    <!-- ===== COVER ===== -->
-    <div id="coverTab" class="tab-content">
-      <h3>Okładka książki</h3>
-
-      <label class="upload-btn">
-        <i class="fas fa-upload"></i> Wgraj okładkę
-        <input type="file" id="coverUpload" accept="image/*" hidden>
-      </label>
-
-      <p id="coverInfo" class="status"></p>
-
-      <div class="cover-preview">
-        <img id="coverPreview" class="cover-canvas" style="display:none;">
+      <!-- 🔴 JEDYNY EDYTOR -->
+      <div id="mainEditor"
+           class="editor-area"
+           contenteditable="true"
+           spellcheck="false">
       </div>
-    </div>
-
-    <!-- ===== AUDIO ===== -->
-    <div id="audioTab" class="tab-content">
-      <h3>Audiobook / MP3</h3>
-
-      <label class="upload-btn">
-        <i class="fas fa-upload"></i> Wgraj MP3
-        <input type="file" id="audioUpload" accept="audio/mpeg,audio/mp3" hidden>
-      </label>
-
-      <p id="audioInfo" class="status"></p>
-
-      <audio id="audioPlayer" controls style="width:100%;margin-top:1rem;"></audio>
-    </div>
-
-    <!-- ===== BELLA AI ===== -->
-    <div id="bellaTab" class="tab-content">
-      <iframe
-        src="bella-assistant.html"
-        title="Bella AI"
-        style="width:100%;height:720px;border:none;border-radius:18px;">
-      </iframe>
-    </div>
-
-    <!-- ===== EXPORT ===== -->
-    <div id="exportTab" class="tab-content">
-      <h3>Eksport książki</h3>
-      <div class="export-buttons">
-        <button id="exportPDF"><i class="fas fa-file-pdf"></i> PDF</button>
-        <button id="exportDOCX"><i class="fas fa-file-word"></i> DOCX</button>
-        <button id="exportEPUB"><i class="fas fa-book-open"></i> EPUB</button>
-      </div>
-    </div>
-
-    <!-- ===== PREVIEW ===== -->
-    <div id="previewTab" class="tab-content">
-      <h3>Podgląd książki</h3>
-      <div id="bookPreview" class="editor-area"></div>
     </div>
 
   </section>
 </main>
 
-<!-- ================= TOAST ================= -->
 <div id="toastContainer"></div>
 
-<!-- ================= SCRIPTS ================= -->
+<!-- ================= SCRIPTS SYSTEMOWE ================= -->
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
 <script src="js/editor.js"></script>
@@ -144,35 +83,27 @@
 <script src="js/ai-integration.js"></script>
 <script src="js/upload.js"></script>
 
-<!-- DOCX -->
-<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
+<!-- ================= TRYB SESJA PISARSKA ================= -->
 <script>
 'use strict';
-
-// ========================================
-// BELLA — SESJA PISARSKA (TRYB 5)
-// Focus Mode • Zero Rozproszeń
-// ========================================
 
 class BellaWritingSession {
   constructor() {
     this.active = false;
-    this.startTime = null;
-    this.wordStart = 0;
+    this.startTime = 0;
+    this.startWords = 0;
+    this.editor = document.getElementById('mainEditor');
 
     this.init();
   }
 
   init() {
-    // skrót klawiszowy: CTRL + SHIFT + S
     document.addEventListener('keydown', e => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
         e.preventDefault();
         this.toggle();
       }
     });
-
-    console.log('Bella Writing Session READY');
   }
 
   toggle() {
@@ -180,81 +111,35 @@ class BellaWritingSession {
   }
 
   enter() {
-    if (this.active) return;
+    if (!this.editor) return;
 
     this.active = true;
     this.startTime = Date.now();
-
-    const editor = document.getElementById('editor');
-    this.wordStart = this.countWords(editor.value);
+    this.startWords = this.countWords();
 
     document.body.classList.add('writing-session');
-
     this.injectOverlay();
-    this.updateOverlay();
 
-    this.timer = setInterval(() => this.updateOverlay(), 1000);
-
-    this.toast('Sesja pisarska rozpoczęta');
+    this.timer = setInterval(() => this.update(), 1000);
   }
 
   exit() {
-    if (!this.active) return;
-
     this.active = false;
     clearInterval(this.timer);
-
-    const editor = document.getElementById('editor');
-    const wordsNow = this.countWords(editor.value);
-
-    const duration = Math.floor((Date.now() - this.startTime) / 1000);
-    const delta = wordsNow - this.wordStart;
-
     document.body.classList.remove('writing-session');
     document.getElementById('writingSessionOverlay')?.remove();
-
-    this.toast(
-      `Sesja zakończona • ${this.formatTime(duration)} • +${delta} słów`
-    );
   }
 
-  // =========================
-  // UI
-  // =========================
-  injectOverlay() {
-    const overlay = document.createElement('div');
-    overlay.id = 'writingSessionOverlay';
-    overlay.innerHTML = `
-      <div class="ws-panel">
-        <div class="ws-title">SESJA PISARSKA</div>
-        <div class="ws-metric"><span id="wsTime">00:00</span> czasu</div>
-        <div class="ws-metric"><span id="wsWords">0</span> słów</div>
-        <button id="wsExit">Zakończ sesję</button>
-      </div>
-    `;
-    document.body.appendChild(overlay);
+  update() {
+    const t = Math.floor((Date.now() - this.startTime) / 1000);
+    const w = this.countWords() - this.startWords;
 
-    document.getElementById('wsExit').onclick = () => this.exit();
+    document.getElementById('wsTime').textContent = this.formatTime(t);
+    document.getElementById('wsWords').textContent = w;
   }
 
-  updateOverlay() {
-    if (!this.active) return;
-
-    const editor = document.getElementById('editor');
-    const wordsNow = this.countWords(editor.value);
-    const delta = wordsNow - this.wordStart;
-
-    const time = Math.floor((Date.now() - this.startTime) / 1000);
-
-    document.getElementById('wsTime').textContent = this.formatTime(time);
-    document.getElementById('wsWords').textContent = delta;
-  }
-
-  // =========================
-  // UTILS
-  // =========================
-  countWords(text) {
-    return text.trim().split(/\s+/).filter(Boolean).length;
+  countWords() {
+    return this.editor.innerText.trim().split(/\s+/).filter(Boolean).length;
   }
 
   formatTime(sec) {
@@ -263,77 +148,56 @@ class BellaWritingSession {
     return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
 
-  toast(msg) {
-    const t = document.createElement('div');
-    t.textContent = msg;
-    t.style.cssText = `
-      position:fixed;bottom:20px;left:50%;
-      transform:translateX(-50%);
-      background:#00ffff;color:#000;
-      padding:12px 20px;border-radius:12px;
-      font-weight:bold;z-index:99999;
+  injectOverlay() {
+    const o = document.createElement('div');
+    o.id = 'writingSessionOverlay';
+    o.innerHTML = `
+      <div class="ws-panel">
+        <strong>SESJA PISARSKA</strong>
+        <div><span id="wsTime">00:00</span></div>
+        <div><span id="wsWords">0</span> słów</div>
+        <button id="wsExit">Zakończ</button>
+      </div>
     `;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
+    document.body.appendChild(o);
+    document.getElementById('wsExit').onclick = () => this.exit();
   }
 }
 
-// =========================
-// STYLES (inject)
-// =========================
 const style = document.createElement('style');
 style.textContent = `
 .writing-session header,
-.writing-session .profile-bar,
-.writing-session .controls,
-.writing-session .suggestions,
-.writing-session .analytics-section,
-.writing-session .footer {
+.writing-session nav,
+.writing-session aside,
+.writing-session .chapters-panel,
+.writing-session .editor-header {
   display:none !important;
 }
 
-.writing-session .container {
+.writing-session .main-container {
   grid-template-columns: 1fr !important;
 }
 
 #writingSessionOverlay {
   position:fixed;
   top:20px;right:20px;
-  background:rgba(0,0,0,0.85);
-  color:#00ffff;
-  padding:16px;
-  border-radius:16px;
-  z-index:9999;
-  box-shadow:0 0 30px rgba(0,255,255,0.4);
-}
-
-.ws-panel {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  text-align:center;
-}
-
-.ws-title {
-  font-weight:900;
-  letter-spacing:2px;
+  background:#000;
+  color:#0ff;
+  padding:14px;
+  border-radius:12px;
+  z-index:99999;
 }
 
 #wsExit {
-  margin-top:10px;
-  padding:8px;
-  border:none;
-  border-radius:10px;
-  background:#00ffff;
-  color:#000;
+  margin-top:8px;
+  padding:6px 10px;
   font-weight:bold;
-  cursor:pointer;
 }
 `;
 document.head.appendChild(style);
 
-// INIT
 window.BellaWritingSession = new BellaWritingSession();
 </script>
+
 </body>
 </html>
