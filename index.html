@@ -8,49 +8,219 @@
 <link rel="stylesheet" href="styles.css">
 
 <style>
-body{
-  margin:0;
-  background:#050510;
-  color:#e0ffff;
-  font-family:system-ui,sans-serif;
+:root {
+  --bg-primary: #050510;
+  --bg-secondary: #0a0a1a;
+  --accent: #00ffff;
+  --accent-glow: #00ffff80;
+  --text-primary: #e0ffff;
+  --text-secondary: #a0d8ff;
+  --neon-glow: 0 0 20px #00ffff, 0 0 40px #00ffff, inset 0 0 10px #00ffff20;
 }
-header{
-  padding:20px;
-  text-align:center;
-  border-bottom:2px solid #00ffff;
+
+* {
+  box-sizing: border-box;
 }
-h1{
-  margin:0;
-  font-size:2.2rem;
-  letter-spacing:2px;
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  animation: bgPulse 8s ease-in-out infinite alternate;
 }
-nav{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  padding:20px;
+
+@keyframes bgPulse {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
-nav button{
-  padding:16px;
-  font-size:18px;
-  font-weight:900;
-  border-radius:16px;
-  border:none;
-  background:#00ffff;
-  color:#000;
+
+header {
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  background: rgba(0, 15, 30, 0.3);
+  backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
 }
-section{
-  padding:20px;
-  max-width:900px;
-  margin:0 auto;
-  line-height:1.6;
+
+header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent 0deg, var(--accent-glow) 90deg, transparent 180deg);
+  animation: rotate 20s linear infinite;
+  opacity: 0.1;
 }
-footer{
-  text-align:center;
-  padding:16px;
-  opacity:.6;
-  font-size:14px;
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
+
+h1 {
+  margin: 0 0 8px 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: 4px;
+  text-shadow: var(--neon-glow);
+  position: relative;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  0% { filter: drop-shadow(0 0 5px var(--accent)); }
+  100% { filter: drop-shadow(0 0 20px var(--accent)); }
+}
+
+header div {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  opacity: 0;
+  animation: fadeInUp 1s ease 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+nav button {
+  padding: 20px 24px;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  font-weight: 900;
+  border-radius: 24px;
+  border: 2px solid transparent;
+  background: linear-gradient(145deg, #00ffff, #00ccff);
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+nav button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+nav button:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--neon-glow), 0 20px 40px rgba(0, 255, 255, 0.3);
+  border-color: var(--accent);
+}
+
+nav button:hover::before {
+  left: 100%;
+}
+
+nav button:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+nav button:focus {
+  outline: 3px solid var(--accent-glow);
+  outline-offset: 2px;
+}
+
+section {
+  padding: 60px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s ease 0.8s forwards;
+}
+
+section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--accent-glow);
+  position: relative;
+}
+
+section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+section p, section li {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+section ul {
+  list-style: none;
+  padding: 0;
+}
+
+section li {
+  padding: 16px 0;
+  border-left: 3px solid transparent;
+  padding-left: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+section li:hover {
+  border-left-color: var(--accent);
+  transform: translateX(8px);
+}
+
+section li b {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent-glow);
+}
+
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  opacity: 0.7;
+  border-top: 1px solid var(--accent-glow);
+  margin-top: 80px;
+}
+
+/* Mobile enhancements */
+@media (max-width: 768px) {
+  nav { gap: 16px; padding: 30px 16px; }
+  nav button { padding: 18px 20px; font-size: 1.1rem; }
+  section { padding: 40px 16px; }
+}
+
+/* High performance scroll reveal */
+section { scroll-snap-align: start; }
 </style>
 </head>
 
@@ -69,23 +239,22 @@ footer{
 
 <section>
   <h2>Status</h2>
-  <p>🟢 Repo kompletne · 📱 Mobile OK · 🧠 Bella aktywna</p>
+  <p>🟢 <strong>Repo kompletne</strong> · 📱 <strong>Mobile OK</strong> · 🧠 <strong>Bella aktywna</strong></p>
 
   <h2>Jak pracować</h2>
   <ul>
-    <li><b>PISANIE</b> – główny edytor + bramy + kanon</li>
-    <li><b>BELLA AI</b> – rozwijanie scen i stylu</li>
-    <li><b>SESJA</b> – fokus, licznik czasu i słów</li>
+    <li><b>PISANIE</b> – główny edytor + bramy + kanon (CTRL + B dla bram)</li>
+    <li><b>BELLA AI</b> – rozwijanie scen i stylu (automatyczne profile postaci)</li>
+    <li><b>SESJA</b> – fokus, licznik czasu i słów (CTRL + SHIFT + S)</li>
   </ul>
 </section>
 
 <footer>
-  © 2026 · ETERNIVERSE · Maciej Maciuszek
+  © 2026 · ETERNIVERSE · Maciej Maciuszek · Sosnowiec, Śląsk
 </footer>
 
 <script>
 function openWriting(){
-  // wracamy do trybu edytora w tym samym pliku
   window.location.href = "index.html#writing";
 }
 
@@ -94,32 +263,41 @@ function openBella(){
 }
 
 function openSession(){
-  alert("Sesja pisarska działa w trybie pisania (CTRL + SHIFT + S)");
+  alert("Sesja pisarska działa w trybie pisania (CTRL + SHIFT + S)
+
+Funkcje: timer, licznik słów, fokus mode, auto-save.");
 }
+
+// Smooth scroll reveal na scroll (natywny JS, bez lib)
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section');
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      section.style.opacity = '1';
+      section.style.transform = 'translateY(0)';
+    }
+  });
+});
+
+// Preload dla smooth performance
+window.addEventListener('load', () => {
+  document.body.style.opacity = '1';
+});
 </script>
 
-<!-- CORE SYSTEM -->
+<!-- CORE SYSTEM (bez zmian) -->
 <script src="js/system-core.js"></script>
 <script src="js/eterniverse-core.js"></script>
-
-<!-- DATA + RENDER -->
 <script src="js/data.js"></script>
 <script src="js/render.js"></script>
-
-<!-- EDITOR -->
 <script src="js/editor.js"></script>
 <script src="js/app.js"></script>
-
-<!-- BELLA -->
 <script src="js/ai-integration.js"></script>
 <script src="js/bella-ai-memory.js"></script>
 <script src="js/bella-ai-memory-compressor.js"></script>
 <script src="js/bella-ai-autoprofile.js"></script>
-
-<!-- SESSION -->
 <script src="js/bella-writing-session.js"></script>
-
-<!-- UPLOAD -->
 <script src="js/upload.js"></script>
 
 </body>
