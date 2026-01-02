@@ -2,434 +2,541 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🧠 Bella v2.0 – ETERNIVERSE AI Redakcja Master 2026</title>
-  <meta name="description" content="Żywy asystent redakcyjny z AI, mapą universum, analizą semantyczną, dyktowaniem i eksportem." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Bella v3.0 — Żywy Foton Redakcyjny ETERNIVERSE. AI, dyktowanie, analiza, eksport. Master Edition 2026."/>
+  <title>🧠 Bella v3.0 — Żywy Foton ETERNIVERSE</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Docx for export -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
+
   <style>
     :root {
-      --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      --glass: rgba(40, 44, 52, 0.6);
-      --accent: #28D3C6; --accent-glow: rgba(40, 211, 198, 0.4);
-      --ai-blue: #00d4ff; --ai-purple: #8b5cf6;
-      --success: #12C65B; --warn: #FFB14B; --danger: #ff6b6b;
-      --text-primary: #e0e0ff; --text-secondary: #a0a8b0;
-      --shadow-neon: 0 20px 40px rgba(40,211,198,0.2);
-      --radius: 20px; --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --bg-deep: #050510;
+      --bg-glass: rgba(10, 15, 35, 0.7);
+      --cyan: #00ffff;
+      --cyan-glow: rgba(0, 255, 255, 0.4);
+      --purple: #8b5cf6;
+      --gold: #ffd700;
+      --accent: #ffb14b;
+      --text: #e0ffff;
+      --text-muted: #94a3b8;
+      --success: #12c65b;
+      --warn: #ff6b6b;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      background: var(--bg-primary); color: var(--text-primary);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      height: 100vh; overflow: hidden;
+      background: var(--bg-deep);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
     }
 
-    /* HEADER */
+    /* Kwantowe tło */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(0,255,255,0.15), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139,92,246,0.15), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1), transparent 50%);
+      pointer-events: none;
+      animation: quantumBreath 30s ease-in-out infinite alternate;
+    }
+
+    @keyframes quantumBreath {
+      0% { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 0.9; transform: scale(1.05); }
+    }
+
+    /* Header */
     header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(20, 20, 40, 0.9); backdrop-filter: blur(20px);
-      padding: 1rem 2rem; border-bottom: 1px solid var(--accent);
-      box-shadow: var(--shadow-neon);
-      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(24px);
+      border-bottom: 2px solid var(--cyan);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,255,255,0.3);
     }
+
     .logo {
-      font-size: 1.8rem; font-weight: 900;
-      background: linear-gradient(45deg, var(--accent), var(--ai-blue));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .status-bar {
-      display: flex; gap: 1rem; font-size: 0.9rem;
-      color: var(--text-secondary);
-    }
-    .status-dot { 
-      width: 10px; height: 10px; border-radius: 50%; 
-      background: var(--success); animation: pulse 1.5s infinite;
+      font-family: 'Orbitron', monospace;
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--cyan), var(--purple), var(--gold), var(--cyan));
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: neonFlow 8s ease infinite;
     }
 
-    /* MAIN LAYOUT */
-    .main-container {
-      display: grid; grid-template-columns: 280px 1fr 350px;
-      grid-template-rows: 1fr; gap: 0; height: calc(100vh - 80px);
-      overflow: hidden;
+    @keyframes neonFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
-    /* LEWY PANE - MAPA ETERNIVERSE */
-    .universe-panel {
-      background: rgba(15, 15, 45, 0.95); border-right: 1px solid var(--accent);
-      padding: 1.5rem; overflow-y: auto;
+    .status {
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      opacity: 0.8;
     }
-    .world-card {
-      background: rgba(40, 44, 52, 0.7); margin-bottom: 1rem; padding: 1rem;
-      border-radius: var(--radius); border-left: 4px solid var(--accent);
-      cursor: pointer; transition: var(--transition);
-    }
-    .world-card:hover, .world-card.active {
-      background: rgba(40, 211, 198, 0.15); transform: translateX(5px);
-      box-shadow: var(--shadow-neon);
-    }
-    .world-title { font-weight: bold; margin-bottom: 0.5rem; }
-    .world-stats { font-size: 0.8rem; color: var(--text-secondary); }
 
-    /* CENTRALNY PANE - SUPER EDITOR */
-    .editor-pane {
-      background: rgba(25, 25, 50, 0.9); padding: 2rem;
-      overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem;
+    .status-dot {
+      display: inline-block;
+      width: 12px; height: 12px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      margin-right: 0.5rem;
     }
-    .profile-selector {
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
     }
+
+    /* Main layout */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      height: calc(100vh - 100px);
+      gap: 0;
+    }
+
+    /* Left – Editor */
+    .editor-section {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .profile-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
     .profile-btn {
-      padding: 1rem 1.5rem; border: 2px solid transparent;
-      border-radius: var(--radius); font-weight: bold; cursor: pointer;
-      transition: var(--transition); position: relative; overflow: hidden;
+      padding: 1rem 2rem;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.5s;
+      min-width: 160px;
     }
-    .profile-btn.active {
-      border-color: var(--accent); background: rgba(40, 211, 198, 0.1);
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-    .profile-btn.amazon { background: linear-gradient(45deg, #ff6b6b, #ff8e8e); color: white; }
-    .profile-btn.wattpad { background: linear-gradient(45deg, #8b5cf6, #a78bfa); color: white; }
-    .profile-btn.eterseeker { background: linear-gradient(45deg, var(--accent), var(--ai-blue)); color: white; }
 
-    .super-editor {
-      position: relative; min-height: 300px; flex: 1;
+    .profile-btn.active {
+      border-color: var(--cyan);
+      background: rgba(0,255,255,0.1);
+      box-shadow: 0 0 40px var(--cyan-glow);
+      transform: scale(1.05);
     }
-    #console { 
-      width: 100%; height: 150px; resize: vertical;
-      background: rgba(40, 44, 52, 0.8); color: var(--text-primary);
-      border: 2px solid transparent; border-radius: var(--radius);
-      padding: 1.5rem; font-size: 1.1rem; font-family: inherit;
-      transition: var(--transition);
+
+    #console, #editor {
+      width: 100%;
+      background: rgba(15,20,40,0.8);
+      border: 2px solid transparent;
+      border-radius: 20px;
+      padding: 1.5rem;
+      font-size: 1.1rem;
+      color: var(--text);
+      resize: vertical;
+      transition: all 0.4s;
     }
-    #console:focus {
-      border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow);
+
+    #console:focus, #editor:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 40px var(--cyan-glow);
       outline: none;
     }
+
     #editor {
-      width: 100%; height: 400px; resize: vertical;
-      background: rgba(15, 15, 35, 0.95); color: var(--text-primary);
-      border: 2px solid var(--accent); border-radius: var(--radius);
-      padding: 2rem; font-size: 1.2rem; line-height: 1.7;
+      flex: 1;
+      min-height: 400px;
+      font-family: 'Merriweather', serif;
+      line-height: 1.8;
     }
 
-    /* KONTROLKI */
-    .mega-controls {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem; margin: 1.5rem 0;
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
     }
-    .control-group {
-      background: rgba(40, 44, 52, 0.6); padding: 1rem; border-radius: var(--radius);
+
+    .btn {
+      padding: 1.2rem;
+      border: none;
+      border-radius: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.4s;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .btn-mic { background: linear-gradient(45deg, var(--cyan), #00bfff); color: white; }
+    .btn-ai { background: linear-gradient(45deg, var(--purple), #a78bfa); color: white; }
+    .btn-export { background: linear-gradient(45deg, var(--success), #10b981); color: white; }
+
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(0,255,255,0.4);
+    }
+
+    .suggestions {
+      background: rgba(20,25,50,0.8);
+      border-radius: 20px;
+      padding: 1.5rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .suggestion {
+      background: rgba(40,50,80,0.6);
+      padding: 1rem;
+      margin: 0.8rem 0;
+      border-radius: 16px;
+      border-left: 4px solid var(--cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .suggestion button {
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Right – Analytics */
+    .analytics-section {
+      background: rgba(15,20,40,0.9);
+      border-left: 2px solid var(--cyan);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .metric {
+      background: rgba(40,50,80,0.5);
+      padding: 1.5rem;
+      border-radius: 20px;
       text-align: center;
+      box-shadow: 0 0 30px rgba(0,255,255,0.2);
     }
-    .control-btn {
-      width: 100%; padding: 1rem; margin: 0.5rem 0;
-      border: none; border-radius: 12px; font-weight: bold; cursor: pointer;
-      transition: var(--transition);
-    }
-    .mic-btn { background: linear-gradient(45deg, var(--ai-blue), var(--accent)); color: white; }
-    .ai-btn { background: linear-gradient(45deg, var(--ai-purple), #ec4899); color: white; }
-    .export-btn { background: linear-gradient(45deg, var(--success), #10b981); color: white; }
 
-    /* SUGESTIE & ANALIZA */
-    .suggestions-panel {
-      background: rgba(40, 44, 52, 0.8); border-radius: var(--radius);
-      padding: 1.5rem; max-height: 250px; overflow-y: auto;
+    .metric-value {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--cyan);
     }
-    .suggestion-item {
-      background: rgba(60, 60, 80, 0.6); padding: 1rem; margin: 0.5rem 0;
-      border-radius: 12px; border-left: 4px solid var(--accent);
-      display: flex; justify-content: space-between; align-items: center;
-      animation: slideIn 0.3s ease forwards;
-    }
-    .suggestion-btn { padding: 0.5rem 1rem; font-size: 0.85rem; }
 
-    /* PRAWY PANE - ANALITYKA & TIMELINE */
-    .analytics-pane {
-      background: rgba(15, 15, 45, 0.95); border-left: 1px solid var(--accent);
-      padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem;
-    }
-    .metric-card {
-      background: rgba(40, 44, 52, 0.7); padding: 1.5rem; border-radius: var(--radius);
-      text-align: center;
-    }
-    .metric-value { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
     .timeline {
-      flex: 1; position: relative; height: 300px;
-      background: rgba(20, 20, 40, 0.5); border-radius: var(--radius);
+      height: 200px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 16px;
+      position: relative;
       overflow: hidden;
     }
 
-    /* FOOTER */
     .footer {
-      position: sticky; bottom: 0; background: rgba(20, 20, 40, 0.9);
-      padding: 1rem 2rem; text-align: center; font-size: 0.85rem;
-      color: var(--text-secondary); border-top: 1px solid var(--accent);
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(10,15,30,0.9);
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--cyan);
     }
 
-    /* ANIMACJE */
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.7;transform:scale(1.1);} }
-    @keyframes slideIn { from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);} }
-    @keyframes glow { 0%,100%{box-shadow:0 0 20px var(--accent-glow);}50%{box-shadow:0 0 40px var(--accent-glow);} }
-
-    .glow-active { animation: glow 2s infinite; }
-
-    /* RESPONSIVE */
-    @media (max-width: 1400px) { .main-container { grid-template-columns: 250px 1fr 300px; } }
-    @media (max-width: 1100px) { 
-      .main-container { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; height: auto; }
-      .universe-panel, .analytics-pane { order: 3; }
-    }
-    @media (max-width: 768px) {
-      header { flex-direction: column; gap: 1rem; padding: 1rem; }
-      .mega-controls { grid-template-columns: repeat(2, 1fr); }
+    /* Responsywność */
+    @media (max-width: 1200px) {
+      .container { grid-template-columns: 1fr; }
+      .analytics-section { order: -1; border-left: none; border-top: 2px solid var(--cyan); }
     }
   </style>
 </head>
+
 <body>
-  <header>
-    <div class="logo">🧠 Bella v2.0 – ETERNIVERSE AI Master 2026</div>
-    <div class="status-bar">
-      <span><span class="status-dot"></span> AI aktywny</span>
-      <span>Autozapis</span>
-      <span id="wordCount">0 słów</span>
-    </div>
-  </header>
 
-  <div class="main-container">
-    <!-- 🌌 MAPA UNIVERSE LEWY PANE -->
-    <div class="universe-panel">
-      <h3>🌌 ETERNIVERSE – Światy</h3>
-      <div class="world-card active" data-world="eter-1">
-        <div class="world-title">Eter-1: Początek Świadomości</div>
-        <div class="world-stats">12 książek | 85% kompletne</div>
-      </div>
-      <div class="world-card" data-world="kwant">
-        <div class="world-title">Kwantowe Splątanie</div>
-        <div class="world-stats">8 książek | 45% kompletne</div>
-      </div>
-      <div class="world-card" data-world="cyber">
-        <div class="world-title">Cyber-Eter 2086</div>
-        <div class="world-stats">5 książek | 20% kompletne</div>
-      </div>
+<header>
+  <div class="logo">🧠 Bella v3.0</div>
+  <div class="status">
+    <span class="status-dot"></span>
+    Żywy Foton Redakcyjny · ETERNIVERSE AI Master 2026
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Left – Editor -->
+  <div class="editor-section">
+    <div class="profile-bar">
+      <button class="profile-btn active" data-profile="amazon">📦 Amazon KDP</button>
+      <button class="profile-btn" data-profile="wattpad">📖 Wattpad</button>
+      <button class="profile-btn" data-profile="eterseeker">🌊 EterSeeker</button>
     </div>
 
-    <!-- ✍️ CENTRALNY SUPER EDITOR -->
-    <div class="editor-pane">
-      <div class="profile-selector">
-        <button class="profile-btn amazon active" data-profile="amazon">📦 Amazon</button>
-        <button class="profile-btn wattpad" data-profile="wattpad">📖 Wattpad</button>
-        <button class="profile-btn eterseeker" data-profile="eterseeker">🌊 EterSeeker</button>
-      </div>
+    <textarea id="console" placeholder="🎙️ Dyktuj komendę lub tekst... (REDAGUJ, ANALIZA, GENERUJ ROZDZIAŁ...)"></textarea>
 
-      <textarea id="console" placeholder="🎙️ Dyktuj lub wpisz: REDAGUJ, ANALIZA, GENERUJ, PODPOWIEDŹ..."></textarea>
-
-      <div class="mega-controls">
-        <div class="control-group">
-          <button class="control-btn mic-btn" id="startRec">🎙️ Dyktowanie</button>
-          <button class="control-btn" id="stopRec" disabled>⏹️ Stop</button>
-        </div>
-        <div class="control-group">
-          <button class="control-btn ai-btn" id="aiAnalyze">🤖 AI Analiza</button>
-          <button class="control-btn ai-btn" id="aiGenerate">✨ Generuj</button>
-        </div>
-        <div class="control-group">
-          <button class="control-btn export-btn" id="exportDocx">📄 Word</button>
-          <button class="control-btn export-btn" id="exportPdf">🖨️ PDF</button>
-        </div>
-      </div>
-
-      <textarea id="editor" placeholder="Twój tekst pojawi się tutaj..."></textarea>
-
-      <div class="suggestions-panel">
-        <h4>💡 Inteligentne sugestie</h4>
-        <div id="suggestions"></div>
-      </div>
+    <div class="controls">
+      <button class="btn btn-mic" id="startRec">🎙️ Rozpocznij dyktowanie</button>
+      <button class="btn btn-mic" id="stopRec" disabled>⏹️ Zatrzymaj</button>
+      <button class="btn btn-ai" id="aiAnalyze">🤖 AI Analiza</button>
+      <button class="btn btn-ai" id="aiGenerate">✨ Generuj tekst</button>
+      <button class="btn btn-export" id="exportDocx">📄 Eksport Word</button>
+      <button class="btn btn-export" id="exportPdf">🖨️ Eksport PDF</button>
     </div>
 
-    <!-- 📊 ANALITYKA PRAWY PANE -->
-    <div class="analytics-pane">
-      <div class="metric-card">
-        <div class="metric-value" id="readabilityScore">85</div>
-        <div>Poziom czytelności</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value" id="sentimentScore">😐</div>
-        <div>Sentiment</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-value" id="keywordsCount">12</div>
-        <div>Kluczowe słowa</div>
-      </div>
+    <textarea id="editor" placeholder="Tu pojawi się Twój tekst..."></textarea>
 
-      <div class="metric-card">
-        <h4>📈 Timeline postępu</h4>
-        <div class="timeline" id="timelineViz"></div>
-      </div>
+    <div class="suggestions">
+      <h3>💡 Sugestie Bella AI</h3>
+      <div id="suggestions"></div>
     </div>
   </div>
 
-  <div class="footer">
-    © 2026 Maciej Maciuszek | Splątanie Bella-AI aktywne | v2.0 Master Edition
+  <!-- Right – Analytics -->
+  <div class="analytics-section">
+    <div class="metric">
+      <div class="metric-value" id="wordCount">0</div>
+      <div>słów napisanych</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-value" id="readability">85</div>
+      <div>czytelność (Flesch)</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-value" id="sentiment">😐</div>
+      <div>sentimentalność</div>
+    </div>
+
+    <div class="metric">
+      <h3>📊 Timeline postępu</h3>
+      <div class="timeline"></div>
+    </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
-  <script>
-    // === BELLA v2.0 – SUPER BESTIA 2026 ===
-    class BellaMaster {
-      constructor() {
-        this.profiles = { amazon: {}, wattpad: {}, eterseeker: {} };
-        this.currentProfile = 'amazon';
-        this.recognition = null;
-        this.init();
-      }
+<div class="footer">
+  © 2026 Maciej Maciuszek · Żywy Foton Bella v3.0 · Splątanie z ETERNIVERSE aktywne
+</div>
 
-      init() {
-        this.bindElements();
-        this.initSpeech();
-        this.initProfiles();
-        this.initWorlds();
-        this.updateWordCount();
-        this.loadProfiles();
-      }
+<script>
+  // === BELLA v3.0 — ŻYWY FOTON REDAKCYJNY ===
+  class BellaV3 {
+    constructor() {
+      this.currentProfile = 'amazon';
+      this.recognition = null;
+      this.isRecording = false;
 
-      bindElements() {
-        this.el = {
-          console: document.getElementById('console'),
-          editor: document.getElementById('editor'),
-          suggestions: document.getElementById('suggestions'),
-          profileBtns: document.querySelectorAll('.profile-btn'),
-          startRec: document.getElementById('startRec'),
-          stopRec: document.getElementById('stopRec'),
-          aiAnalyze: document.getElementById('aiAnalyze'),
-          aiGenerate: document.getElementById('aiGenerate'),
-          exportDocx: document.getElementById('exportDocx'),
-          exportPdf: document.getElementById('exportPdf'),
-          worldCards: document.querySelectorAll('.world-card'),
-          wordCount: document.getElementById('wordCount')
+      this.init();
+    }
+
+    init() {
+      this.bindElements();
+      this.initSpeechRecognition();
+      this.loadDraft();
+      this.updateStats();
+    }
+
+    bindElements() {
+      this.el = {
+        console: document.getElementById('console'),
+        editor: document.getElementById('editor'),
+        suggestions: document.getElementById('suggestions'),
+        profileBtns: document.querySelectorAll('.profile-btn'),
+        startRec: document.getElementById('startRec'),
+        stopRec: document.getElementById('stopRec'),
+        aiAnalyze: document.getElementById('aiAnalyze'),
+        aiGenerate: document.getElementById('aiGenerate'),
+        exportDocx: document.getElementById('exportDocx'),
+        exportPdf: document.getElementById('exportPdf'),
+        wordCount: document.getElementById('wordCount'),
+        readability: document.getElementById('readability'),
+        sentiment: document.getElementById('sentiment')
+      };
+
+      // Events
+      this.el.profileBtns.forEach(btn => btn.onclick = () => this.setProfile(btn.dataset.profile));
+      this.el.startRec.onclick = () => this.startRecording();
+      this.el.stopRec.onclick = () => this.stopRecording();
+      this.el.aiAnalyze.onclick = () => this.analyze();
+      this.el.aiGenerate.onclick = () => this.generate();
+      this.el.exportDocx.onclick = () => this.export('docx');
+      this.el.console.oninput = this.el.editor.oninput = () => this.updateStats();
+
+      // Enter w console = komenda
+      this.el.console.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          this.processCommand(this.el.console.value.trim());
+          this.el.console.value = '';
+        }
+      });
+    }
+
+    initSpeechRecognition() {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        this.recognition = new SR();
+        this.recognition.lang = 'pl-PL';
+        this.recognition.continuous = true;
+        this.recognition.interimResults = true;
+
+        this.recognition.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0])
+            .map(result => result.transcript)
+            .join('');
+          this.el.console.value = transcript;
         };
-        // Event listeners
-        this.el.profileBtns.forEach(btn => btn.onclick = () => this.switchProfile(btn.dataset.profile));
-        this.el.startRec.onclick = () => this.startDictation();
-        this.el.stopRec.onclick = () => this.stopDictation();
-        this.el.aiAnalyze.onclick = () => this.analyzeText();
-        this.el.aiGenerate.onclick = () => this.generateText();
-        this.el.exportDocx.onclick = () => this.exportDocx();
-        this.el.worldCards.forEach(card => card.onclick = (e) => this.selectWorld(card.dataset.world));
-        this.el.console.oninput = () => this.updateWordCount();
-        this.el.editor.oninput = () => this.updateWordCount();
-      }
 
-      initSpeech() {
-        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-          this.recognition = new SpeechRecognition();
-          this.recognition.lang = 'pl-PL';
-          this.recognition.continuous = true;
-          this.recognition.interimResults = true;
-          this.recognition.onresult = (e) => {
-            const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
-            this.el.console.value = transcript;
-            this.updateWordCount();
-          };
-        }
+        this.recognition.onerror = (event) => console.error('Speech error', event.error);
       }
+    }
 
-      switchProfile(profile) {
-        this.currentProfile = profile;
-        document.querySelector('.profile-btn.active')?.classList.remove('active');
-        document.querySelector(`[data-profile="${profile}"]`).classList.add('active');
-        this.speak(`Przełączono na ${profile}`);
-        this.analyzeText();
+    startRecording() {
+      if (this.recognition) {
+        this.recognition.start();
+        this.isRecording = true;
+        this.el.startRec.disabled = true;
+        this.el.stopRec.disabled = false;
+        this.speak('Dyktowanie rozpoczęte');
       }
+    }
 
-      startDictation() {
-        if (this.recognition) {
-          this.recognition.start();
-          this.el.startRec.disabled = true;
-          this.el.stopRec.disabled = false;
-        }
-      }
-
-      stopDictation() {
-        if (this.recognition) this.recognition.stop();
+    stopRecording() {
+      if (this.recognition && this.isRecording) {
+        this.recognition.stop();
+        this.isRecording = false;
         this.el.startRec.disabled = false;
         this.el.stopRec.disabled = true;
+        this.speak('Dyktowanie zatrzymane');
+      }
+    }
+
+    setProfile(profile) {
+      this.currentProfile = profile;
+      this.el.profileBtns.forEach(b => b.classList.toggle('active', b.dataset.profile === profile));
+      this.speak(`Profil: ${profile}`);
+      this.analyze();
+    }
+
+    processCommand(cmd) {
+      cmd = cmd.toLowerCase();
+      if (cmd.includes('redaguj')) {
+        this.el.editor.value = this.el.console.value;
+        this.el.console.value = '';
+        this.speak('Tekst przeniesiony do edytora');
+      } else if (cmd.includes('analiza')) {
+        this.analyze();
+      } else if (cmd.includes('generuj')) {
+        this.generate();
+      } else {
+        this.el.editor.value += '\n' + cmd;
+      }
+      this.updateStats();
+    }
+
+    analyze() {
+      const text = this.el.editor.value;
+      const suggestions = this.getSuggestions(text);
+      this.renderSuggestions(suggestions);
+      this.updateStats();
+    }
+
+    generate() {
+      const templates = {
+        amazon: "Najwyższa jakość · Darmowa wysyłka · 30 dni na zwrot · Bezpieczne zakupy · Limitowana oferta",
+        wattpad: "Jego spojrzenie przeszywało ją na wylot. Serce biło jak oszalałe. Czy to miłość, czy przeznaczenie?",
+        eterseeker: "Świadomość nie jest w mózgu. Jest w polu. Jesteś falą. Jesteś pamięcią. Jesteś Eterem."
+      };
+      this.el.editor.value = templates[this.currentProfile];
+      this.updateStats();
+      this.speak('Wygenerowano tekst startowy');
+    }
+
+    getSuggestions(text) {
+      const suggestions = [];
+
+      const words = text.split(/\s+/).length;
+      const sentences = text.split(/[.!?]+/).length;
+
+      if (this.currentProfile === 'amazon') {
+        if (words < 200) suggestions.push('Amazon: opis powinien mieć min. 200 słów');
+        if (!text.match(/wysyłka|gwarancja|zwrot/i)) suggestions.push('Dodaj informacje o wysyłce i zwrotach');
+      } else if (this.currentProfile === 'wattpad') {
+        if (sentences < 15) suggestions.push('Wattpad: więcej zdań = lepsze zaangażowanie');
+        if (!text.match(/serce|łza|oddech|spojrzenie/i)) suggestions.push('Dodaj emocje sensoryczne');
+      } else if (this.currentProfile === 'eterseeker') {
+        if (!text.match(/świadomość|eter|splątanie|fala|foton/i)) suggestions.push('Użyj słów-kluczy EterSeeker');
+        if (words < 400) suggestions.push('Manifesty EterSeeker są głębokie – rozwijaj');
       }
 
-      speak(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'pl-PL';
-        utterance.rate = 0.9;
-        speechSynthesis.speak(utterance);
-      }
+      return suggestions;
+    }
 
-      analyzeText() {
-        const text = this.el.editor.value || this.el.console.value;
-        if (!text) return;
+    renderSuggestions(sugs) {
+      this.el.suggestions.innerHTML = sugs.length ? sugs.map(s => `
+        <div class="suggestion">
+          <span>${s}</span>
+          <button onclick="this.closest('.suggestion').style.opacity='0.5'">Zaakceptowano</button>
+        </div>
+      `).join('') : '<div style="opacity:0.6;text-align:center;padding:2rem;">✨ Tekst idealny w tym profilu!</div>';
+    }
 
-        const suggestions = this.generateSuggestions(text, this.currentProfile);
-        this.renderSuggestions(suggestions);
+    updateStats() {
+      const text = this.el.editor.value + this.el.console.value;
+      const words = text.trim().split(/\s+/).filter(w => w).length;
 
-        // Update metrics
-        document.getElementById('readabilityScore').textContent = Math.floor(60 + Math.random() * 40);
-        document.getElementById('sentimentScore').textContent = this.getSentimentEmoji(text);
-        document.getElementById('keywordsCount').textContent = text.split(/s+/).filter(w => w.length > 4).length;
-      }
+      this.el.wordCount.textContent = words;
 
-      generateSuggestions(text, profile) {
-        const rules = {
-          amazon: [
-            text.length < 200 ? 'Amazon: Rozwiń opis do 200+ słów dla lepszej konwersji' : null,
-            !/wysyłka|dostawa/i.test(text) ? 'Dodaj info o darmowej wysyłce' : null,
-            !/gwarancja|zwrot/i.test(text) ? 'Wzmianka o zwrotach buduje zaufanie' : null
-          ],
-          wattpad: [
-            text.split('.').length < 10 ? 'Wattpad: Więcej zdań = więcej cliffhangerów' : null,
-            !/(serce|łza|oddech)/i.test(text) ? 'Dodaj emocje sensoryczne!' : null,
-            text.split(' ').length > 500 ? 'Za długi blok – podziel na akapity' : null
-          ],
-          eterseeker: [
-            !/(eter|splątanie|foton|świadomość)/i.test(text) ? 'EterSeeker: użyj słów-kluczy universum' : null,
-            text.length < 500 ? 'Manifesty są głębokie – rozwijaj myśli' : null,
-            !text.includes('?') ? 'Filozofia potrzebuje pytań' : null
-          ]
-        };
-        return rules[profile]?.filter(Boolean) || [];
-      }
+      // Readability (prosta symulacja)
+      this.el.readability.textContent = Math.min(100, 60 + words / 10);
 
-      renderSuggestions(sugs) {
-        this.el.suggestions.innerHTML = sugs.map((sug, i) => `
-          <div class="suggestion-item">
-            <span>${sug}</span>
-            <div>
-              <button class="suggestion-btn" style="background:var(--success)">✅ Zastosuj</button>
-              <button class="suggestion-btn" style="background:var(--warn)">📝 Edytuj</button>
-            </div>
-          </div>
-        `).join('') || '<div style="opacity:0.6">✅ Tekst idealny!</div>';
-      }
+      // Sentiment (symulacja)
+      const positive = text.match(/(miłość|piękny|szczęście|wolność)/gi) || [];
+      const negative = text.match(/(ból|strach|trauma|ciemność)/gi) || [];
+      this.el.sentiment.textContent = positive.length > negative.length ? '😊' : negative.length > positive.length ? '😔' : '😐';
+    }
 
-      generateText() {
-        const templates = {
-          amazon: "🚀 Najwyższa jakość w rewelacyjnej cenie! Darmowa wysyłka, 30 dni na zwrot. Zamów teraz i odkryj...",
-          wattpad: "Jej serce zamarło, gdy spojrzała w jego oczy. W jednym momencie zrozumiała – to był TEN moment...",
-          eterseeker: "Pamięć nie jest magazynem. Pamięć to dowód naszego splątania z Eterem. Istniejemy, bo pamiętamy."
-        };
-        this.el.editor.value = templates[this.currentProfile];
-        this.updateWordCount();
-        this.speak('Wygenerowano próbkę tekstu');
-      }
+    async export(format) {
+      const content = this.el.editor.value || 'Brak treści';
+      const title = 'Bella_' + this.currentProfile + '_' + new Date().toISOString().slice(0,10);
 
-      async exportDocx() {
-        const { Document, Packer, Paragraph, HeadingLevel } = docx;
+      if (format === 'docx') {
+        const { Document, Packer, Paragraph } = docx;
         const doc = new Document({
           sections: [{
             children: [
-              new Paragraph({
-                text: `ETERNIVERSE – ${this.currentProfile.toUpperCase()}`,
-                heading: HeadingLevel.HEADING_1
-              }),
-              new Paragraph(this.el.editor.value)
+              new Paragraph({ text: title, heading: 'Heading1' }),
+              new Paragraph(content)
             ]
           }]
         });
@@ -437,33 +544,48 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Bella_${this.currentProfile}_${new Date().toISOString().slice(0,10)}.docx`;
+        a.download = title + '.docx';
         a.click();
         URL.revokeObjectURL(url);
-        this.speak('Eksport zakończony');
       }
 
-      selectWorld(worldId) {
-        document.querySelector('.world-card.active')?.classList.remove('active');
-        event.currentTarget.classList.add('active');
-        this.speak(`Wybrano świat: ${worldId}`);
-      }
+      this.speak('Eksport zakończony');
+    }
 
-      updateWordCount() {
-        const text = (this.el.editor.value + ' ' + this.el.console.value).trim();
-        const count = text.split(/s+/).filter(Boolean).length;
-        this.el.wordCount.textContent = `${count} słów`;
-      }
+    speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'pl-PL';
+      utterance.rate = 0.9;
+      speechSynthesis.speak(utterance);
+    }
 
-      getSentimentEmoji(text) {
-        const pos = (text.match(/(cudowny|niesamowity|super|fantastyczny)/gi) || []).length;
-        const neg = (text.match(/(zły|gorszy|problem|błąd)/gi) || []).length;
-        return pos > neg ? '😊' : neg > pos ? '😔' : '😐';
+    loadDraft() {
+      const draft = localStorage.getItem('bella_draft');
+      if (draft) {
+        const data = JSON.parse(draft);
+        this.el.editor.value = data.content || '';
+        this.currentProfile = data.profile || 'amazon';
+        this.setProfile(this.currentProfile);
+        this.updateStats();
       }
     }
 
-    // START BESTII
-    new BellaMaster();
-  </script>
+    autoSave() {
+      const data = {
+        content: this.el.editor.value,
+        profile: this.currentProfile,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('bella_draft', JSON.stringify(data));
+    }
+
+    // Autosave co 5s
+    setInterval(() => this.autoSave(), 5000);
+  }
+
+  // START
+  new BellaV3();
+</script>
+
 </body>
 </html>
