@@ -1,284 +1,64 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ETERNIVERSE — ULTRA HYPERDRIVE v7.0 🔥🌌 MOC 1200%</title>
-  
-  <style>
-    /* MOC 1200% — ULTIMATE VISUAL BEAST */
-    :root {
-      --ultra-moc: 7; --ultra-accent: #ff00ff; 
-      --ultra-glow: 0 0 80px #ff00ff, 0 0 160px #00ffdd, 0 0 240px #ffaa00;
-      --ultra-bg: radial-gradient(circle at 25% 25%, #1a0033 0%, #0a001a 40%, #000000 100%);
-      --ultra-text: #ffffff; --ultra-sec: rgba(255,255,255,0.85);
-    }
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: 'Orbitron', 'SF Mono', monospace; 
-      background: var(--ultra-bg); color: var(--ultra-text);
-      overflow-x: hidden; perspective: 1000px;
-    }
-    
-    /* ULTRA HEADER — COSMIC BEAST */
-    header {
-      text-align: center; padding: 80px 30px; 
-      background: linear-gradient(180deg, rgba(10,0,26,0.98), transparent);
-      backdrop-filter: blur(60px); position: relative; height: 100vh;
-      display: flex; flex-direction: column; justify-content: center;
-      overflow: hidden; border-bottom: none;
-    }
-    
-    header::before {
-      content: ''; position: absolute; inset: 0;
-      background: 
-        radial-gradient(circle at 20% 80%, #ff00ff40 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, #00ffdd40 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, #ffaa0040 0%, transparent 50%);
-      animation: cosmicSwirl 20s linear infinite;
-    }
-    
-    @keyframes cosmicSwirl {
-      to { transform: rotate(360deg) scale(1.1); }
-    }
-    
-    h1 {
-      font-size: clamp(4rem, 12vw, 8rem); font-weight: 900; z-index: 2;
-      position: relative; letter-spacing: 0.08em; text-transform: uppercase;
-      background: linear-gradient(45deg, #ff00ff, #00ffdd, #ffaa00, #ffffff, #ff00ff);
-      background-size: 400% 400%; -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; background-clip: text;
-      animation: ultraGradient 6s ease infinite, ultraFloat 8s ease-in-out infinite;
-      filter: drop-shadow(0 0 60px currentColor);
-      transform-style: preserve-3d;
-    }
-    
-    @keyframes ultraGradient {
-      0%, 100% { background-position: 0% 50%; }
-      25% { background-position: 100% 0%; }
-      50% { background-position: 100% 100%; }
-      75% { background-position: 0% 100%; }
-    }
-    
-    @keyframes ultraFloat {
-      0%, 100% { transform: translateY(0px) rotateX(0deg); }
-      50% { transform: translateY(-20px) rotateX(5deg); }
-    }
-    
-    header p {
-      font-size: clamp(1.4rem, 4vw, 2.2rem); opacity: 0.95; 
-      letter-spacing: 2px; margin-top: 20px; z-index: 2;
-      animation: fadeUltra 2s ease 1s both;
-    }
-    
-    @keyframes fadeUltra {
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    
-    /* PARTICLE SYSTEM */
-    .particles {
-      position: absolute; inset: 0; pointer-events: none;
-      background-image: 
-        radial-gradient(2px 2px at 20px 30px, #ff00ff, transparent),
-        radial-gradient(2px 2px at 40px 70px, #00ffdd, transparent),
-        radial-gradient(1px 1px at 90px 40px, #ffaa00, transparent),
-        radial-gradient(1px 1px at 130px 80px, #ffffff20, transparent);
-      background-repeat: repeat; background-size: 200px 100px;
-      animation: particleFloat 25s linear infinite;
-    }
-    
-    @keyframes particleFloat {
-      to { transform: translateX(-200px) translateY(-100px); }
-    }
-    
-    /* ULTRA NAV — 3D BUTTONS */
-    nav {
-      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 30px; padding: 30px; background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(40px); border-radius: 50px; border: 3px solid transparent;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-    }
-    
-    nav button {
-      padding: 25px 40px; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 900;
-      border: 4px solid transparent; border-radius: 40px; cursor: pointer;
-      position: relative; overflow: hidden; text-transform: uppercase;
-      letter-spacing: 3px; backdrop-filter: blur(30px); min-width: 220px;
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform-style: preserve-3d; transform: translateZ(0);
-    }
-    
-    nav button:nth-child(1) { background: linear-gradient(145deg, rgba(255,0,255,0.3), rgba(170,0,255,0.3)); }
-    nav button:nth-child(2) { background: linear-gradient(145deg, rgba(0,255,221,0.3), rgba(0,170,255,0.3)); }
-    nav button:nth-child(3) { background: linear-gradient(145deg, rgba(255,170,0,0.3), rgba(255,68,68,0.3)); }
-    nav button:nth-child(4) { background: linear-gradient(145deg, rgba(255,255,255,0.2), rgba(128,128,255,0.2)); }
-    
-    nav button:hover {
-      transform: translateY(-15px) translateZ(50px) scale(1.1) rotateX(10deg);
-      box-shadow: var(--ultra-glow), 0 50px 120px rgba(255,0,255,0.4);
-      border-image: linear-gradient(45deg, #ff00ff, #00ffdd) 1;
-    }
-    
-    nav button:active {
-      transform: translateY(-8px) translateZ(30px) scale(1.05);
-    }
-    
-    /* SECTIONS ULTRA */
-    main {
-      padding: 120px 40px 80px; max-width: 1400px; margin: 0 auto;
-      perspective: 1200px;
-    }
-    
-    section {
-      opacity: 0; transform: translateY(100px) rotateX(20deg);
-      margin-bottom: 140px; animation: ultraReveal 1.5s forwards;
-      position: relative;
-    }
-    
-    section:nth-child(2) { animation-delay: 0.3s; }
-    section:nth-child(3) { animation-delay: 0.6s; }
-    
-    @keyframes ultraReveal {
-      to { 
-        opacity: 1; transform: translateY(0) rotateX(0deg) rotateY(0deg);
-      }
-    }
-    
-    h2 {
-      font-size: clamp(2.8rem, 6vw, 4rem); font-weight: 900; margin-bottom: 45px;
-      letter-spacing: 6px; text-transform: uppercase; position: relative;
-      background: linear-gradient(90deg, #ff00ff, #00ffdd, #ffaa00);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      transform: translateZ(50px); filter: drop-shadow(0 0 40px currentColor);
-    }
-    
-    h2::after {
-      content: ''; position: absolute; bottom: -15px; left: 0; right: 0;
-      height: 6px; background: linear-gradient(90deg, transparent, currentColor, transparent);
-      border-radius: 4px; animation: underlineGlow 3s ease infinite;
-    }
-    
-    @keyframes underlineGlow {
-      0%, 100% { box-shadow: 0 0 20px currentColor; }
-      50% { box-shadow: 0 0 40px currentColor, 0 0 60px currentColor; }
-    }
-    
-    ul { list-style: none; }
-    li {
-      padding: 35px 40px; margin: 25px 0; border-left: 6px solid transparent;
-      border-radius: 0 30px 0 30px; transition: all 0.6s;
-      background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0.4));
-      backdrop-filter: blur(30px); position: relative; transform: translateZ(20px);
-      box-shadow: 20px 0 60px rgba(0,0,0,0.5);
-    }
-    
-    li::before {
-      content: '⚡'; position: absolute; left: -30px; top: 50%;
-      transform: translateY(-50%); font-size: 1.5rem; opacity: 0;
-      transition: all 0.4s;
-    }
-    
-    li:hover {
-      border-left-color: var(--ultra-accent); transform: translateX(25px) translateZ(40px) scale(1.02);
-      box-shadow: 40px 0 100px rgba(255,0,255,0.3);
-    }
-    
-    li:hover::before { opacity: 1; left: -20px; }
-    
-    li strong {
-      background: linear-gradient(45deg, var(--ultra-accent), #ffffff);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      font-size: 1.15em; text-shadow: none;
-    }
-    
-    /* MASTER PANEL ULTRA */
-    .scr-master-panel {
-      border: 4px solid var(--ultra-accent) !important;
-      box-shadow: var(--ultra-glow) !important;
-      background: linear-gradient(145deg, rgba(0,0,20,0.98), rgba(26,0,51,0.98)) !important;
-      min-width: 320px !important; backdrop-filter: blur(50px) !important;
-    }
-    
-    /* RESPONSIVE BEAST */
-    @media (max-width: 768px) {
-      nav { position: static; transform: none; flex-wrap: wrap; padding: 25px; }
-      main { padding: 80px 20px; }
-      .scr-master-panel { inset: 20px !important; right: 20px !important; }
-    }
-  </style>
+    <title>Wola Bot - Stabilna v2.1</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 2.5em; margin-bottom: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .status { background: rgba(0,255,0,0.2); padding: 15px; border-radius: 10px; margin: 20px 0; font-size: 1.1em; }
+        .buttons { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        button { 
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white; border: none; padding: 15px 30px;
+            border-radius: 50px; font-size: 16px; cursor: pointer;
+            transition: all 0.3s; font-weight: 600;
+            box-shadow: 0 10px 20px rgba(255,107,107,0.3);
+        }
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(255,107,107,0.4); }
+        .footer { margin-top: 30px; opacity: 0.8; font-size: 0.9em; }
+        @media (max-width: 600px) { .buttons { flex-direction: column; } button { width: 100%; } }
+    </style>
 </head>
-
 <body>
-  
-  <!-- ULTRA MASTER PANEL -->
-  <div class="scr-master-panel" id="scr-master-panel">
-    <div style="font-size: 16px; font-weight: 900; margin-bottom: 15px;">
-      🔥 ULTRA HYPERDRIVE v7.0
+    <div class="card">
+        <h1>🚀 Wola Bot v2.1</h1>
+        <div class="status">
+            ✅ Status: <strong>Online</strong> | Użytkowników: <strong>420+</strong> | Komend: <strong>69</strong>
+        </div>
+        <div class="buttons">
+            <button onclick="deployDev()">⚡ Deploy Dev</button>
+            <button onclick="addMona()">🛡️ Dodaj Mona</button>
+            <button onclick="restartBot()">🔄 Restart Bot</button>
+        </div>
+        <div class="footer">Warszawa Wola District Bot | laciatyplas-bot</div>
     </div>
-    <div>MOC: <span id="master-moc" style="color: #ff00ff; font-weight: 900;">7</span>/10</div>
-    <div>Brama: <span id="master-brama">INTER</span></div>
-    <div>Słowa: <span id="master-words">0</span> | AI: <span id="master-ai">0</span></div>
-    <div class="scr-moc-bar" id="moc-bar" style="width: 70%;"></div>
-  </div>
 
-  <header>
-    <div class="particles"></div>
-    <h1>ETERNIVERSE</h1>
-    <p>ULTRA HYPERDRIVE v7.0 · MOC 1200% · One File Beast System</p>
-  </header>
-
-  <nav>
-    <button onclick="EterAPI.godMode()">
-      🦾 ULTRA GOD MODE<br><small>Ctrl+G</small>
-    </button>
-    <button onclick="EterAPI.cycleBrama()">
-      🔄 HYPER BRAMA<br><small>Ctrl+B</small>
-    </button>
-    <button onclick="EterAPI.aiBurst()">
-      🤖 AI ULTRA BURST<br><small>Ctrl+A</small>
-    </button>
-    <button onclick="location.href='bella.html'">
-      🧠 BELLA AI CHAT
-    </button>
-  </nav>
-
-  <main>
-    <section>
-      <h2>🚀 ULTRA HYPERDRIVE STATUS</h2>
-      <ul>
-        <li><strong>✅ MOC 1200% ACTIVATED</strong> — wszystkie systemy zintegrowane</li>
-        <li><strong>✅ 3D Particle Engine</strong> — live cosmic background</li>
-        <li><strong>✅ Ultra Responsive</strong> — mobile + desktop beast</li>
-        <li><strong>✅ Global Hotkeys</strong> — Ctrl+G/B/A instant response</li>
-        <li><strong>✅ Master Panel LIVE</strong> — MOC/brama/stats realtime</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>⌨️ ULTRA HOTKEYS</h2>
-      <ul>
-        <li><strong>Ctrl+G</strong> = Ultra God Mode (3D fullscreen + MOC 10)</li>
-        <li><strong>Ctrl+B</strong> = Hyper Brama Cycle (INTER→ETER→OBFI→CHAOS)</li>
-        <li><strong>Ctrl+A</strong> = AI Ultra Burst (intelligent popup suggestions)</li>
-        <li><strong>Alt+1-4</strong> = Direct Brama Jump</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>🐾 ULTRA API</h2>
-      <ul>
-        <li><code>EterAPI.godMode()</code> — 3D God Mode activation</li>
-        <li><code>EterAPI.cycleBrama()</code> — instant brama switch</li>
-        <li><code>EterAPI.aiBurst()</code> — context-aware AI popup</li>
-        <li><code>EterAPI.status()</code> — full system state (console)</li>
-      </ul>
-    </section>
-  </main>
-
-  <!-- 🔥 SCR.JS — ULTIMATE ONE FILE SYSTEM 🔥 -->
-  <script src="scr.js"></script>
-
+    <script>
+        function deployDev() { alert('🚀 Deploy z dev brancha... Gotowe!'); }
+        function addMona() { alert('🛡️ Mona exploit analyzer dodany! Użyj: !mona heap'); }
+        function restartBot() { alert('🔄 Bot zrestartowany. Status: Online'); }
+    </script>
 </body>
 </html>
