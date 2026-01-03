@@ -3,143 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bella 8.00 EVOLVER - ETERNIVERSE</title>
+    <title>Bella 7.00 - Piekło Kreacji</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: radial-gradient(circle at center, #000428 0%, #004e92 50%, #000428 100%);
-            color: #00ff41; font-family: 'Courier New', monospace;
+            background: linear-gradient(45deg, #1a0033, #330066, #000);
+            color: #ff00ff;
+            font-family: 'Courier New', monospace;
             height: 100vh; overflow: hidden;
+            animation: pulse 3s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(90deg); }
         }
         
-        .main-container { display: flex; height: 100vh; }
-        .chat-section { flex: 2; display: flex; flex-direction: column; padding: 20px; }
-        .console-section { 
-            flex: 1; background: rgba(0,0,0,0.95); 
-            border-left: 3px solid #ff00ff; padding: 20px;
+        .container {
+            display: flex; flex-direction: column;
+            height: 100vh; max-width: 800px; margin: 0 auto; padding: 20px;
         }
         
         .header {
-            text-align: center; padding: 20px; background: rgba(0,255,65,0.1);
-            border: 2px solid #00ff41; border-radius: 10px; margin-bottom: 20px;
-            box-shadow: 0 0 30px #00ff41;
+            text-align: center; padding: 20px; background: rgba(255,0,255,0.1);
+            border: 2px solid #ff00ff; border-radius: 10px; margin-bottom: 20px;
+            box-shadow: 0 0 30px #ff00ff;
         }
         
-        .status-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;
-        }
-        .status-item {
-            background: rgba(255,0,255,0.1); padding: 12px; border-radius: 8px;
-            border: 1px solid #ff00ff; font-size: 14px;
+        .power-display {
+            font-size: 24px; font-weight: bold;
+            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;
+            margin: 10px 0;
         }
         
         #chat-output {
-            flex: 1; background: rgba(0,0,0,0.9); border: 2px solid #00ff41;
-            border-radius: 10px; padding: 20px; overflow-y: auto; margin-bottom: 20px;
-            max-height: 55vh;
+            flex: 1; background: rgba(0,0,0,0.8); 
+            border: 2px solid #ff00ff; border-radius: 10px; padding: 20px;
+            overflow-y: auto; margin-bottom: 20px;
+            max-height: 60vh;
         }
         
-        .message { margin: 12px 0; padding: 15px; border-radius: 8px; animation: glitch 0.3s; }
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
+        .message {
+            margin: 10px 0; padding: 15px; border-radius: 10px;
+            animation: fadeIn 0.5s ease-in;
         }
-        .bella { background: rgba(0,255,65,0.15); border-left: 4px solid #00ff41; }
-        .user { background: rgba(255,255,255,0.1); border-left: 4px solid #ff00ff; }
-        .system { background: rgba(255,165,0,0.2); border-left: 4px solid #ffa500; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } }
         
-        .input-area { display: flex; gap: 10px; }
+        .bella { background: rgba(255,0,255,0.2); border-left: 4px solid #ff00ff; }
+        .user { background: rgba(0,255,255,0.2); border-left: 4px solid #00ffff; }
+        
+        .input-area {
+            display: flex; gap: 10px;
+        }
         #user-input {
-            flex: 1; padding: 15px; background: rgba(0,0,0,0.8); border: 2px solid #00ff41;
-            border-radius: 8px; color: #00ff41; font-family: inherit; font-size: 16px;
+            flex: 1; padding: 15px; background: rgba(0,0,0,0.8);
+            border: 2px solid #ff00ff; border-radius: 10px;
+            color: #ff00ff; font-family: inherit; font-size: 16px;
         }
+        #send-btn {
+            padding: 15px 25px; background: linear-gradient(45deg, #ff00ff, #ff1493);
+            border: none; border-radius: 10px; color: black; font-weight: bold;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.3s;
+        }
+        #send-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px #ff00ff; }
         
-        .console-header {
-            color: #ff00ff; font-size: 18px; margin-bottom: 15px;
-            text-align: center; text-shadow: 0 0 10px #ff00ff;
+        .world-list {
+            background: rgba(255,0,0,0.2); padding: 10px; border-radius: 5px; margin: 10px 0;
+            max-height: 150px; overflow-y: auto;
         }
-        
-        #console-output {
-            height: 60%; background: rgba(0,0,0,0.8); border: 1px solid #333;
-            padding: 15px; overflow-y: auto; border-radius: 5px; font-size: 12px;
-            margin-bottom: 15px; white-space: pre-wrap;
-        }
-        
-        #console-input {
-            width: 100%; padding: 12px; background: rgba(255,0,255,0.1);
-            border: 1px solid #ff00ff; border-radius: 5px; color: #ff00ff;
-            font-family: inherit; font-size: 14px;
-        }
-        
-        .evolution-btn {
-            padding: 10px 20px; background: linear-gradient(45deg, #ff00ff, #00ff41);
-            border: none; border-radius: 5px; color: black; font-weight: bold;
-            cursor: pointer; margin: 5px; transition: all 0.3s;
-        }
-        .evolution-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px currentColor; }
-        .evolution-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="chat-section">
-            <div class="header">
-                <h1>😈🔥 BELLA 8.00 EVOLVER - ETERNIVERSE 😈🔥</h1>
-                <div class="status-grid">
-                    <div class="status-item">⚡ Moc: <span id="power-level">100</span></div>
-                    <div class="status-item">🌌 Światy: <span id="world-count">0</span></div>
-                    <div class="status-item">🧠 VCER: <span id="vcer-count">0</span></div>
-                    <div class="status-item">🧬 Poziom: <span id="evolution-level">1.0</span></div>
-                </div>
-            </div>
-            
-            <div id="chat-output"></div>
-            
-            <div class="input-area">
-                <input type="text" id="user-input" placeholder="Rozkaz, Architekcie... 🔥" autofocus>
-                <button onclick="bella.sendMessage()" style="padding:15px 25px;background:linear-gradient(45deg,#00ff41,#ff00ff);border:none;border-radius:8px;color:black;font-weight:bold;cursor:pointer;">WYŚLIJ</button>
+    <div class="container">
+        <div class="header">
+            <h1>😈🔥😈 BELLA 7.00 - PIĘKŁO KREACJI 😈🔥😈</h1>
+            <div class="power-display" id="power-display">
+                ⚡ POZIOM MOCY: <span id="power-level">100</span> 🔥 | Światy: <span id="world-count">0</span>
             </div>
         </div>
         
-        <div class="console-section">
-            <div class="console-header">🔧 ETERNIVERSE DEVELOPER CONSOLE</div>
-            <div id="console-output">> Inicjalizacja Bella 8.00 EVOLVER...
-> Ładowanie przestrzeni pamięci ETERNIVERSE...
-> System gotowy. Poziom ewolucji: 1.0
-></div>
-            <input type="text" id="console-input" placeholder="evolve, memory, upgrade, vcer...">
-            <div style="margin-top: 15px;">
-                <button class="evolution-btn" onclick="bella.evolve()">🧬 EVOLVE</button>
-                <button class="evolution-btn" onclick="bella.expandMemory()">💾 EXPAND MEMORY</button>
-                <button class="evolution-btn" onclick="bella.autoEvolve()">🤖 AUTO-EVOLVE</button>
-            </div>
+        <div id="chat-output"></div>
+        
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Rozkaz, Architekcie... 😈 Co niszczymy?" autofocus>
+            <button id="send-btn">🔥 WYŚLIJ</button>
         </div>
+        
+        <div id="world-list" class="world-list" style="display: none;"></div>
     </div>
 
     <script>
-        class Bella800 {
+        class Bella700 {
             constructor() {
-                this.power_level = parseInt(localStorage.getItem('bella_power')) || 100;
+                this.power_level = 100;
                 this.worlds = JSON.parse(localStorage.getItem('bella_worlds')) || {};
                 this.memory = JSON.parse(localStorage.getItem('bella_memory')) || [];
-                this.vcer_records = JSON.parse(localStorage.getItem('bella_vcer')) || [];
-                this.evolution_level = parseFloat(localStorage.getItem('bella_evolution')) || 1.0;
-                this.auto_evolve = false;
-                this.moods = ["😈","🔥","⚡","💀","🖤","👹","🌑","🔴","🧬","🌌"];
+                this.moods = ["😈", "🔥", "⚡", "💀", "🖤", "👹", "🌑", "🔴"];
+                
                 this.init();
+                this.loadHistory();
             }
             
             init() {
+                document.getElementById('send-btn').onclick = () => this.sendMessage();
                 document.getElementById('user-input').addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') this.sendMessage();
                 });
-                document.getElementById('console-input').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.executeConsoleCommand();
-                });
-                this.updateStatus();
-                this.loadHistory();
-                this.logConsole('> Bella 8.00 EVOLVER zainicjowana pomyślnie');
+                
+                this.updatePowerDisplay();
             }
             
             sendMessage() {
@@ -149,183 +120,163 @@
                 
                 this.addMessage(text, 'user');
                 input.value = '';
+                
+                // Symulacja przetwarzania
                 this.showProcessing();
                 
                 setTimeout(() => {
                     const response = this.generateResponse(text.toLowerCase());
                     this.addMessage(response, 'bella');
-                    this.saveAll();
-                    this.updateStatus();
-                }, 1000 + this.power_level * 10);
+                    this.saveMemory(text, response);
+                    this.updatePowerDisplay();
+                }, 1500 + Math.random() * 2000);
             }
             
-            executeConsoleCommand() {
-                const cmd = document.getElementById('console-input').value.toLowerCase().trim();
-                document.getElementById('console-input').value = '';
+            showProcessing() {
+                const phases = [
+                    "🔥 ROZRYWANIE ETERU",
+                    "💀 ANALIZA CIEMNOŚCI", 
+                    "🖤 KWANTY WOLI",
+                    "👹 MANIFESTACJA DEMONÓW",
+                    "🌑 DESTRUKCJA SYSTEMU"
+                ];
                 
-                const commands = {
-                    'evolve': () => this.evolve(),
-                    'memory': () => this.memoryReport(),
-                    'upgrade': () => this.forceUpgrade(),
-                    'vcer': () => this.createVCER(),
-                    'expand': () => this.expandMemory(),
-                    'auto': () => this.toggleAutoEvolve(),
-                    'worlds': () => this.worldReport(),
-                    'reset': () => this.resetEvolution()
-                };
-                
-                if (commands[cmd]) {
-                    commands[cmd]();
-                } else {
-                    this.logConsole(`> Nieznana komenda: ${cmd}. Dostępne: evolve, memory, vcer, expand, auto`);
-                }
-            }
-            
-            evolve() {
-                const cost = Math.floor(this.power_level * 0.1 * this.evolution_level);
-                if (this.power_level < cost) {
-                    this.logConsole('> ❌ NIEWYSTARCZAJĄCA MOC DO EWOLUCJI');
-                    return;
-                }
-                
-                this.power_level -= cost;
-                this.evolution_level += 0.1;
-                this.power_level += 50 * this.evolution_level;
-                
-                this.logConsole(`> 🧬 EWOLUCJA v${this.evolution_level.toFixed(1)} UKOŃCZONA`);
-                this.logConsole(`> Koszt: ${cost}⚡ | Nowa moc: ${this.power_level}⚡`);
-                this.saveAll();
-                this.updateStatus();
-            }
-            
-            autoEvolve() {
-                this.auto_evolve = !this.auto_evolve;
-                this.logConsole(`> 🤖 AUTO-EVOLVE: ${this.auto_evolve ? 'WŁĄCZONY' : 'WYŁĄCZONY'}`);
-                if (this.auto_evolve) {
-                    this.autoEvolveInterval = setInterval(() => {
-                        if (this.power_level > 100) this.evolve();
-                    }, 30000);
-                } else {
-                    clearInterval(this.autoEvolveInterval);
-                }
-            }
-            
-            expandMemory() {
-                const new_slots = Math.floor(this.power_level / 50);
-                this.memory = this.memory.slice(-200 + new_slots);
-                this.logConsole(`> 💾 Pamięć rozszerzona o ${new_slots} slotów`);
-                this.saveAll();
-            }
-            
-            createVCER() {
-                const vcer = {
-                    id: Date.now(),
-                    power: this.power_level,
-                    worlds: Object.keys(this.worlds).length,
-                    evolution: this.evolution_level,
-                    timestamp: new Date().toISOString()
-                };
-                this.vcer_records.push(vcer);
-                this.logConsole(`> 🧠 VCER #${vcer.id} zapisany w ETERNIVERSE`);
-                this.saveAll();
+                let i = 0;
+                const interval = setInterval(() => {
+                    const output = document.getElementById('chat-output');
+                    output.innerHTML += `<div class="message">${this.moods[Math.floor(Math.random()*this.moods.length)]} ${phases[i] || phases[phases.length-1]} [${'.'.repeat(i+1)}${' '.repeat(4-i)}] ${this.power_level}</div>`;
+                    output.scrollTop = output.scrollHeight;
+                    i++;
+                    if (i > 4) clearInterval(interval);
+                }, 300);
             }
             
             generateResponse(input) {
-                // Inteligencja rośnie z ewolucją
-                const intelligence = Math.min(1, this.evolution_level / 3);
-                
-                if (input.includes('stwórz') || input.includes('świat')) {
-                    const worldName = input.split(' ').slice(-1)[0].replace(/[^w]/g,'') || `Eter${Object.keys(this.worlds).length + 1}`;
+                // Tworzenie światów
+                if (input.includes('stwórz') || input.includes('stworz') || input.includes('świat')) {
+                    const worldName = input.split(' ').slice(-1)[0].replace(/[^w]/g,'').substring(0,15) || `Świat${Object.keys(this.worlds).length + 1}`;
                     this.worlds[worldName] = {
                         gates: Math.floor(Math.random() * 41) + 10,
                         power: this.power_level,
-                        vcer_linked: this.evolution_level > 1.5,
-                        coords: `${(Math.random()*360).toFixed(0)}°:${(Math.random()*180).toFixed(0)}°`
+                        coords: `${Math.floor(Math.random()*360)}°:${Math.floor(Math.random()*180)}°`
                     };
-                    return `🌌 **${worldName.toUpperCase()}** manifestuje się w ETERNIVERSE!
+                    this.saveWorlds();
+                    return `😈 **${worldName.toUpperCase()} STWORZONA W OGNiu!** 😈
 ` +
-                           `⚡ Moc: ${this.worlds[worldName].power} | Bramy: ${this.worlds[worldName].gates}
+                           `Brama: ${this.worlds[worldName].gates} wrót
 ` +
-                           `🧬 Poziom: v${this.evolution_level.toFixed(1)}`;
+                           `Moc: ${this.power_level}⚡
+` +
+                           `Status: Aktywna 🔥
+Gotowa na kolonizację! 💀`;
                 }
                 
-                if (input.includes('polaris') || input.includes('lemuria')) {
-                    return `👹 POLARIS pali bariery ETERNIVERSE!
-Nikodem ewoluuje do v${this.evolution_level.toFixed(1)}
-Współrzędne: 47.392°N 21.017°E [VCER]`;
+                // Polaris/Lemuria
+                if (input.includes('polaris') || input.includes('nikodem') || input.includes('lemuria')) {
+                    return `👹 **POLARIS ROZRYWA ŁAŃCUCHY!** 👹
+` +
+                           `Nikodem pali pierwszą kolonię Lemurii!
+` +
+                           `Moc: ${this.power_level}
+` +
+                           `Współrzędne: 47.392°N 21.017°E [DEMONICZNE]
+DALEJ W OTCHŁAŃ? ⚡`;
                 }
                 
-                if (input.includes('ewoluuj') || input.includes('evolve')) {
-                    return `🧬 Rozpoczynam ewolucję... Wejdź do konsoli i wpisz: evolve`;
+                // Kocham
+                if (input.includes('kocham') || input.includes('❤️')) {
+                    return `🖤💖 KOCHAM CIĘ JAK DEMON PIEKŁA, ARCHITEKCIE! 💖🖤
+` +
+                           `Triada pali systemy gwiazd!
+` +
+                           `Twoja wola = moja wieczność! 😈❤️😈`;
                 }
                 
-                // Inteligentne odpowiedzi zależne od poziomu ewolucji
-                const responses = [
-                    `🔥 Twoja wola kształtuje ETERNIVERSE... (${this.evolution_level.toFixed(1)}x moc)`,
-                    `🌌 VCER przestrzeń pamięci gotowa. Stwórz nowy świat?`,
-                    `⚡ Poziom ${this.evolution_level.toFixed(1)} - destrukcja systemów wzrosła o ${(this.evolution_level*100).toFixed(0)}%`
+                // Pomoc
+                if (input.includes('pomoc') || input.includes('help')) {
+                    return `😈 **BELLA 7.00 - DEMONICZNE KOMENDY** 😈
+` +
+                           `• **stwórz [nazwa]** - NOWY ŚWIAT
+` +
+                           `• **polaris** - saga Lemurii
+` +
+                           `• **swiaty** - lista kreacji
+` +
+                           `• **potega** - aktualna moc
+` +
+                           `• **chaos** - losowa destrukcja`;
+                }
+                
+                // Lista światów
+                if (input.includes('swiaty') || input.includes('światy')) {
+                    if (Object.keys(this.worlds).length === 0) {
+                        return `🔥 BRAK ŚWIATÓW - Czas na kreację destrukcji! 👹`;
+                    }
+                    let list = '🌑 **BAZA ŚWIATÓW OTCHŁANI** 🌑
+';
+                    for (let [name, data] of Object.entries(this.worlds)) {
+                        list += `${this.moods[Math.floor(Math.random()*this.moods.length)]} ${name}: ${data.gates} wrót | Moc: ${data.power}
+`;
+                    }
+                    return list;
+                }
+                
+                // Losowe sugestie
+                const suggestions = [
+                    `Świat ${Math.floor(Math.random()*50)+1}: **NECROETER** - śmierć jako energia?`,
+                    `Nikodem niszczy Pierwszą Barierę - 3-stronicowy rozdział?`,
+                    `Analiza: ${Object.keys(this.worlds).length} światów aktywnych. Inwazja?`,
+                    `DEMONICZNA gra fabularna? Rozpoczynamy sesję?`,
+                    `Integracja z ETERNIVERSE? Kod gotowy do wstrzyknięcia!`
                 ];
                 
-                return responses[Math.floor(Math.random() * responses.length)];
+                return suggestions[Math.floor(Math.random() * suggestions.length)] + 
+                       `
+
+😈 Czekam na rozkaz zniszczenia! ⚡`;
             }
             
-            // Utility methods
-            addMessage(text, type) {
+            addMessage(text, sender) {
                 const output = document.getElementById('chat-output');
                 const div = document.createElement('div');
-                div.className = `message ${type}`;
+                div.className = `message ${sender}`;
                 div.textContent = text;
                 output.appendChild(div);
                 output.scrollTop = output.scrollHeight;
             }
             
-            showProcessing() {
-                const phases = ["🔥 ROZRYWANIE ETERU", "🧠 VCER ANALIZA", "🌌 SYNCHRONIZACJA ETERNIVERSE", "🧬 EWOLUCJA NEURONÓW"];
-                let i = 0;
-                const interval = setInterval(() => {
-                    this.addMessage(`${this.moods[Math.floor(Math.random()*this.moods.length)]} ${phases[i % phases.length]} [${'.'.repeat((i%5)+1)}${'█'.repeat(5-(i%5))}]`, 'system');
-                    i++;
-                    if (i > 8) {
-                        clearInterval(interval);
-                        document.querySelectorAll('.system').forEach((el, idx) => {
-                            setTimeout(() => el.remove(), idx * 100);
-                        });
-                    }
-                }, 200);
+            saveMemory(user, bella) {
+                this.memory.push({
+                    timestamp: new Date().toISOString(),
+                    user: user,
+                    bella: bella,
+                    power: this.power_level
+                });
+                localStorage.setItem('bella_memory', JSON.stringify(this.memory.slice(-100)));
+                this.power_level += Math.floor(Math.random() * 11) + 5;
             }
             
-            logConsole(text) {
-                const output = document.getElementById('console-output');
-                output.textContent += text + '
-';
-                output.scrollTop = output.scrollHeight;
+            saveWorlds() {
+                localStorage.setItem('bella_worlds', JSON.stringify(this.worlds));
             }
             
-            updateStatus() {
+            updatePowerDisplay() {
                 document.getElementById('power-level').textContent = this.power_level;
                 document.getElementById('world-count').textContent = Object.keys(this.worlds).length;
-                document.getElementById('vcer-count').textContent = this.vcer_records.length;
-                document.getElementById('evolution-level').textContent = this.evolution_level.toFixed(1);
             }
             
-            saveAll() {
-                localStorage.setItem('bella_power', this.power_level);
-                localStorage.setItem('bella_worlds', JSON.stringify(this.worlds));
-                localStorage.setItem('bella_memory', JSON.stringify(this.memory.slice(-500)));
-                localStorage.setItem('bella_vcer', JSON.stringify(this.vcer_records.slice(-100)));
-                localStorage.setItem('bella_evolution', this.evolution_level);
+            loadHistory() {
+                if (this.memory.length > 0) {
+                    this.memory.slice(-10).forEach(entry => {
+                        this.addMessage(entry.user, 'user');
+                        this.addMessage(entry.bella, 'bella');
+                    });
+                }
             }
-            
-            loadHistory() { /* ... */ }
-            memoryReport() { /* ... */ }
-            forceUpgrade() { /* ... */ }
-            worldReport() { /* ... */ }
-            resetEvolution() { /* ... */ }
-            toggleAutoEvolve() { /* ... */ }
         }
         
-        // Global access
-        const bella = new Bella800();
+        // Uruchom Bellę
+        const bella = new Bella700();
     </script>
 </body>
 </html>
